@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		<title>Chronological Diagram of Asia</title>
+		<script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script>
+	</head>
+	<body>
+		<script type="text/javascript">
+			d3.select("body").selectAll("p")
+  			  .data([4, 8, 15, 16, 23, 42])
+  			  .enter().append("p")
+  			  .text(function(d) { return "I’m number " + d + "!"; });
+		</script>
+	</body>
+</html>
+
