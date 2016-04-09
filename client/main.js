@@ -1,6 +1,8 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 
+import { Sequences } from '../imports/api/sequences.js';
+
 import './main.html';
 
 Template.hello.onCreated(function helloOnCreated() {
@@ -11,6 +13,10 @@ Template.hello.onCreated(function helloOnCreated() {
 Template.hello.helpers({
   counter() {
     return Template.instance().counter.get();
+  },
+  sequences() {
+	  var seq = Sequences.find({}).fetch();
+	  return 'dump : ' + JSON.stringify(seq);
   },
 });
 
