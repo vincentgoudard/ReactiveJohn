@@ -1,1 +1,74 @@
 /* CSS declarations go here */
+.chart {
+	shape-rendering: crispEdges;
+	width:100%;
+}
+
+.mini text {
+	font: 9px sans-serif;
+}
+
+.main text {
+	font:16px sans-serif;	
+}
+
+.miniItem0 {
+	fill: darksalmon;
+	stroke-width: 6;	
+}
+
+.miniItem1 {
+	fill: darkolivegreen;
+	fill-opacity: .7;
+	stroke-width: 6;	
+}
+
+.miniItem2 {
+	fill: slategray;
+	fill-opacity: .7;
+	stroke-width: 6;	
+}
+
+.miniItem3 {
+	fill: lightsteelblue;
+	stroke-width: 6;	
+}
+
+.miniItem4 {
+	fill: lightpink;
+	fill-opacity: .7;
+	stroke-width: 6;	
+}
+
+.miniItem5 {
+	fill: mediumturquoise;
+	fill-opacity: .7;
+	stroke-width: 6;	
+}
+
+.miniItem6 {
+	fill: lightcoral;
+	fill-opacity: .7;
+	stroke-width: 6;	
+}
+
+.brush .extent {
+	stroke: gray;
+	fill: dodgerblue;
+	fill-opacity: .365;
+}
+
+.svg-container {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    vertical-align: top;
+    overflow: hidden;
+}
+.svg-content-responsive {
+    display: inline-block;
+    position: absolute;
+    top: 10px;
+    left: 0;
+}
+
