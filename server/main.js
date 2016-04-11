@@ -37,5 +37,10 @@ Meteor.startup(() => {
 				{"lane": 6, "id": "chuchotement", "start": 1390, "end": 1890},
 				{"lane": 6, "id": "onomatopée", "start": 1900, "end": 1945}]
 		});
+
+	Meteor.publish('john.public', function() {
+	  return Sequences.find({});
+	});
+
 });
 

@@ -23,13 +23,20 @@ Template.hello.helpers({
 Template.hello.events({
   'click button'(event, instance) {
     // increment the counter when button is clicked
-    instance.counter.set(instance.counter.get() + 1);
-
-  	var seq = Sequences.find({}).fetch();
-	var lanes = seq[0].lanes;
-	var items = seq[0].items;
- 	var john1 = John.create(lanes, items, "#john_anchor_1");
-
-  },
+    instance.counter.set(instance.counter.get() + 1);  },
 });
 
+
+const handle = Meteor.subscribe('john.public');
+
+Tracker.autorun(() => {
+	const isReady = handle.ready();
+	console.log(`Handle is ${isReady ? 'ready' : 'not ready'}`);
+
+	if(isReady) {
+		var seq = Sequences.find({}).fetch();
+		var lanes = seq[0].lanes;
+		var items = seq[0].items;
+		var john1 = John.create(lanes, items, "#john_anchor_1");
+	}
+});
