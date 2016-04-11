@@ -1,18 +1,20 @@
 import { Meteor } from 'meteor/meteor';
 
 import { Sequences } from '../imports/api/sequences.js';
+import { Lanes } from '../imports/api/sequences.js';
 
 Meteor.startup(() => {
   // code to run on server at startup
 
 	// start from sratch
+	Lanes.remove({});
 	Sequences.remove({});
 
-	// all this will be stored in a file or elsewhere
+	// add sample players
+	Lanes.insert({"lanes" : ["Pierre","Serge","Laurence", "Gyorgy", "Jean", "Hugues", "Vincent"]});
 
-	Sequences.insert(
-			{"lanes" : ["Pierre","Serge","Laurence", "Gyorgy", "Jean", "Hugues", "Vincent"],
-			"items" : [{"lane": 0, "id": "Doux", "start": 5, "end": 205},
+
+	var SampleEvents = [{"lane": 0, "id": "Doux", "start": 5, "end": 205},
 				{"lane": 0, "id": "Valse", "start": 265, "end": 420},
 				{"lane": 0, "id": "Sériel", "start": 580, "end": 615},
 				{"lane": 0, "id": "Explosif", "start": 620, "end": 900},
@@ -35,7 +37,11 @@ Meteor.startup(() => {
 				{"lane": 5, "id": "tremblement de terre", "start": 690, "end": 900},
 				{"lane": 6, "id": "lointain", "start": 920, "end": 1380},
 				{"lane": 6, "id": "chuchotement", "start": 1390, "end": 1890},
-				{"lane": 6, "id": "onomatopée", "start": 1900, "end": 1945}]
-		});
+				{"lane": 6, "id": "onomatopée", "start": 1900, "end": 1945}];
+
+	// add sample events
+	for (var i=0; i<SampleEvents.length; i++)
+	Sequences.insert(SampleEvents[i]);
+
 });
 
