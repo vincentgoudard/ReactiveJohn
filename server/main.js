@@ -42,11 +42,11 @@ Meteor.startup(() => {
 	for (var i=0; i<SampleEvents.length; i++)
 	Sequences.insert(SampleEvents[i]);
 
-
+	var the_time = 0;
 	var delay_milliseconds = 5;
 
 	var interval = setInterval(Meteor.bindEnvironment(function (err, res) {
-		TheTime.update('timer', {$set:{"time": 3}});
+		TheTime.upsert('timer', {$set:{"time": the_time++}});
 
 	}), delay_milliseconds);
 

@@ -45,6 +45,13 @@ Tracker.autorun(() => {
 	}
 });
 
+Tracker.autorun(() => {
+	var currentTime = TheTime.find('timer').fetch();
+	if(currentTime.length == 1) {
+		d3.select('#john_time').text(currentTime[0].time);
+	}
+});
+
 Template.body.events({
   'submit .new-event'(event) {
     // Prevent default browser form submit
