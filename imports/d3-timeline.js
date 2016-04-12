@@ -4,6 +4,8 @@
  *
  */
 
+import { TheSharedTime } from '../client/main.js';
+
 export const John = { extensions: {} };
 
 John.create = function (lanes, items, main_anchor) {
@@ -206,7 +208,9 @@ John.create = function (lanes, items, main_anchor) {
 
 		// Drawing code goes here... for example updating an 'x' position:
 		//this.x += 10 * dt; // Increase 'x' by 10 units per millisecond
-		currentTime+=dt/10;
+		//currentTime+=dt/10;
+		currentTime = TheSharedTime/10;
+		//console.log(TheSharedTime);
 
 		// make condition that stop cursor if time exceeds graph domain
 		if (currentTime > timeEnd ) {

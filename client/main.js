@@ -8,6 +8,9 @@ import { John } from '../imports/d3-timeline.js';
 
 import './main.html';
 
+TheSharedTime = 0;
+export { TheSharedTime };
+
 Template.hello.onCreated(function helloOnCreated() {
   // counter starts at 0
   this.counter = new ReactiveVar(0);
@@ -66,7 +69,8 @@ Tracker.autorun(() => {
 Tracker.autorun(() => {
 	var currentTime = TheTime.find('timer').fetch();
 	if(currentTime.length == 1) {
-		d3.select('#john_time').text(currentTime[0].time);
+    TheSharedTime = currentTime[0].time;
+		d3.select('#john_time').text(TheSharedTime);
 	}
 });
 
