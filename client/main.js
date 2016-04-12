@@ -70,7 +70,7 @@ Tracker.autorun(() => {
 	var currentTime = TheTime.find('timer').fetch();
 	if(currentTime.length == 1) {
     TheSharedTime = currentTime[0].time;
-		d3.select('#john_time').text(TheSharedTime);
+		d3.select('#john_time').text(TheSharedTime.toFixed(2));
 	}
 });
 
@@ -104,5 +104,3 @@ Template.body.events({
     Template.hello.events();
   }
 });
-
-

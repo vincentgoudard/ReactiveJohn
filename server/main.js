@@ -48,10 +48,12 @@ Meteor.startup(() => {
 	Sequences.insert(SampleEvents[i]);
 
 	var the_time = 0;
-	var delay_milliseconds = 5;
+	var the_offset = Date.now();
+	var delay_milliseconds = 100;
 
 	var interval = setInterval(Meteor.bindEnvironment(function (err, res) {
-		TheTime.upsert('timer', {$set:{"time": the_time++}});
+		//TheTime.upsert('timer', {$set:{"time": the_time++}});
+		TheTime.upsert('timer', {$set:{"time": ( Date.now() - the_offset )}});
 
 	}), delay_milliseconds);
 

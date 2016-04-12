@@ -56,7 +56,10 @@ John.create = function (lanes, items, main_anchor) {
 						.text("start")
 						.on("click", function() {animateDaShit();});
 
-
+	// and a start/stop button underneath
+	var sequenceTimeDisplay = d3.select(main_anchor)
+						.append("div")
+						.text("current time : 0s");
 
 	// define a graphical objects for later reuse
 	chart.append("defs").append("clipPath")
@@ -196,21 +199,22 @@ John.create = function (lanes, items, main_anchor) {
 
 	var currentTime = 0;
 	var brushSize = 500;
-	var time;
+	var timeOffset;
 	var requestId = undefined;
 
 	function animate() {
 		requestId = window.requestAnimationFrame(animate);
-		var now = new Date().getTime(),
-			dt = now - (time || now);
-
-		time = now;
+		//var now = new Date().getTime(),
+		//	dt = now - (time || now);
 
 		// Drawing code goes here... for example updating an 'x' position:
 		//this.x += 10 * dt; // Increase 'x' by 10 units per millisecond
 		//currentTime+=dt/10;
-		currentTime = TheSharedTime/10;
+
+		currentTime = ( TheSharedTime - timeOffset ) / 1000;
 		//console.log(TheSharedTime);
+
+		sequenceTimeDisplay.text("current time : " + currentTime.toFixed(2) + "s");
 
 		// make condition that stop cursor if time exceeds graph domain
 		if (currentTime > timeEnd ) {
@@ -239,14 +243,14 @@ John.create = function (lanes, items, main_anchor) {
 		if (!requestId) {
 			start_button.text("stop").style("background-color", "LightGreen");
 			pos = 0;
-			time = 0;
+			timeOffset = TheSharedTime;
 			animate();
 		}
 		else {
 		   start_button.text("start").style("background-color", "LightCoral");
 		   window.cancelAnimationFrame(requestId);
 		   requestId = undefined;
-		   time = 0;
+		   timeOffset = TheSharedTime;
 		}
 	}
 
