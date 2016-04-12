@@ -1,7 +1,7 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 
-import { Sequences, Lanes, TheTime } from '../imports/api/sequences.js';
+import { Sequences, Lanes, Karmas, TheTime }  from '../imports/api/sequences.js';
 
 import '../imports/d3/d3.v2.js';
 import { John } from '../imports/d3-timeline.js';
@@ -39,8 +39,26 @@ Tracker.autorun(() => {
 		var lanesCollection = Lanes.find({}).fetch();
 		var lanes = lanesCollection[0].lanes;
 
+    // feed the lane Menu
+    for (var i = 0; i < lanes.length; i++) {
+      var myElement = "<option value=" + i + ">" + lanes[i] + "</option>";
+      $( ".laneMenu" ).append( myElement );
+    }
+
+    // get the karmas
+    var karmasCollection = Karmas.find({}).fetch();
+    var karmas = karmasCollection[0].karmas;
+    console.log(karmas);
+    // feed the karma Menu
+    for (var i = 0; i < karmas.length; i++) {
+      var myElement = "<option value=" + karmas[i] + ">" + karmas[i] + "</option>";
+      $( ".karmaMenu" ).append( myElement );
+    }
+
+    // get the events
 		var eventsCollection = Sequences.find({}).fetch();
 
+    // create a view for timeline
 		var john1 = John.create(lanes, eventsCollection, "#john_anchor_1");
 	}
 });
@@ -60,8 +78,8 @@ Template.body.events({
     // Get value from form element
     const target = event.target;
     //const text = target.text.value;
-    const lane = Number(target.lane.value);
-    const karma = target.karma.value;
+    const lane = Number(target.laneMenu.value);
+    const karma = target.karmaMenu.value;
     const start = Number(target.start.value);
     const end = Number(target.end.value);
 
@@ -71,7 +89,7 @@ Template.body.events({
     //  createdAt: new Date(), // current time
     //});
 
-    Sequences.insert({"lane": lane, "id": karma, "start": start, "end": end});
+    Sequences.insert({"lane": lane, "karma": karma, "start": start, "end": end});
 
     // Clear form
     target.lane.value = '0';
@@ -82,3 +100,5 @@ Template.body.events({
     Template.hello.events();
   }
 });
+
+

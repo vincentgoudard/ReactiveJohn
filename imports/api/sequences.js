@@ -4,6 +4,7 @@ import { Mongo } from 'meteor/mongo';
 
 export const Sequences = new Mongo.Collection('sequences');
 export const Lanes = new Mongo.Collection('lanes');
+export const Karmas = new Mongo.Collection('karmas');
 
 
 export const TheTime = new Mongo.Collection('time');

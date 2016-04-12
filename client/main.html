@@ -9,12 +9,12 @@
   <header>
     <h2>score maker</h2>
     <form class="new-event">
-      <input type="number" name="lane" min="0" max="6" value="0">
-      <select name="karma">
-        <option value="doux">doux</option>
-        <option value="valse">valse</option>
-        <option value="seriel">seriel</option>
-        <option value="explosif">explosif</option>
+      <select class="laneMenu" name="laneMenu">
+        <!-- this menu is filled dynamically from the collection -->
+      </select>
+      <select class="karmaMenu" name="karmaMenu">
+        <!-- this menu is filled dynamically from the collection -->
+        <!-- <option value="doux">doux</option-->
       </select>
       <input type="number" name="start" min="0" value="0">
       <input type="number" name="end" min="0" value="1000">

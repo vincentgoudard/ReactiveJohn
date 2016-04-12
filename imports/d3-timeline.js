@@ -133,7 +133,7 @@ John.create = function (lanes, items, main_anchor) {
 	mini.append("g").selectAll(".miniLabels")
 		.data(items)
 		.enter().append("text")
-		.text(function(d) {return d.id;})
+		.text(function(d) {return d.karma;})
 		.attr("x", function(d) {return x(d.start);})
 		.attr("y", function(d) {return y2(d.lane + .5);})
 		.attr("dy", ".5ex");
@@ -168,7 +168,7 @@ John.create = function (lanes, items, main_anchor) {
 
 		//update main item rects
 		rects = itemRects.selectAll("rect")
-				.data(visItems, function(d) { return d.id; })
+				.data(visItems, function(d) { return d.karma; })
 			.attr("x", function(d) {return x1(d.start);})
 			.attr("width", function(d) {return x1(d.end) - x1(d.start);});
 
@@ -182,10 +182,10 @@ John.create = function (lanes, items, main_anchor) {
 
 		//update the item labels
 		labels = itemRects.selectAll("text")
-			.data(visItems, function (d) { return d.id; })
+			.data(visItems, function (d) { return d.karma; })
 			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 2);});
 		labels.enter().append("text")
-			.text(function(d) {return d.id;})
+			.text(function(d) {return d.karma;})
 			.attr("x", function(d) {return x1(Math.max(d.start, minExtent));})
 			.attr("y", function(d) {return y1(d.lane + .5);})
 			.attr("text-anchor", "start");
