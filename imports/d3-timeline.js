@@ -39,6 +39,7 @@ John.create = function (lanes, items, main_anchor) {
 			.domain([0, laneLength])
 			.range([0, miniHeight]);
 
+	d3.select(main_anchor).html("");
 
 	// create the chart as an svg element
 	var chart = d3.select(main_anchor)
