@@ -104,3 +104,23 @@ Template.body.events({
     Template.hello.events();
   }
 });
+
+var scoreMakerViewHidden = 1;
+var eventMakerViewHidden = 1;
+
+Template.body.events({
+    'click .score-maker-view': function (e) {
+      e.preventDefault();
+      scoreMakerViewHidden = !scoreMakerViewHidden;
+      //console.log("You pressed the button");
+      if ( scoreMakerViewHidden ) $( ".score-maker" ).addClass("hidden");
+      else $( ".score-maker" ).removeClass("hidden");
+    },
+    'click .event-maker-view': function (e) {
+      e.preventDefault();
+      eventMakerViewHidden = !eventMakerViewHidden;
+      //console.log("You pressed the button");
+      if ( eventMakerViewHidden ) $( ".event-maker" ).addClass("hidden");
+      else $( ".event-maker" ).removeClass("hidden");
+    }
+  });

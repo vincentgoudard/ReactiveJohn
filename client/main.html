@@ -7,19 +7,45 @@
   <h1>Welcome to John!</h1>
 
   <header>
-    <h2>score maker</h2>
-    <form class="new-event">
-      <select class="laneMenu" name="laneMenu">
-        <!-- this menu is filled dynamically from the collection -->
-      </select>
-      <select class="karmaMenu" name="karmaMenu">
-        <!-- this menu is filled dynamically from the collection -->
-        <!-- <option value="doux">doux</option-->
-      </select>
-      <input type="number" name="start" min="0" value="0">
-      <input type="number" name="end" min="0" value="1000">
-      <input type="submit" value="Submit">
-    </form>
+    <div class="score-maker-container">
+      <button class="score-maker-view">view</button><h2>score maker</h2> 
+      <div class="score-maker hidden">
+            <form class="new-score">
+                <section>
+                    <div style="float:left;">
+                        <label for="duration">concert duration</label>
+                        <input type="number" name="concert-duration" min="0" value="30000">
+                    </div>
+                    <div style="float:left;">
+                        <label for="email">event duration</label>
+                        <input type="number" name="event-duration" min="0" value="100">
+                    </div>
+                    </section>
+                <input type="submit" value="Submit">
+            </form>
+  
+      </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="event-maker-container">
+        <button class="event-maker-view">view</button><h2>event maker</h2> 
+        <div class="event-maker hidden">
+            <form class="new-event">
+                <select class="laneMenu" name="laneMenu">
+                  <!-- this menu is filled dynamically from the collection -->
+                </select>
+                <select class="karmaMenu" name="karmaMenu">
+                  <!-- this menu is filled dynamically from the collection -->
+                  <!-- <option value="doux">doux</option-->
+                </select>
+                <input type="number" name="start" min="0" value="0">
+                <input type="number" name="end" min="0" value="1000">
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+    </div>
+
   </header>
 
   <div id="john_anchor_1"></div>
@@ -37,3 +63,8 @@
 <template name="info">
   <p>This is John's footer</p>
 </template>
+
+
+
+
+
