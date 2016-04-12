@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 
-import { Sequences } from '../imports/api/sequences.js';
-import { Lanes } from '../imports/api/sequences.js';
+import { Sequences, Lanes, TheTime } from '../imports/api/sequences.js';
 
 Meteor.startup(() => {
   // code to run on server at startup
@@ -43,6 +42,13 @@ Meteor.startup(() => {
 	for (var i=0; i<SampleEvents.length; i++)
 	Sequences.insert(SampleEvents[i]);
 
+
+	var delay_milliseconds = 5;
+
+	var interval = setInterval(Meteor.bindEnvironment(function (err, res) {
+		TheTime.update('timer', {$set:{"time": 3}});
+
+	}), delay_milliseconds);
 
 	Meteor.publish('john.public', function() {
 	  return Sequences.find({});

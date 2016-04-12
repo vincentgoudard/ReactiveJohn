@@ -6,6 +6,8 @@ export const Sequences = new Mongo.Collection('sequences');
 export const Lanes = new Mongo.Collection('lanes');
 
 
+export const TheTime = new Mongo.Collection('time');
+
 // to insert manually in mongo :
 // start "meteor mongo" and type :
 // db.sequences.insert({"lane": 0, "id": "Doux", "start": 5, "end": 205});

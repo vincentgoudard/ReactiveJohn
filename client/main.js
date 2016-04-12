@@ -1,8 +1,7 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 
-import { Sequences } from '../imports/api/sequences.js';
-import { Lanes } from '../imports/api/sequences.js';
+import { Sequences, Lanes, TheTime } from '../imports/api/sequences.js';
 
 import '../imports/d3/d3.v2.js';
 import { John } from '../imports/d3-timeline.js';
