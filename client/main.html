@@ -2,17 +2,33 @@
   <title>John the Meteor</title>
 </head>
 
+
 <body>
   <h1>Welcome to John!</h1>
 
-
+  <header>
+    <h2>score maker</h2>
+    <form class="new-event">
+      <input type="number" name="lane" min="0" max="6" value="0">
+      <select name="karma">
+        <option value="doux">doux</option>
+        <option value="valse">valse</option>
+        <option value="seriel">seriel</option>
+        <option value="explosif">explosif</option>
+      </select> 
+      <input type="number" name="start" min="0" value="0">
+      <input type="number" name="end" min="0" value="1000">
+      <input type="submit" value="Submit">
+    </form>
+  </header>
+  
   {{> hello}}
   <div id="john_anchor_1"></div>
   {{> info}}
 </body>
 
 <template name="hello">
-  <button>Don't Click Me</button>
+  <button>Show John timeline</button>
   <p>You've pressed the button {{counter}} times.</p>
 </template>
 
