@@ -4,11 +4,15 @@
  *
  */
 
-import { TheSharedTime } from '../client/main.js';
-
 export const John = { extensions: {} };
 
 John.create = function (lanes, items, main_anchor) {
+
+	var TheSharedTime;
+	this.setTime = function(time) {
+		TheSharedTime = time;
+	}
+
 	var laneLength = lanes.length;
 
 	// find biggest value for time end
