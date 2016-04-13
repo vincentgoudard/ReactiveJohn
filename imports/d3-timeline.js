@@ -4,11 +4,25 @@
  *
  */
 
-import { TheSharedTime } from '../client/main.js';
-
 export const John = { extensions: {} };
 
-John.create = function (lanes, items, main_anchor) {
+John.create = function (lanes, items, main_anchor, start_callback) {
+
+	var TheSharedTime;
+	this.setTime = function(time, start_time, playing) {
+		TheSharedTime = time;
+
+		if(playing)
+		{
+			start_button.text("stop").style("background-color", "LightGreen");
+			timeOffset = start_time;
+			animate();
+		}
+		else {
+		   start_button.text("start").style("background-color", "LightCoral");
+		}
+	}
+
 	var laneLength = lanes.length;
 
 	// find biggest value for time end
@@ -54,7 +68,7 @@ John.create = function (lanes, items, main_anchor) {
 	var start_button = d3.select(main_anchor)
 						.append("button")
 						.text("start")
-						.on("click", function() {animateDaShit();});
+						.on("click", function() {start_callback(TheSharedTime);});
 
 	// and a start/stop button underneath
 	var sequenceTimeDisplay = d3.select(main_anchor)
@@ -203,13 +217,6 @@ John.create = function (lanes, items, main_anchor) {
 	var requestId = undefined;
 
 	function animate() {
-		requestId = window.requestAnimationFrame(animate);
-		//var now = new Date().getTime(),
-		//	dt = now - (time || now);
-
-		// Drawing code goes here... for example updating an 'x' position:
-		//this.x += 10 * dt; // Increase 'x' by 10 units per millisecond
-		//currentTime+=dt/10;
 
 		currentTime = ( TheSharedTime - timeOffset ) / 1000;
 		//console.log(TheSharedTime);
@@ -219,7 +226,6 @@ John.create = function (lanes, items, main_anchor) {
 		// make condition that stop cursor if time exceeds graph domain
 		if (currentTime > timeEnd ) {
 			console.log(w);
-			window.cancelAnimationFrame(requestId);
 			return;
 		}
 
@@ -238,22 +244,6 @@ John.create = function (lanes, items, main_anchor) {
 	}
 
 	init();
-
-	var animateDaShit = function(){
-		if (!requestId) {
-			start_button.text("stop").style("background-color", "LightGreen");
-			pos = 0;
-			timeOffset = TheSharedTime;
-			animate();
-		}
-		else {
-		   start_button.text("start").style("background-color", "LightCoral");
-		   window.cancelAnimationFrame(requestId);
-		   requestId = undefined;
-		   timeOffset = TheSharedTime;
-		}
-	}
-
 
 
 };

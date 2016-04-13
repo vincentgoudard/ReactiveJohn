@@ -8,8 +8,7 @@ import { John } from '../imports/d3-timeline.js';
 
 import './main.html';
 
-TheSharedTime = 0;
-export { TheSharedTime };
+var TheJohn;
 
 Template.hello.onCreated(function helloOnCreated() {
   // counter starts at 0
@@ -62,15 +61,21 @@ Tracker.autorun(() => {
 		var eventsCollection = Sequences.find({}).fetch();
 
     // create a view for timeline
-		var john1 = John.create(lanes, eventsCollection, "#john_anchor_1");
+		John.create(lanes, eventsCollection, "#john_anchor_1", function(time){
+			var currentTime = TheTime.find('timer').fetch();
+			// inverse playing
+			var playing = !currentTime[0].playing;
+
+			TheTime.upsert('timer', {$set:{"john_start": time}});
+			TheTime.upsert('timer', {$set:{"playing": playing}});
+		});
 	}
 });
 
 Tracker.autorun(() => {
 	var currentTime = TheTime.find('timer').fetch();
 	if(currentTime.length == 1) {
-    TheSharedTime = currentTime[0].time;
-		d3.select('#john_time').text(TheSharedTime.toFixed(2));
+		John.setTime(currentTime[0].time, currentTime[0].john_start, currentTime[0].playing);
 	}
 });
 
