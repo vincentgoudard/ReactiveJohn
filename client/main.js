@@ -61,14 +61,21 @@ Tracker.autorun(() => {
 		var eventsCollection = Sequences.find({}).fetch();
 
     // create a view for timeline
-		John.create(lanes, eventsCollection, "#john_anchor_1");
+		John.create(lanes, eventsCollection, "#john_anchor_1", function(time){
+			var currentTime = TheTime.find('timer').fetch();
+			// inverse playing
+			var playing = !currentTime[0].playing;
+
+			TheTime.upsert('timer', {$set:{"john_start": time}});
+			TheTime.upsert('timer', {$set:{"playing": playing}});
+		});
 	}
 });
 
 Tracker.autorun(() => {
 	var currentTime = TheTime.find('timer').fetch();
 	if(currentTime.length == 1) {
-		John.setTime(currentTime[0].time);
+		John.setTime(currentTime[0].time, currentTime[0].john_start, currentTime[0].playing);
 	}
 });
 
