@@ -27,7 +27,9 @@ John.create = function (lanes, items, main_anchor, start_callback) {
 
 	// find biggest value for time end
 	var timeBegin = 0,
-		timeEnd = -Infinity;
+		timeEnd = 3600;
+
+//		timeEnd = -Infinity;
 	var i;
 	for(i=0; i < items.length; i++) {
 		if( items[i].end > timeEnd) timeEnd = items[i].end;

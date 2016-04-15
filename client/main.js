@@ -10,6 +10,8 @@ import './main.html';
 
 var TheJohn;
 
+karmas = [];
+
 Template.hello.onCreated(function helloOnCreated() {
   // counter starts at 0
   this.counter = new ReactiveVar(0);
@@ -49,8 +51,9 @@ Tracker.autorun(() => {
 
     // get the karmas
     var karmasCollection = Karmas.find({}).fetch();
-    var karmas = karmasCollection[0].karmas;
-    console.log(karmas);
+    karmas = karmasCollection[0].karmas;
+    //console.log(karmas);
+
     // feed the karma Menu
     for (var i = 0; i < karmas.length; i++) {
       var myElement = "<option value=" + karmas[i] + ">" + karmas[i] + "</option>";
@@ -107,6 +110,65 @@ Template.body.events({
     target.end.value = '1000';
 
     Template.hello.events();
+  },
+  // function to create a new random score
+  'submit .new-score'(event) {
+    // Prevent default browser form submit
+    event.preventDefault();
+
+    // Get value from form element
+    const target = event.target;
+    //const text = target.text.value;
+
+    const formConcertDuration = Number(target.concertDuration.value);
+    const formEventDurationMin = Number(target.eventDurationMin.value);
+    const formEventDurationMax = Number(target.eventDurationMax.value);
+    const formNbPlayersMin = Number(target.nbPlayersMin.value);
+    const formNbPlayersMax = Number(target.nbPlayersMax.value);
+
+    const formEventDurationSpan = formEventDurationMax - formEventDurationMin;
+    const formNbPlayersSpan = formNbPlayersMax - formNbPlayersMin;
+    console.log("formNbPlayersSpan " + formNbPlayersSpan);
+
+    var currentConcertDuration=0;
+    var currentKarma = "par défaut";
+
+    // iteratively create events and add them to the score
+    // as long as not exceeding concert duration
+    while( currentConcertDuration < formConcertDuration ){
+      
+      var players = [0, 1, 2, 3, 4, 5, 6];
+      // decide how many players will play next sequence
+      //var nPlayers = Math.floor(Math.random()*(players.length)); // should be decided by formular
+      var nPlayers = Math.floor((Math.random() * formNbPlayersSpan) + formNbPlayersMin); // should be decided by formular
+
+      // define event's duration
+      var currentEventDuration = ( Math.random() * formEventDurationSpan ) + formEventDurationMin;
+
+      //var activePlayersForThisSequence = Meteor.myFunctions.shuffle(players).slice(nPlayers);
+      console.log("currentConcertDuration: " + currentConcertDuration + " - nPlayers: " + nPlayers + " - event duration: " + currentEventDuration);
+
+      var activePlayersForThisSequence = [];
+      var uniqueRandoms = [];
+  
+      for (var i = 0; i < nPlayers; i++){
+          var index = Math.floor(Math.random() * players.length);
+          activePlayersForThisSequence.push(players[index]);
+          // now remove that value from the array
+          players.splice(index, 1);
+          //console.log(activePlayersForThisSequence);
+      }
+      console.log(activePlayersForThisSequence);
+      for (var i = 0; i < activePlayersForThisSequence.length; i++){
+        currentKarma = karmas[Math.floor(Math.random() * karmas.length)];
+        console.log("currentKarma:" + currentKarma);
+        Sequences.insert({"lane": activePlayersForThisSequence[i], "karma": currentKarma, "start": currentConcertDuration, "end": currentEventDuration});        
+      }
+
+      currentConcertDuration += currentEventDuration;
+
+    }
+
   }
 });
 
@@ -127,5 +189,12 @@ Template.body.events({
       //console.log("You pressed the button");
       if ( eventMakerViewHidden ) $( ".event-maker" ).addClass("hidden");
       else $( ".event-maker" ).removeClass("hidden");
+    },
+    'click .clear-score': function(e) {
+      e.preventDefault();
+      Meteor.call('removeAllSequences')
     }
   });
+
+
+

@@ -7,21 +7,36 @@
   <h1>Welcome to John!</h1>
 
   <header>
+    <div class="clear-score">
+      <!-- <input type="submit" name="clear-score" value="clear score"> -->
+      <button class="clear-score">clear score</button>
+    </div>
     <div class="score-maker-container">
       <button class="score-maker-view">view</button><h2>score maker</h2> 
       <div class="score-maker hidden">
             <form class="new-score">
                 <section>
-                    <div style="float:left;">
+                    <div style="float:left;margin-right:20px;">
                         <label for="duration">concert duration</label>
-                        <input type="number" name="concert-duration" min="0" value="30000">
+                        <input type="number" name="concertDuration" min="0" value="3600">
                     </div>
-                    <div style="float:left;">
-                        <label for="email">event duration</label>
-                        <input type="number" name="event-duration" min="0" value="100">
+                    <div style="float:left;margin-right:20px;">
+                        <label for="duration">event duration min</label>
+                        <input type="number" name="eventDurationMin" min="1" max="300" value="30">
                     </div>
-                    </section>
-                <input type="submit" value="Submit">
+                    <div style="float:left;margin-right:20px;">
+                        <label for="email">event duration max</label>
+                        <input type="number" name="eventDurationMax" min="1" max="300" value="300">
+                    </div>
+                    <div style="float:left;margin-right:20px;">
+                        <label for="number">nb of players min</label>
+                        <input type="number" name="nbPlayersMin" min="0" max="7" value="1">
+                    </div>
+                    <div style="float:left;margin-right:20px;">
+                        <label for="number">nb of players max</label>
+                        <input type="number" name="nbPlayersMax" min="0" max="7" value="7">
+                    </div>                    </section>
+                <input type="submit" value="create score">
             </form>
   
       </div>
