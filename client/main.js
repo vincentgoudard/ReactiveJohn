@@ -162,7 +162,7 @@ Template.body.events({
       for (var i = 0; i < activePlayersForThisSequence.length; i++){
         currentKarma = karmas[Math.floor(Math.random() * karmas.length)];
         console.log("currentKarma:" + currentKarma);
-        Sequences.insert({"lane": activePlayersForThisSequence[i], "karma": currentKarma, "start": currentConcertDuration, "end": currentEventDuration});        
+        Sequences.insert({"lane": activePlayersForThisSequence[i], "karma": currentKarma, "start": currentConcertDuration, "end": currentConcertDuration + currentEventDuration});        
       }
 
       currentConcertDuration += currentEventDuration;
