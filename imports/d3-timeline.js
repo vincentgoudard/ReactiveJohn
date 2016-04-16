@@ -114,7 +114,8 @@ John.create = function (lanes, items, main_anchor, start_callback) {
 		.attr("dy", ".5ex")
 		.attr("text-anchor", "end")
 		.attr("class", "laneText")
-		.style("fill", function(d, i) {return "hsl(" + i / laneLength * 360. + ",50%,40%)";}); // a color for each lane
+		.style("fill", function(d, i) {return "hsl(" + i / laneLength * 360. + ",50%,40%)";});// a color for each lane
+ 
 
 	//mini lanes and texts
 	mini.append("g").selectAll(".laneLines")
@@ -150,12 +151,13 @@ John.create = function (lanes, items, main_anchor, start_callback) {
 		.attr("y", function(d) {return y2(d.lane + .5) - 5;})
 		.attr("width", function(d) {return x(d.end - d.start);})
 		.attr("height", 10);
+
 	//mini labels
 	mini.append("g").selectAll(".miniLabels")
 		.data(items)
 		.enter().append("text")
 		.text(function(d) {return d.karma;})
-		.attr("x", function(d) {return x(d.start);})
+		.attr("x", function(d) {return x(d.start) + 1;})
 		.attr("y", function(d) {return y2(d.lane + .5);})
 		.attr("dy", ".5ex");
 
@@ -198,16 +200,18 @@ John.create = function (lanes, items, main_anchor, start_callback) {
 			.attr("x", function(d) {return x1(d.start);})
 			.attr("y", function(d) {return y1(d.lane) + 5;})
 			.attr("width", function(d) {return x1(d.end) - x1(d.start);})
-			.attr("height", function(d) {return .8 * y1(1);});
+			.attr("height", function(d) {return .8 * y1(1);})
+			.style("stroke-width", "1")
+			.style("stroke", "rgb(0,0,0)");
 		rects.exit().remove();
 
 		//update the item labels
 		labels = itemRects.selectAll("text")
 			.data(visItems, function (d) { return d.karma; })
-			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 2);});
+			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 1);});
 		labels.enter().append("text")
 			.text(function(d) {return d.karma;})
-			.attr("x", function(d) {return x1(Math.max(d.start, minExtent));})
+			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 1);})
 			.attr("y", function(d) {return y1(d.lane + .5);})
 			.attr("text-anchor", "start");
 		labels.exit().remove();

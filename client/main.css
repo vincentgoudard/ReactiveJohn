@@ -1,7 +1,53 @@
 /* CSS declarations go here */
+
+h1 {
+	font-family: Trebuchet MS,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Tahoma,sans-serif;
+	font-size: 24px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 500;
+	line-height: 26.4px;
+}
+h2, h3 {
+	font-family: Trebuchet MS,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Tahoma,sans-serif;
+	font-size: 14px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 500;
+	line-height: 15.4px;
+}
+p {
+	font-family: Trebuchet MS,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Tahoma,sans-serif;
+	font-size: 14px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 400;
+	line-height: 20px;
+}
+blockquote {
+	font-family: Trebuchet MS,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Tahoma,sans-serif;
+	font-size: 21px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 400;
+	line-height: 30px;
+}
+pre {
+	font-family: Trebuchet MS,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Tahoma,sans-serif;
+	font-size: 13px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 400;
+	line-height: 18.5667px;
+}
+
 .chart {
 	shape-rendering: crispEdges;
 	width:100%;
+	border:1px solid #aaa;
+	padding:2px;
+	margin-top: 5px;
+	background-color: #eee;
 }
 
 .mini text {
@@ -9,7 +55,8 @@
 }
 
 .main text {
-	font:16px sans-serif;	
+	font:16px sans-serif;
+	margin-left: 25px;	
 }
 
 .miniItem0 {
@@ -100,4 +147,11 @@ h2 {
 
 input, label {
     display:block;
+}
+
+div.score-maker-container, div.event-maker-container{
+	border:1px solid #aaa;
+	padding:2px;
+	margin-top: 5px;
+	background-color: #eee;
 }
