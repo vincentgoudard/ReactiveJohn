@@ -72,7 +72,7 @@ John.create = function (lanes, items, main_anchor, start_callback) {
 						.text("start")
 						.on("click", function() {start_callback(TheSharedTime);});
 
-	// and a start/stop button underneath
+	// and a display of the current transport time
 	var sequenceTimeDisplay = d3.select(main_anchor)
 						.append("div")
 						.text("current time : 0s");
@@ -191,7 +191,7 @@ John.create = function (lanes, items, main_anchor, start_callback) {
 
 		//update main item rects
 		rects = itemRects.selectAll("rect")
-				.data(visItems, function(d) { return d.karma; })
+				.data(visItems, function(d) { return d._id; })
 			.attr("x", function(d) {return x1(d.start);})
 			.attr("width", function(d) {return x1(d.end) - x1(d.start);});
 
@@ -207,7 +207,7 @@ John.create = function (lanes, items, main_anchor, start_callback) {
 
 		//update the item labels
 		labels = itemRects.selectAll("text")
-			.data(visItems, function (d) { return d.karma; })
+			.data(visItems, function (d) { return d._id; })
 			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 1);});
 		labels.enter().append("text")
 			.text(function(d) {return d.karma;})
