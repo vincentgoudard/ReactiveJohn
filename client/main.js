@@ -216,7 +216,11 @@ Template.body.events({
     'click .clear-score': function(e) {
       e.preventDefault();
       Meteor.call('removeAllSequences')
+    },
+    'click .download-score': function(e) {
+      e.preventDefault();
+      var myScore = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(John.items));
+      $('<a href="data:' + myScore + '" download="sequences.json">download JSON</a>').appendTo('#download_anchor');
     }
   });
-
 
