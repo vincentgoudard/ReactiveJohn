@@ -54,7 +54,7 @@ Tracker.autorun(() => {
     karmas = karmasCollection[0].karmas;
     //console.log(karmas);
 
-    // feed the karma Menu
+    // feed the karma Menu(s)
     for (var i = 0; i < karmas.length; i++) {
       var myElement = "<option value=" + karmas[i] + ">" + karmas[i] + "</option>";
       $( ".karmaMenu" ).append( myElement );
@@ -83,6 +83,30 @@ Tracker.autorun(() => {
 });
 
 Template.body.events({
+  'submit .karma-edit'(event) {
+    // Prevent default browser form submit
+    event.preventDefault();
+    //console.log(John.items);
+    // Get value from form element
+    const target = event.target;
+    const newKarma = target.karmaMenu.value;
+
+    function editKarmaForSelectedItem(element) {
+      if (element.selected){
+        // element.karma = newKarma;
+        Sequences.update({"_id":element._id}, {"lane":element.lane, "karma": newKarma, "start":element.start, "end":element.end });
+      }
+    }
+
+    John.items.forEach(editKarmaForSelectedItem);
+
+
+//    Sequences.insert({"lane": lane, "karma": karma, "start": start, "end": end});
+
+    // Clear form
+    target.karmaMenu.value = 'Doux';
+
+  },
   'submit .new-event'(event) {
     // Prevent default browser form submit
     event.preventDefault();
@@ -104,12 +128,11 @@ Template.body.events({
     Sequences.insert({"lane": lane, "karma": karma, "start": start, "end": end});
 
     // Clear form
-    target.lane.value = '0';
-    target.karma.value = 'doux';
+    target.laneMenu.value = '0';
+    target.karmaMenu.value = 'Doux';
     target.start.value = '0';
     target.end.value = '1000';
 
-    Template.hello.events();
   },
   // function to create a new random score
   'submit .new-score'(event) {
@@ -195,7 +218,5 @@ Template.body.events({
       Meteor.call('removeAllSequences')
     }
   });
-
-
 
 

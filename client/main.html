@@ -35,7 +35,8 @@
                     <div style="float:left;margin-right:20px;">
                         <label for="number">nb of players max</label>
                         <input type="number" name="nbPlayersMax" min="0" max="7" value="7">
-                    </div>                    </section>
+                    </div>
+                </section>
                 <input type="submit" value="create score">
                 <div style="clear:both"></div>
             </form>
@@ -63,7 +64,12 @@
     </div>
 
   </header>
-
+  <div id="karma_edit_anchor">
+      <form class="karma-edit">
+          <select class="karmaMenu" name="karmaMenu"></select>
+          <input type="submit" value="ok">
+      </form>
+  </div>
   <div id="john_anchor_1"></div>
   {{> info}}
   {{> hello}}

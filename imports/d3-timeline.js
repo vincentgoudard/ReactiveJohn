@@ -8,6 +8,12 @@ export const John = { extensions: {} };
 
 John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
+	// clear whatever already exists in main anchor
+	d3.select(main_anchor).html("");
+
+	this.items = items;
+
+	var selectedEvents = [];
 	var TheSharedTime;
 	this.setTime = function(time, start_time, playing) {
 		TheSharedTime = time;
@@ -64,8 +70,6 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.domain([0, laneLength])
 			.range([0, miniHeight]);
 	
-
-	d3.select(main_anchor).html("");
 
 	// create the chart as an svg element
 	var chart = d3.select(main_anchor)
@@ -260,9 +264,16 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 	init();
 
-	function dragstart() {
-	  d3.select(this).style("fill", "red");
-	 // console.log(d3.select(this));
+	// add a "selected" field for events
+	items.forEach(function(obj){obj.selected = false});
+
+	function dragstart(d) {
+
+		//d3.select(this).style("fill", "pink");
+		d3.select(this).style("stroke", "red");
+		 //console.log(d3.select(this));
+		console.log(d);
+		//	selectedEvents.push(d._id);
 	}
 	
 	function dragmove(d) {
@@ -286,7 +297,15 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	function dragend(d) {
 		//console.log(d3.select(this));
 		//console.log(xb(d3.select(this)[0][0].x.baseVal.value));
-		console.log(d);
+		//	console.log(d);
+
+		d3.select(this).style("stroke", "black");
+
+		// toggle selection
+		d.selected = !d.selected;
+
+		if (d.selected)	d3.select(this).style("fill", "red")
+			else d3.select(this).style("fill", null);
 	
 	  	var minExtent = brush.extent()[0],
 			maxExtent = brush.extent()[1];
@@ -299,7 +318,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		//console.log("min-max brush: ", minExtent, maxExtent);
 
 		// color back to normal
-		d3.select(this).style("fill", null);
+		//d3.select(this).style("fill", null);
 	
 	
 		// update data info
