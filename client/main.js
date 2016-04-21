@@ -64,7 +64,7 @@ Tracker.autorun(() => {
 		var eventsCollection = Sequences.find({}).fetch();
 
     // create a view for timeline
-		John.create(lanes, eventsCollection, "#john_anchor_1", function(time){
+		John.create(Sequences, lanes, eventsCollection, "#john_anchor_1", function(time){
 			var currentTime = TheTime.find('timer').fetch();
 			// inverse playing
 			var playing = !currentTime[0].playing;
@@ -195,6 +195,7 @@ Template.body.events({
       Meteor.call('removeAllSequences')
     }
   });
+
 
 
 

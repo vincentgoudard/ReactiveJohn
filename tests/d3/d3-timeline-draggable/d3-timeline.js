@@ -292,6 +292,7 @@ function dragstart() {
 
 function dragmove(d) {
   //console.log(d3.event, d3.event);
+
   // TODO : update du data
 	if (d3.select(this)[0][0].localName == "circle"){
 		d3.select(this)
@@ -310,14 +311,20 @@ function dragmove(d) {
 function dragend(d) {
 	//console.log(d3.select(this));
 	//console.log(xb(d3.select(this)[0][0].x.baseVal.value));
-	//console.log(d);
+	console.log(d);
+
+  	var minExtent = brush.extent()[0],
+		maxExtent = brush.extent()[1];
 
 	// color back to normal
 	d3.select(this).style("fill", null);
+
 	// update data info
 	var duration = (d.end - d.start);
-	d.start = xb(d3.select(this)[0][0].x.baseVal.value);
+	d.start = xb(d3.select(this)[0][0].x.baseVal.value) + minExtent;
 	d.end = d.start + duration;
-	// update display
+
+
+	// update display to move label along
 	display();
 }

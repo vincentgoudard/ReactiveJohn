@@ -6,7 +6,7 @@
 
 export const John = { extensions: {} };
 
-John.create = function (lanes, items, main_anchor, start_callback) {
+John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 	var TheSharedTime;
 	this.setTime = function(time, start_time, playing) {
@@ -22,6 +22,13 @@ John.create = function (lanes, items, main_anchor, start_callback) {
 		   start_button.text("start").style("background-color", "LightCoral");
 		}
 	}
+
+	// define drag callbacks
+	var drag = d3.behavior.drag()
+    .origin(function(d) { return {x:x1(d.start),y:y1(d.lane)}; })
+    .on("dragstart", dragstart)
+    .on("drag", dragmove)
+    .on("dragend", dragend);
 
 	var laneLength = lanes.length;
 
@@ -56,6 +63,7 @@ John.create = function (lanes, items, main_anchor, start_callback) {
 	var y2 = d3.scale.linear()
 			.domain([0, laneLength])
 			.range([0, miniHeight]);
+	
 
 	d3.select(main_anchor).html("");
 
@@ -202,7 +210,8 @@ John.create = function (lanes, items, main_anchor, start_callback) {
 			.attr("width", function(d) {return x1(d.end) - x1(d.start);})
 			.attr("height", function(d) {return .8 * y1(1);})
 			.style("stroke-width", "1")
-			.style("stroke", "rgb(0,0,0)");
+			.style("stroke", "rgb(0,0,0)")
+			.call(drag);
 		rects.exit().remove();
 
 		//update the item labels
@@ -251,5 +260,64 @@ John.create = function (lanes, items, main_anchor, start_callback) {
 
 	init();
 
+	function dragstart() {
+	  d3.select(this).style("fill", "red");
+	 // console.log(d3.select(this));
+	}
+	
+	function dragmove(d) {
+	  //console.log(d3.event, d3.event);
+	
+	  // TODO : update du data
+		if (d3.select(this)[0][0].localName == "circle"){
+			d3.select(this)
+			    .attr("cx", d.x = Math.max(radius, Math.min(w - radius, d3.event.x)))
+			    .attr("cy", d.y = Math.max(radius, Math.min(w - radius, d3.event.y)));
+			}
+		else if (d3.select(this)[0][0].localName == "rect"){
+			d3.select(this)
+			    .attr("x", d.x = Math.max(0, Math.min(w - 10, d3.event.x)));
+			//labels
+			    //.attr("y", d.y = Math.max(0, Math.min(height - 1000, d3.event.y)));
+	
+	  	}
+	}
+	
+	function dragend(d) {
+		//console.log(d3.select(this));
+		//console.log(xb(d3.select(this)[0][0].x.baseVal.value));
+		console.log(d);
+	
+	  	var minExtent = brush.extent()[0],
+			maxExtent = brush.extent()[1];
+		
+		// scale function from graph position to data value
+		var invX = d3.scale.linear()
+				.domain([0, w])
+				.range([minExtent, maxExtent]);
+
+		//console.log("min-max brush: ", minExtent, maxExtent);
+
+		// color back to normal
+		d3.select(this).style("fill", null);
+	
+	
+		// update data info
+		var duration = (d.end - d.start);
+		// convert graph position to data value
+		d.start = invX(d3.select(this)[0][0].x.baseVal.value);
+		d.end = d.start + duration;
+	
+	
+		// update display to move label along
+		display();
+
+		////update mongo collection
+		//console.log("d.id : ", d._id);
+		Sequences.update({"_id":d._id}, {"lane":d.lane, "karma": d.karma, "start":d.start, "end":d.end });
+
+		//console.log(Sequences.find({}).fetch());
+
+	}
 
 };
