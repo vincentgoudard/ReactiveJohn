@@ -187,8 +187,9 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		.attr("y", 1)
 		.attr("height", miniHeight - 1);
 
-
-	var xAxis = d3.svg.axis().scale(x).orient("bottom");
+	// Time axes
+	var xAxis = d3.svg.axis().scale(x).orient("bottom"),
+	    xAxis2 = d3.svg.axis().scale(x1).orient("bottom");
 	mini.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + miniHeight + ")")
@@ -207,6 +208,13 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.call(brush.extent([minExtent, maxExtent]));
 
 		x1.domain([minExtent, maxExtent]);
+
+		// update x-axis for main view
+		main.selectAll('.x.axis').remove();
+		main.append("g")
+      		.attr("class", "x axis")
+      		.attr("transform", "translate(0," + mainHeight + ")")
+      		.call(xAxis2);
 
 		//update main item rects
 		rects = itemRects.selectAll("rect")
