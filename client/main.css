@@ -104,7 +104,12 @@ pre {
 	fill: dodgerblue;
 	fill-opacity: .365;
 }
-
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
 .svg-container {
     display: inline-block;
     position: relative;

@@ -187,6 +187,13 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		.attr("y", 1)
 		.attr("height", miniHeight - 1);
 
+
+	var xAxis = d3.svg.axis().scale(x).orient("bottom");
+	mini.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + miniHeight + ")")
+      .call(xAxis);
+
 	function display() {
 
 		var rects, labels,

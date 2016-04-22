@@ -219,6 +219,8 @@ Template.body.events({
     },
     'click .download-score': function(e) {
       e.preventDefault();
+      // erase previous outdated links
+      $('#download_anchor').html("");
       var myScore = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(John.items));
       $('<a href="data:' + myScore + '" download="sequences.json">download JSON</a>').appendTo('#download_anchor');
     }
