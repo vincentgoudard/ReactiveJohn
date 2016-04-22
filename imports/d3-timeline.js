@@ -89,7 +89,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 						.append("div")
 						.text("current time : 0s");
 
-	// define a graphical objects for later reuse
+	// define a clip-path matching main height to prevent rects to spread ontop of lanes names
 	chart.append("defs").append("clipPath")
 		.attr("id", "clip")
 		.append("rect")
@@ -197,7 +197,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 	function display() {
 
-		var rects, labels,
+		var rects, labels, rbrushes,
 			minExtent = brush.extent()[0],
 			maxExtent = brush.extent()[1];
 
@@ -232,6 +232,9 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.style("stroke", "rgb(0,0,0)")
 			.call(drag);
 		rects.exit().remove();
+
+		// updates rbrushes
+		//rbrushes = 
 
 		//update the item labels
 		labels = itemRects.selectAll("text")
