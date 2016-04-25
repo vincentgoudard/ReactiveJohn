@@ -33,7 +33,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	// define drag callbacks
 	var drag = d3.behavior.drag()
     //.origin(function(d) { return {x:x1(d.start),y:y1(d.lane)}; })
-	.origin(function(d) { return {x:x1(d.start),y:x1(d.end - d.start)}; })
+	.origin(function(d) { return {x:x1(d.start),y:(x1(d.end) - x1(d.start))}; })
     .on("dragstart", dragstart)
     .on("drag", dragmove)
     .on("dragend", dragend);
@@ -308,27 +308,30 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	function dragmove(d) {
 	  //console.log(d3.event, d3.event);
 		
-		// console.log('d3.event.y ', d3.event.y, 'd3.event: ', d3.event);
+		//console.log('d3.event: ', d3.event);
+		//console.log('data: ', d);
+
+	  	var minExtent = brush.extent()[0],
+			maxExtent = brush.extent()[1];
+		//console.log('min/max brush', minExtent, maxExtent);
+
+		x1.domain([0, maxExtent-minExtent]);
 
 	  // TODO : update du data
-		if (d3.select(this)[0][0].localName == "circle"){
+		if (d3.select(this)[0][0].localName == "rect"){
 			d3.select(this)
-			    .attr("cx", d.x = Math.max(radius, Math.min(w - radius, d3.event.x)))
-			    .attr("cy", d.y = Math.max(radius, Math.min(w - radius, d3.event.y)));
-			}
-		else if (d3.select(this)[0][0].localName == "rect"){
-			d3.select(this)
-			    .attr("x", d.x = Math.max(0, Math.min(w - 10, jUtils.roundN(d3.event.x, x1(10)))), 10.)
+			    .attr("x", Math.max(0, Math.min(w - 10, jUtils.roundN(d3.event.x, x1(10)))), 10.)
 			    .attr("width", Math.max(jUtils.roundN(d3.event.y,x1(10)), 10));
 			//labels
 			    //.attr("y", d.y = Math.max(0, Math.min(height - 1000, d3.event.y)));
 	  	}
+	  	//console.log('element: ', this);
 	}
 	
 	function dragend(d) {
 		//console.log(d3.select(this));
 		//console.log(xb(d3.select(this)[0][0].x.baseVal.value));
-		console.log(d);
+		//console.log(d);
 
 		d3.select(this).style("stroke", "black");
 
@@ -341,6 +344,8 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	  	var minExtent = brush.extent()[0],
 			maxExtent = brush.extent()[1];
 		
+		//x1.domain([0, maxExtent-minExtent]);
+
 		// scale function from graph position to data value
 		var invX = d3.scale.linear()
 				.domain([0, w])
@@ -353,8 +358,16 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	
 		// update data info
 		//var duration = (d.end - d.start);
+		console.log('this :', this);
+
+		console.log('new width :', this.getAttribute('width'));
 		var newStart = jUtils.roundN(invX(this.getAttribute('x')*1), 10);
+
+		invX.range([0, maxExtent - minExtent]);
 		var duration = jUtils.roundN(invX(this.getAttribute('width')*1), 10); // *1 converts string to number
+
+		console.log('new duration :', duration);
+
 		// convert graph position to data value
 		d.start = newStart; // 
 		d.end = d.start + duration;
