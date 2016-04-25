@@ -2,6 +2,47 @@ import { Meteor } from 'meteor/meteor';
 
 import { Sequences, Lanes, Karmas, TheTime } from '../imports/api/sequences.js';
 
+const starline = "******************************************************"
+console.log(starline);
+console.log("Hello world, je suis le server meteor et je printe ici");
+console.log(starline);
+console.log();
+
+
+// UDP server listening on port 7575
+//	const dgram = require('dgram');
+//	const server = dgram.createSocket('udp4');
+//
+//	console.log(dgram);
+//	console.log("///",server);
+//	
+//	server.on('error', (err) => {
+//	  console.log(`server error:\n${err.stack}`);
+//	  server.close();
+//	});
+//	
+//	server.on('message', (msg, rinfo) => {
+//	  console.log(`server got: ${msg} from ${rinfo.address}:${rinfo.port}`);
+//	});
+//	
+//	server.on('listening', () => {
+//	  var address = server.address();
+//	  console.log(`server listening ${address.address}:${address.port}`);
+//	});
+//	
+//	server.bind(7575);
+//	// server listening 0.0.0.0:7575
+//
+//	var PORT = 7474;
+//	var HOST = '127.0.0.1';
+//	// sending UDP on port 7474
+//	const message = new Buffer('/My KungFu is Good!');
+//	const client = dgram.createSocket('udp4');
+//	client.send(message, 0, message.length, PORT, HOST, (err) => {
+//		client.close();
+//	});
+
+
 Meteor.startup(() => {
   // code to run on server at startup
 
@@ -69,3 +110,84 @@ Meteor.startup(() => {
 	});
 
 });
+
+
+/****************
+ * OSC Over UDP *
+ ****************/
+
+// var osc = require('osc');
+
+
+//var getIPAddresses = function () {
+//    var os = require("os"),
+//        interfaces = os.networkInterfaces(),
+//        ipAddresses = [];
+//
+//    for (var deviceName in interfaces) {
+//        var addresses = interfaces[deviceName];
+//        for (var i = 0; i < addresses.length; i++) {
+//            var addressInfo = addresses[i];
+//            if (addressInfo.family === "IPv4" && !addressInfo.internal) {
+//                ipAddresses.push(addressInfo.address);
+//            }
+//        }
+//    }
+//
+//    return ipAddresses;
+//};
+//
+//var udpPort = new osc.UDPPort({
+//    localAddress: "0.0.0.0",
+//    localPort: 57121
+//});
+//
+//udpPort.on("ready", function () {
+//    var ipAddresses = getIPAddresses();
+//
+//    console.log("Listening for OSC over UDP.");
+//    ipAddresses.forEach(function (address) {
+//        console.log(" Host:", address + ", Port:", udpPort.options.localPort);
+//    });
+//});
+//
+//udpPort.on("message", function (oscMessage) {
+//    example.mapOSCToSynth(oscMessage, example.synth, example.synthValueMap);
+//});
+//
+//udpPort.on("error", function (err) {
+//    console.log(err);
+//});
+//
+//udpPort.open();
+//
+
+
+//////////////////////////////
+// Sending OSC with OSC-min //
+//////////////////////////////
+
+//var dgram, osc, outport, sendHeartbeat, client;
+//
+//osc = require('osc-min');
+//dgram = require("dgram");
+//client = dgram.createSocket("udp4");
+//
+//
+//outport = 7474;
+//
+//console.log("sending heartbeat messages to http://localhost:" + outport);
+//
+////~verbatim:examples[1]~
+////### Send a bunch of args every two seconds;
+//
+//sendHeartbeat = function() {
+//  var buf;
+//  buf = osc.toBuffer({
+//    address: "/heartbeat",
+//    args: []
+//  });
+//  return client.send(buf, 0, buf.length, outport, "localhost");
+//};
+
+// setInterval(sendHeartbeat, 2000);

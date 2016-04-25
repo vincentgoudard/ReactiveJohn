@@ -31,7 +31,8 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 	// define drag callbacks
 	var drag = d3.behavior.drag()
-    .origin(function(d) { return {x:x1(d.start),y:y1(d.lane)}; })
+    //.origin(function(d) { return {x:x1(d.start),y:y1(d.lane)}; })
+	.origin(function(d) { return {x:x1(d.start),y:x1(d.end - d.start)}; })
     .on("dragstart", dragstart)
     .on("drag", dragmove)
     .on("dragend", dragend);
@@ -209,12 +210,12 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 		x1.domain([minExtent, maxExtent]);
 
-		// update x-axis for main view
-		main.selectAll('.x.axis').remove();
-		main.append("g")
-      		.attr("class", "x axis")
-      		.attr("transform", "translate(0," + mainHeight + ")")
-      		.call(xAxis2);
+		// update x-axis for main view (disabled while overlaying mini-lane)
+		//main.selectAll('.x.axis').remove();
+		//main.append("g")
+      	//	.attr("class", "x axis")
+      	//	.attr("transform", "translate(0," + mainHeight + ")")
+      	//	.call(xAxis2);
 
 		//update main item rects
 		rects = itemRects.selectAll("rect")
@@ -241,7 +242,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.data(visItems, function (d) { return d._id; })
 			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 1);});
 		labels.enter().append("text")
-			.text(function(d) {return d.karma;})
+			.text(function(d) {return (d.karma + ' - ' + d.start + ' - ' + d.end );})
 			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 1);})
 			.attr("y", function(d) {return y1(d.lane + .5);})
 			.attr("text-anchor", "start");
@@ -271,6 +272,10 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.call(brush.extent([currentTime, currentTime+brush.extent()[1]-brush.extent()[0]]));
 
 		display();
+
+		var text = chart.selectAll("text")
+								.enter()
+								.append("text");
 	}
 
 	// init display
@@ -286,17 +291,17 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	items.forEach(function(obj){obj.selected = false});
 
 	function dragstart(d) {
-
 		//d3.select(this).style("fill", "pink");
 		d3.select(this).style("stroke", "red");
 		 //console.log(d3.select(this));
-		console.log(d);
 		//	selectedEvents.push(d._id);
 	}
 	
 	function dragmove(d) {
 	  //console.log(d3.event, d3.event);
-	
+		
+		// console.log('d3.event.y ', d3.event.y, 'd3.event: ', d3.event);
+
 	  // TODO : update du data
 		if (d3.select(this)[0][0].localName == "circle"){
 			d3.select(this)
@@ -305,10 +310,10 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			}
 		else if (d3.select(this)[0][0].localName == "rect"){
 			d3.select(this)
-			    .attr("x", d.x = Math.max(0, Math.min(w - 10, d3.event.x)));
+			    .attr("x", d.x = Math.max(0, Math.min(w - 10, d3.event.x)), 10.)
+			    .attr("width", Math.max(d3.event.y, 1));
 			//labels
 			    //.attr("y", d.y = Math.max(0, Math.min(height - 1000, d3.event.y)));
-	
 	  	}
 	}
 	
@@ -338,13 +343,13 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		// color back to normal
 		//d3.select(this).style("fill", null);
 	
-	
 		// update data info
-		var duration = (d.end - d.start);
+		//var duration = (d.end - d.start);
+		var newStart = roundN(invX(this.getAttribute('x')*1), 10);
+		var duration = roundN(invX(this.getAttribute('width')*1), 10); // *1 converts string to number
 		// convert graph position to data value
-		d.start = invX(d3.select(this)[0][0].x.baseVal.value);
+		d.start = newStart; // 
 		d.end = d.start + duration;
-	
 	
 		// update display to move label along
 		display();
@@ -358,3 +363,9 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	}
 
 };
+
+function roundN(input, grid)
+{
+    return Math.ceil(input/grid)*grid;
+}
+
