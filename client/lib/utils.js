@@ -1,5 +1,5 @@
 /*****************************************
-	utilities
+	utilities for John
 ****************************************/
 
 (function() {
@@ -8,8 +8,11 @@
     	version: "0.1"
   	};
 
+  	// Rounds input to nearest grid multiple value
+  	// used for quantization
 	jUtils.roundN = function(input, grid) {
-    	return Math.ceil(input/grid)*grid;
+		if (grid == 0) return input
+		else return Math.round(input/grid)*grid;
   };
 
 })();
