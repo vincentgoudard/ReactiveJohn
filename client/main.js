@@ -4,6 +4,8 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { Sequences, Lanes, Karmas, TheTime }  from '../imports/api/sequences.js';
 
 import '../imports/d3/d3.v2.js';
+import './lib/utils.js';
+
 import { John } from '../imports/d3-timeline.js';
 
 import './main.html';
@@ -169,7 +171,7 @@ Template.body.events({
       var nPlayers = Math.floor((Math.random() * formNbPlayersSpan) + formNbPlayersMin); // should be decided by formular
 
       // define event's duration
-      var currentEventDuration = roundN(( Math.random() * formEventDurationSpan ) + formEventDurationMin, 10);
+      var currentEventDuration = jUtils.roundN(( Math.random() * formEventDurationSpan ) + formEventDurationMin, 10);
 
       //var activePlayersForThisSequence = Meteor.myFunctions.shuffle(players).slice(nPlayers);
       console.log("currentConcertDuration: " + currentConcertDuration + " - nPlayers: " + nPlayers + " - event duration: " + currentEventDuration);
@@ -378,7 +380,3 @@ function toggleConnection() {
 init();
 
 
-function roundN(input, grid)
-{
-    return Math.ceil(input/grid)*grid;
-}

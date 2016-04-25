@@ -5,6 +5,7 @@
  */
 
 export const John = { extensions: {} };
+import '../client/lib/utils.js';
 
 John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
@@ -310,8 +311,8 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			}
 		else if (d3.select(this)[0][0].localName == "rect"){
 			d3.select(this)
-			    .attr("x", d.x = Math.max(0, Math.min(w - 10, d3.event.x)), 10.)
-			    .attr("width", Math.max(d3.event.y, 1));
+			    .attr("x", d.x = Math.max(0, Math.min(w - 10, jUtils.roundN(d3.event.x, x1(10)))), 10.)
+			    .attr("width", Math.max(jUtils.roundN(d3.event.y,x1(10)), 1));
 			//labels
 			    //.attr("y", d.y = Math.max(0, Math.min(height - 1000, d3.event.y)));
 	  	}
@@ -345,8 +346,8 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	
 		// update data info
 		//var duration = (d.end - d.start);
-		var newStart = roundN(invX(this.getAttribute('x')*1), 10);
-		var duration = roundN(invX(this.getAttribute('width')*1), 10); // *1 converts string to number
+		var newStart = jUtils.roundN(invX(this.getAttribute('x')*1), 10);
+		var duration = jUtils.roundN(invX(this.getAttribute('width')*1), 10); // *1 converts string to number
 		// convert graph position to data value
 		d.start = newStart; // 
 		d.end = d.start + duration;
@@ -363,9 +364,3 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	}
 
 };
-
-function roundN(input, grid)
-{
-    return Math.ceil(input/grid)*grid;
-}
-
