@@ -164,7 +164,9 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		.attr("x", function(d) {return x(d.start);})
 		.attr("y", function(d) {return y2(d.lane + .5) - 5;})
 		.attr("width", function(d) {return x(d.end - d.start);})
-		.attr("height", 10);
+		.attr("height", 10)
+		.style("fill", function(d, i) {return "hsl(" + d.lane / laneLength * 360. + ",50%,40%)";}) // a color for each lane
+		.style("fill-opacity", "0.7");
 
 	//mini labels
 	mini.append("g").selectAll(".miniLabels")
@@ -190,8 +192,11 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		.attr("height", miniHeight - 1);
 
 	// Time axes
-	var xAxis = d3.svg.axis().scale(x).orient("bottom"),
+	var xAxis = d3.svg.axis().scale(x).ticks(20).orient("bottom"),
 	    xAxis2 = d3.svg.axis().scale(x1).orient("bottom");
+
+
+
 	mini.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + miniHeight + ")")
@@ -232,6 +237,8 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.attr("height", function(d) {return .8 * y1(1);})
 			.style("stroke-width", "1")
 			.style("stroke", "rgb(0,0,0)")
+			.style("fill", function(d, i) {return "hsl(" + d.lane / laneLength * 360. + ",50%,40%)";}) // a color for each lane
+			.style("fill-opacity", "0.7")
 			.call(drag);
 		rects.exit().remove();
 
@@ -312,7 +319,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		else if (d3.select(this)[0][0].localName == "rect"){
 			d3.select(this)
 			    .attr("x", d.x = Math.max(0, Math.min(w - 10, jUtils.roundN(d3.event.x, x1(10)))), 10.)
-			    .attr("width", Math.max(jUtils.roundN(d3.event.y,x1(10)), 1));
+			    .attr("width", Math.max(jUtils.roundN(d3.event.y,x1(10)), 10));
 			//labels
 			    //.attr("y", d.y = Math.max(0, Math.min(height - 1000, d3.event.y)));
 	  	}
@@ -321,7 +328,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	function dragend(d) {
 		//console.log(d3.select(this));
 		//console.log(xb(d3.select(this)[0][0].x.baseVal.value));
-		//	console.log(d);
+		console.log(d);
 
 		d3.select(this).style("stroke", "black");
 
@@ -353,7 +360,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		d.end = d.start + duration;
 	
 		// update display to move label along
-		display();
+		// display();
 
 		////update mongo collection
 		//console.log("d.id : ", d._id);

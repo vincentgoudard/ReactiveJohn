@@ -59,6 +59,7 @@ pre {
 	margin-left: 25px;	
 }
 
+/*
 .miniItem0 {
 	fill: darksalmon;
 	stroke-width: 6;	
@@ -98,7 +99,7 @@ pre {
 	fill-opacity: .7;
 	stroke-width: 6;	
 }
-
+*/
 .brush .extent {
 	stroke: gray;
 	fill: dodgerblue;
