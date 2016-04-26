@@ -202,7 +202,8 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
       .attr("transform", "translate(0," + miniHeight + ")")
       .call(xAxis);
 
-	var rects, labels, rbrushes;
+	var rects, labels, rbrushes, deleteButtons;
+	var deleteButtonsSize = 10;
 
 	function display() {
 
@@ -243,6 +244,22 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.call(drag);
 		rects.exit().remove();
 
+		deleteButtons = itemRects.selectAll("rect.deleteButtons")
+				.data(visItems, function(d) { return d._id; })
+			.attr("x", function(d) {return (x1(d.end) - deleteButtonsSize);})
+			.attr("width", function(d) {return deleteButtonsSize;});
+		deleteButtons.enter().append("rect")
+			.attr("class", function(d) {return "deleteButtons";})
+			.attr("x", function(d) {return (x1(d.end) - deleteButtonsSize);})
+			.attr("y", function(d) {return y1(d.lane) + 5;})
+			.attr("width", function(d) {return deleteButtonsSize;})
+			.attr("height", function(d) {return deleteButtonsSize;})
+			.attr("_id", function(d){return d._id;})
+			.style("stroke-width", "1")
+			.style("stroke", "rgb(0,0,0)")
+			.style("fill", function(d, i) {return "hsl(" + d.lane / laneLength * 360. + ",10%,10%)";}) // a color for each lane
+			.style("fill-opacity", "0.7");
+		deleteButtons.exit().remove();
 		// updates rbrushes
 		//rbrushes = 
 
@@ -254,9 +271,19 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.text(function(d) {return (d.karma + ' - ' + d.start + ' - ' + d.end );})
 			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 1);})
 			.attr("y", function(d) {return y1(d.lane + .5);})
+			.attr("_id", function(d){return d._id;})
 			.attr("text-anchor", "start");
 		labels.exit().remove();
+
+		// delete buttons action
+		deleteButtons.on('click', function(){
+			var theQuery = {'_id':this.getAttribute('_id')};
+			Meteor.call('removeSequences', theQuery);
+		});
 	}
+
+
+
 
 	var currentTime = 0;
 	var brushSize = 500;
@@ -307,42 +334,28 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	}
 	
 	function dragmove(d) {
-	  //console.log(d3.event, d3.event);
+		//console.log(d3.event, d3.event);
 		
-		//console.log('d3.event: ', d3.event);
-		console.log('data: ', d);
-
-	  	var minExtent = brush.extent()[0],
+		var minExtent = brush.extent()[0],
 			maxExtent = brush.extent()[1];
 		//console.log('min/max brush', minExtent, maxExtent);
 
 		var thisDatum = d;
 		x1.domain([0, maxExtent-minExtent]);
 
-	  // TODO : update du data
-		if (d3.select(this)[0][0].localName == "rect"){
-			d3.select(this)
-			    .attr("x", Math.max(0, Math.min(w - 10, jUtils.roundN(d3.event.x, x1(10)))), 10.)
-			    .attr("width", Math.max(jUtils.roundN(d3.event.y,x1(10)), 10));
-			//labels
-			    //.attr("y", d.y = Math.max(0, Math.min(height - 1000, d3.event.y)));
-	  	}
-	  	console.log('labels: ', labels);
+		var newPosition = Math.max(0, Math.min(w - 10, jUtils.roundN(d3.event.x, x1(10))));
+		var newWidth = Math.max(jUtils.roundN(d3.event.y,x1(10)), 10);
 
-	  	// get a list with items inside the visible scope
-		var	theLabel = labels.filter(function(d) {return d.text == thisDatum.karma;});
-		console.log(theLabel);
-
-	  	//update the item labels
-		//labels = itemRects.selectAll("text")
-		//	.data(visItems, function (d) { return d._id; })
-		//	.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 1);});
-		//labels.enter().append("text")
-		//	.text(function(d) {return (d.karma + ' - ' + d.start + ' - ' + d.end );})
-		//	.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 1);})
-		//	.attr("y", function(d) {return y1(d.lane + .5);})
-		//	.attr("text-anchor", "start");
-		//labels.exit().remove();
+		// move item rect
+		d3.select(this)
+			.attr("x", newPosition)
+			.attr("width", newWidth);
+		// move deleteButton
+		d3.select("rect[_id='"+d._id+"']")
+				.attr("x", newPosition + newWidth - deleteButtonsSize);
+		// move labels
+		d3.select("text[_id='"+d._id+"']")
+				.attr("x", newPosition);
 	}
 	
 	function dragend(d) {
