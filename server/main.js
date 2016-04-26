@@ -42,6 +42,22 @@ console.log();
 //		client.close();
 //	});
 
+var clientsIP = [];
+Meteor.onConnection(function(conn) {
+	if (clientsIP.indexOf(conn.clientAddress) == -1) {
+    	clientsIP.push(conn.clientAddress);
+	}
+    //console.log(conn);
+    console.log('actives :', clientsIP);
+    conn.onClose(function() {
+    	// remove IP from list of active connection
+    	var index = clientsIP.indexOf(conn.clientAddress);
+    	if (index > -1) {
+    		clientsIP.splice(index, 1);
+		}
+    	console.log('user left:', conn.clientAddress);
+    });
+});
 
 Meteor.startup(() => {
   // code to run on server at startup
@@ -96,6 +112,7 @@ Meteor.startup(() => {
 		//TheTime.upsert('timer', {$set:{"time": the_time++}});
 		var theTime = Date.now() - the_offset;
 		TheTime.upsert('timer', {$set:{"time": theTime }});
+		// console.log('actives :', clientsIP);
 	}), delay_milliseconds);
 
 	Meteor.publish('john.public', function() {
@@ -171,9 +188,9 @@ Meteor.startup(() => {
 var mySequenceCursor = Sequences.find({});
 // watch the cursor for changes
 var mySequenceHandle = mySequenceCursor.observe({
-  added: function (post) { notifyChange('/items/add', post._id) }, // run when post is added
-  changed: function (post) { notifyChange('/items/changed', post._id)  }, // run when post is changed
-  removed: function (post) { notifyChange('/items/removed', post._id)  } // run when post is removed
+  added: function (post) { multicastOscSend(clientsIP, '/items/add', post._id) }, // run when post is added
+  changed: function (post) { multicastOscSend(clientsIP, '/items/changed', post._id)  }, // run when post is changed
+  removed: function (post) { multicastOscSend(clientsIP, '/items/removed', post._id)  } // run when post is removed
 });
 
 var myTimeCursor = TheTime.find({});
@@ -181,11 +198,11 @@ var myTimeHandle = myTimeCursor.observe({
   changed: function (post) {
   	if(post.playing==true){
    		console.log(post); 
-  	notifyChange('/time', (post.time - post.john_start));		
+  	multicastOscSend(clientsIP, '/time', (post.time - post.john_start));		
   	}
   }, // run when post is changed
 });
-//notifyChange('changed', post) 
+
 //////////////////////////////
 // Sending OSC with OSC-min //
 //////////////////////////////
@@ -197,28 +214,32 @@ dgram = require("dgram");
 client = dgram.createSocket("udp4");
 
 outport = 7474;
+host = 'localhost';
 
 console.log("sending heartbeat messages to http://localhost:" + outport);
 
-notifyChange = function(zeAddress, zeArgs) {
+
+multicastOscSend = function(IPlist, zeAddress, zeArgs) {
+  var buf;
+  return IPlist.forEach(function(IP){
+  	 buf = osc.toBuffer({
+   	 	address: zeAddress,
+    	args: zeArgs
+  	});
+  	client.send(buf, 0, buf.length, outport, IP);
+  });
+};
+
+
+OscSend = function(zeAddress, zeArgs) {
   var buf;
   buf = osc.toBuffer({
     address: zeAddress,
     args: zeArgs
   });
-  return client.send(buf, 0, buf.length, outport, "localhost");
+  return client.send(buf, 0, buf.length, outport, host);
 };
 
-//~verbatim:examples[1]~
-//### Send a bunch of args every two seconds;
+// send heartbeat to connected clients every 2 seconds
+setInterval(function(){multicastOscSend(clientsIP, '/heartbeat')}, 2000);
 
-sendHeartbeat = function() {
-  var buf;
-  buf = osc.toBuffer({
-    address: "/heartbeat",
-    args: []
-  });
-  return client.send(buf, 0, buf.length, outport, "localhost");
-};
-
- setInterval(sendHeartbeat, 2000);
