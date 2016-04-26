@@ -113,6 +113,24 @@ Meteor.startup(() => {
 		var theTime = Date.now() - the_offset;
 		TheTime.upsert('timer', {$set:{"time": theTime }});
 		// console.log('actives :', clientsIP);
+
+		// find active event
+		var TheTimeColl = TheTime.find('timer').fetch()[0];
+		var currentTime = (TheTimeColl.time - TheTimeColl.john_start) / 1000.;
+		var activeItems = Sequences.find(
+			{ 
+				start: { $lt: currentTime },
+				end: { $gt: currentTime }
+			}).fetch();
+
+		activeItems.forEach(function (item){
+			multicastOscSend(clientsIP, '/items/alive', [parseInt(item.lane), item.karma]);
+		});
+
+		//console.log('currentTime: ', currentTime);
+		//console.log(starline);
+		//console.log('activeEvents: ', activeEvents);
+
 	}), delay_milliseconds);
 
 	Meteor.publish('john.public', function() {
@@ -197,8 +215,8 @@ var myTimeCursor = TheTime.find({});
 var myTimeHandle = myTimeCursor.observe({
   changed: function (post) {
   	if(post.playing==true){
-   		console.log(post); 
-  	multicastOscSend(clientsIP, '/time', (post.time - post.john_start));		
+   		//console.log(post); 
+  		multicastOscSend(clientsIP, '/time', (post.time - post.john_start));		
   	}
   }, // run when post is changed
 });
