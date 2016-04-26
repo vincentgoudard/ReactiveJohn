@@ -218,9 +218,25 @@ Template.body.events({
       if ( eventMakerViewHidden ) $( ".event-maker" ).addClass("hidden");
       else $( ".event-maker" ).removeClass("hidden");
     },
+    'click .event-delete': function(e) {
+      // Prevent default browser form submit
+      e.preventDefault();
+      console.log("yohou");
+      // Get value from form element        
+      function deleteSelectedItem(element) {
+        if (element.selected){
+          console.log("element._id:", element._id);
+          // element.karma = newKarma;
+          //Sequences.remove({"_id"=element._id});
+          var theQuery = {"_id": element._id};
+          Meteor.call('removeSequences', theQuery);
+        }
+      } 
+      John.items.forEach(deleteSelectedItem);
+    },
     'click .clear-score': function(e) {
       e.preventDefault();
-      Meteor.call('removeAllSequences')
+      Meteor.call('removeAllSequences');
     },
     'click .download-score': function(e) {
       e.preventDefault();
@@ -232,27 +248,28 @@ Template.body.events({
   });
 ///////////////////////////////////////////////////////
 
-var gConnection; // websocket gConnection
 
+var gConnection; // websocket gConnection
+var gConnectionID = -1;
 var panel;
 var connectButton;
 var label;
 var xypad;
 
 function init() {  
-   panel = new Interface.Panel({  
-    background:"#fff", 
-    stroke:"000",
-    container:$("#panel"),
-    useRelativeSizesAndPositions : true
-  }); 
+//   panel = new Interface.Panel({  
+//    background:"#fff", 
+//    stroke:"#000",
+//    container:$("#panel"),
+//    useRelativeSizesAndPositions : true
+//  }); 
   
   connectButton = new Interface.Button({ 
     background:"#fff",
     bounds:[0.,0.,0.2,0.05 ],  
     label:'WebSocket Connect',    
     size:14,
-    stroke:"000",
+    stroke:"#000",
     style:'normal',
     onvaluechange: function() {
       this.clear();
@@ -261,37 +278,37 @@ function init() {
   });
   
   label = new Interface.Label({ 
-    bounds:[0.4,0.,1.9, 0.05],
+    bounds:[0.21,0.,0.9, 0.05],
     value:'',
     hAlign:'left',
     vAlign:'middle',
     size:12,
-    stroke:"000",
+    stroke:"#000",
     style:'normal'
   });
   
-  xypad = new Interface.XY({
-    background:"#fff",
-    stroke:"000",
-    childWidth: 40,
-    numChildren: 1,
-    bounds:[0,0.06,0.9,0.9],
-    usePhysics : false,
-    friction : 0.9,
-    activeTouch : true,
-    maxVelocity : 100,
-    detectCollisions : true,
-    onvaluechange : function() {
-      if(gConnection) 
-        gConnection.send(JSON.stringify(this.values[0], function(key, val) {
-            return val.toFixed ? Number(val.toFixed(3)) : val;
-            })
-        );
-    },
-    oninit: function() { this.rainbow() }
-  });
+//  xypad = new Interface.XY({
+//    background:"#fff",
+//    stroke:"#000",
+//    childWidth: 40,
+//    numChildren: 1,
+//    bounds:[0,0.06,0.9,0.9],
+//    usePhysics : false,
+//    friction : 1,
+//    activeTouch : true,
+//    maxVelocity : 100,
+//    detectCollisions : true,
+//    onvaluechange : function() {
+//      if(gConnection) 
+//        gConnection.send(JSON.stringify(this.values[0], function(key, val) {
+//                                              return val.toFixed ? Number(val.toFixed(3)) : val;
+//                                          })
+//        );
+//    },
+//    oninit: function() { this.rainbow() }
+//  });
   
-  panel.add(connectButton, label, xypad);
+//  panel.add(connectButton, label, xypad);
 }
 
 function writeToScreen (message) {
@@ -328,7 +345,12 @@ function ws_connect() {
           {
             json = ev.data.substr(3);
             
-            if(json.substr(0, 5) == "move ")
+            if(json.substr(0, 7) == "set_id ")
+            {
+              gConnectionID = parseInt(json.substr(7));
+              writeToScreen('Connection ID ' + gConnectionID);
+            }
+            else if(json.substr(0, 5) == "move ")
             {
               values = JSON.parse(json.substr(5));
               xypad.children[0].x = values.x * xypad._width();
@@ -378,5 +400,3 @@ function toggleConnection() {
 //}
 
 init();
-
-

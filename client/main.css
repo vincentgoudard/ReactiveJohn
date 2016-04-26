@@ -1,4 +1,7 @@
 /* CSS declarations go here */
+p {
+	margin:0;
+}
 
 h1 {
 	font-family: Trebuchet MS,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Tahoma,sans-serif;
@@ -59,47 +62,35 @@ pre {
 	margin-left: 25px;	
 }
 
-/*
+
 .miniItem0 {
-	fill: darksalmon;
 	stroke-width: 6;	
 }
 
 .miniItem1 {
-	fill: darkolivegreen;
-	fill-opacity: .7;
 	stroke-width: 6;	
 }
 
 .miniItem2 {
-	fill: slategray;
-	fill-opacity: .7;
 	stroke-width: 6;	
 }
 
 .miniItem3 {
-	fill: lightsteelblue;
 	stroke-width: 6;	
 }
 
 .miniItem4 {
-	fill: lightpink;
-	fill-opacity: .7;
 	stroke-width: 6;	
 }
 
 .miniItem5 {
-	fill: mediumturquoise;
-	fill-opacity: .7;
 	stroke-width: 6;	
 }
 
 .miniItem6 {
-	fill: lightcoral;
-	fill-opacity: .7;
 	stroke-width: 6;	
 }
-*/
+
 .brush .extent {
 	stroke: gray;
 	fill: dodgerblue;
@@ -155,7 +146,7 @@ input, label {
     display:block;
 }
 
-div.score-maker-container, div.event-maker-container{
+div.GUI-container{
 	border:1px solid #aaa;
 	padding:2px;
 	margin-top: 5px;

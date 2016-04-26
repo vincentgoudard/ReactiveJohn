@@ -11,7 +11,7 @@
       <!-- <input type="submit" name="clear-score" value="clear score"> -->
       <button class="clear-score">clear score</button>
     </div>
-    <div class="score-maker-container">
+    <div class="score-maker-container GUI-container">
       <button class="score-maker-view">view</button><h2>score maker</h2> 
       <div class="score-maker hidden">
             <form class="new-score">
@@ -45,7 +45,7 @@
     </div>
     <div class="clearfix"></div>
 
-    <div class="event-maker-container">
+    <div class="event-maker-container GUI-container">
         <button class="event-maker-view">view</button><h2>event maker</h2> 
         <div class="event-maker hidden">
             <form class="new-event">
@@ -64,11 +64,16 @@
     </div>
 
   </header>
-  <div id="karma_edit_anchor">
+  <div id="karma_edit_anchor" class="GUI-container">
+      <p>Select events to change their karmas</p>
       <form class="karma-edit">
           <select class="karmaMenu" name="karmaMenu"></select>
           <input type="submit" value="ok">
       </form>
+  </div>
+  <div id="event_delete_anchor" class="GUI-container">
+      <p>Select events to delete them </p>
+      <button class="event-delete">delete selected events</button>
   </div>
   <div id="john_anchor_1"></div>
   {{> info}}

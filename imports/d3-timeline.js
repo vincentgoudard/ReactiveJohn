@@ -8,7 +8,7 @@ export const John = { extensions: {} };
 import '../client/lib/utils.js';
 
 John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
-
+	console.log("john created");
 	// clear whatever already exists in main anchor
 	d3.select(main_anchor).html("");
 
@@ -202,10 +202,11 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
       .attr("transform", "translate(0," + miniHeight + ")")
       .call(xAxis);
 
+	var rects, labels, rbrushes;
+
 	function display() {
 
-		var rects, labels, rbrushes,
-			minExtent = brush.extent()[0],
+		var minExtent = brush.extent()[0],
 			maxExtent = brush.extent()[1];
 
 		// get a list with items inside the visible scope
@@ -309,12 +310,13 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	  //console.log(d3.event, d3.event);
 		
 		//console.log('d3.event: ', d3.event);
-		//console.log('data: ', d);
+		console.log('data: ', d);
 
 	  	var minExtent = brush.extent()[0],
 			maxExtent = brush.extent()[1];
 		//console.log('min/max brush', minExtent, maxExtent);
 
+		var thisDatum = d;
 		x1.domain([0, maxExtent-minExtent]);
 
 	  // TODO : update du data
@@ -325,7 +327,22 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			//labels
 			    //.attr("y", d.y = Math.max(0, Math.min(height - 1000, d3.event.y)));
 	  	}
-	  	//console.log('element: ', this);
+	  	console.log('labels: ', labels);
+
+	  	// get a list with items inside the visible scope
+		var	theLabel = labels.filter(function(d) {return d.text == thisDatum.karma;});
+		console.log(theLabel);
+
+	  	//update the item labels
+		//labels = itemRects.selectAll("text")
+		//	.data(visItems, function (d) { return d._id; })
+		//	.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 1);});
+		//labels.enter().append("text")
+		//	.text(function(d) {return (d.karma + ' - ' + d.start + ' - ' + d.end );})
+		//	.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 1);})
+		//	.attr("y", function(d) {return y1(d.lane + .5);})
+		//	.attr("text-anchor", "start");
+		//labels.exit().remove();
 	}
 	
 	function dragend(d) {
@@ -358,15 +375,15 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	
 		// update data info
 		//var duration = (d.end - d.start);
-		console.log('this :', this);
+		//console.log('this :', this);
 
-		console.log('new width :', this.getAttribute('width'));
+		//console.log('new width :', this.getAttribute('width'));
 		var newStart = jUtils.roundN(invX(this.getAttribute('x')*1), 10);
 
 		invX.range([0, maxExtent - minExtent]);
 		var duration = jUtils.roundN(invX(this.getAttribute('width')*1), 10); // *1 converts string to number
 
-		console.log('new duration :', duration);
+		//console.log('new duration :', duration);
 
 		// convert graph position to data value
 		d.start = newStart; // 

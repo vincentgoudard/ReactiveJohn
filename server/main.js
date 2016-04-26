@@ -102,13 +102,16 @@ Meteor.startup(() => {
 	  return Sequences.find({});
 	});
 
-	// provide a function to remove all sequences
+	// function that we can invoke from the client
 	return Meteor.methods({
 		removeAllSequences: function() {
 			return Sequences.remove({});
+		},
+		removeSequences: function(selectionOfItems) {
+			console.log('removing sequences : ', selectionOfItems);
+			return Sequences.remove(selectionOfItems);
 		}
 	});
-
 });
 
 
@@ -167,27 +170,27 @@ Meteor.startup(() => {
 // Sending OSC with OSC-min //
 //////////////////////////////
 
-//var dgram, osc, outport, sendHeartbeat, client;
-//
-//osc = require('osc-min');
-//dgram = require("dgram");
-//client = dgram.createSocket("udp4");
-//
-//
-//outport = 7474;
-//
-//console.log("sending heartbeat messages to http://localhost:" + outport);
-//
-////~verbatim:examples[1]~
-////### Send a bunch of args every two seconds;
-//
-//sendHeartbeat = function() {
-//  var buf;
-//  buf = osc.toBuffer({
-//    address: "/heartbeat",
-//    args: []
-//  });
-//  return client.send(buf, 0, buf.length, outport, "localhost");
-//};
-
-// setInterval(sendHeartbeat, 2000);
+// var dgram, osc, outport, sendHeartbeat, client;
+// 
+// osc = require('osc-min');
+// dgram = require("dgram");
+// client = dgram.createSocket("udp4");
+// 
+// 
+// outport = 7474;
+// 
+// console.log("sending heartbeat messages to http://localhost:" + outport);
+// 
+// //~verbatim:examples[1]~
+// //### Send a bunch of args every two seconds;
+// 
+// sendHeartbeat = function() {
+//   var buf;
+//   buf = osc.toBuffer({
+//     address: "/heartbeat",
+//     args: []
+//   });
+//   return client.send(buf, 0, buf.length, outport, "localhost");
+// };
+// 
+//  setInterval(sendHeartbeat, 2000);// 
