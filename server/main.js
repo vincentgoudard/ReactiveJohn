@@ -94,8 +94,8 @@ Meteor.startup(() => {
 
 	var interval = setInterval(Meteor.bindEnvironment(function (err, res) {
 		//TheTime.upsert('timer', {$set:{"time": the_time++}});
-		TheTime.upsert('timer', {$set:{"time": ( Date.now() - the_offset )}});
-
+		var theTime = Date.now() - the_offset;
+		TheTime.upsert('timer', {$set:{"time": theTime }});
 	}), delay_milliseconds);
 
 	Meteor.publish('john.public', function() {
@@ -166,31 +166,59 @@ Meteor.startup(() => {
 //
 
 
+// DB cursor to detecte any change on sequences collection.
+// found here http://stackoverflow.com/questions/10103541/how-does-meteor-receive-updates-to-the-results-of-a-mongodb-query
+var mySequenceCursor = Sequences.find({});
+// watch the cursor for changes
+var mySequenceHandle = mySequenceCursor.observe({
+  added: function (post) { notifyChange('/items/add', post._id) }, // run when post is added
+  changed: function (post) { notifyChange('/items/changed', post._id)  }, // run when post is changed
+  removed: function (post) { notifyChange('/items/removed', post._id)  } // run when post is removed
+});
+
+var myTimeCursor = TheTime.find({});
+var myTimeHandle = myTimeCursor.observe({
+  changed: function (post) {
+  	if(post.playing==true){
+   		console.log(post); 
+  	notifyChange('/time', (post.time - post.john_start));		
+  	}
+  }, // run when post is changed
+});
+//notifyChange('changed', post) 
 //////////////////////////////
 // Sending OSC with OSC-min //
 //////////////////////////////
 
-// var dgram, osc, outport, sendHeartbeat, client;
-// 
-// osc = require('osc-min');
-// dgram = require("dgram");
-// client = dgram.createSocket("udp4");
-// 
-// 
-// outport = 7474;
-// 
-// console.log("sending heartbeat messages to http://localhost:" + outport);
-// 
-// //~verbatim:examples[1]~
-// //### Send a bunch of args every two seconds;
-// 
-// sendHeartbeat = function() {
-//   var buf;
-//   buf = osc.toBuffer({
-//     address: "/heartbeat",
-//     args: []
-//   });
-//   return client.send(buf, 0, buf.length, outport, "localhost");
-// };
-// 
-//  setInterval(sendHeartbeat, 2000);// 
+var dgram, osc, outport, sendHeartbeat, client;
+
+osc = require('osc-min');
+dgram = require("dgram");
+client = dgram.createSocket("udp4");
+
+outport = 7474;
+
+console.log("sending heartbeat messages to http://localhost:" + outport);
+
+notifyChange = function(zeAddress, zeArgs) {
+  var buf;
+  buf = osc.toBuffer({
+    address: zeAddress,
+    args: zeArgs
+  });
+  return client.send(buf, 0, buf.length, outport, "localhost");
+};
+
+//~verbatim:examples[1]~
+//### Send a bunch of args every two seconds;
+
+sendHeartbeat = function() {
+  var buf;
+  buf = osc.toBuffer({
+    address: "/heartbeat",
+    args: []
+  });
+  return client.send(buf, 0, buf.length, outport, "localhost");
+};
+
+ setInterval(sendHeartbeat, 2000);
