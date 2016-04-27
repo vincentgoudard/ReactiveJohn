@@ -126,6 +126,7 @@ Meteor.startup(() => {
 		activeItems.forEach(function (item){
 			multicastOscSend(clientsIP, '/items/alive', [parseInt(item.lane), item.karma]);
 		});
+		multicastOscSend(clientsIP, '/items/alive', 'done');
 
 		//console.log('currentTime: ', currentTime);
 		//console.log(starline);
