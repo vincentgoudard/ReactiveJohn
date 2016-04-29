@@ -369,7 +369,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		d.selected = !d.selected;
 
 		if (d.selected)	d3.select(this).style("fill", "red")
-			else d3.select(this).style("fill", null);
+			else d3.select(this).style("fill", function(d, i) {return "hsl(" + d.lane / laneLength * 360. + ",50%,40%)";});
 	
 	  	var minExtent = brush.extent()[0],
 			maxExtent = brush.extent()[1];
