@@ -67,6 +67,7 @@ Meteor.startup(() => {
 	Sequences.remove({});
 	Karmas.remove({});
 
+	console.log(myScore);
 
 	// add sample players
 	Lanes.insert({"lanes" : ["Pierre","Serge","Laurence", "Gyorgy", "Jean", "Hugues", "Vincent"]});
@@ -74,7 +75,7 @@ Meteor.startup(() => {
 	// add sample karmas
 	Karmas.insert({"karmas" : ["Doux","Valse","Sériel", "Explosif", "Aquatique", "Géologie sonore", "Vivace","Shuffling","Cristallin","Céleste", "Lointain", "Onomatopée", "à l'unison", "in C", "Cuivré", "En orbite", "mécanique"]});
 
-	var SampleEvents = [];
+	var SampleEvents = myScore;
 	//var SampleEvents = [{"lane": 0, "karma": "Doux", "start": 5, "end": 205},
 	//			{"lane": 0, "karma": "Valse", "start": 265, "end": 420},
 	//			{"lane": 0, "karma": "Sériel", "start": 580, "end": 615},
