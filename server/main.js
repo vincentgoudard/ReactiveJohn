@@ -73,7 +73,7 @@ Meteor.startup(() => {
 	Lanes.insert({"lanes" : ["Pierre","Serge","Laurence", "Gyorgy", "Jean", "Hugues", "Vincent"]});
 
 	// add sample karmas
-	Karmas.insert({"karmas" : ["Doux","Valse","Sériel", "Explosif", "Aquatique", "Géologie sonore", "Vivace","Shuffling","Cristallin","Céleste", "Lointain", "Onomatopée", "à l'unison", "in C", "Cuivré", "En orbite", "mécanique"]});
+	Karmas.insert({"karmas" : ["Test", "Rebours", "Nuit", "Jour", "Agitato", "glissandi", "Presque rien", "4’33", "cosmique", "élastique", "pointilliste", "Doux","Valse","Sériel", "Explosif", "Aquatique", "Géologie sonore", "Vivace","Shuffling","Cristallin","Céleste", "Lointain", "Onomatopée", "à l'unison", "in C", "Cuivré", "En orbite", "mécanique"]});
 
 	var SampleEvents = myScore;
 	//var SampleEvents = [{"lane": 0, "karma": "Doux", "start": 5, "end": 205},
