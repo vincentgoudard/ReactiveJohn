@@ -6,8 +6,11 @@ Draft for a reactive web version of [John sequencer](http://vincentgoudard.com/j
 
 In a nutshell, to run Reactive John :
 - start the server with the command "meteor run" in a shell
-- open a browser at http://localhost:3000/
+- open a browser at http://localhost:4000/
 
 You can then create a random score (with the score maker)
 You can move events (horizontal drag) and rescale them (vertical drag)
 You can navigate in the score with the bottom view area in blue.
+
+John is also sending OSC messages over UDP on port 7474.
+You can find an example [Max](http://cycling74.com/) patch in the Max folder.
