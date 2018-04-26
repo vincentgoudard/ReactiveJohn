@@ -1,5 +1,4 @@
-# ReactiveJohn
-Reactive version of John sequencer (draft).
+# ReactiveJohn (draft)
 
 Draft for a reactive web version of [John sequencer](http://vincentgoudard.com/john/).
 
