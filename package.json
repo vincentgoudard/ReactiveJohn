@@ -5,6 +5,8 @@
     "start": "meteor run"
   },
   "dependencies": {
-    "meteor-node-stubs": "~0.2.0"
+    "@babel/runtime": "^7.0.0-beta.46",
+    "meteor-node-stubs": "~0.2.0",
+    "osc-min": "^1.1.1"
   }
 }

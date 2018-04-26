@@ -3,7 +3,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 
 import { Sequences, Lanes, Karmas, TheTime }  from '../imports/api/sequences.js';
 
-import '../imports/d3/d3.v2.js';
+import '../imports/d3/d3.v5.js';
 import './lib/utils.js';
 
 import { John } from '../imports/d3-timeline.js';
@@ -16,6 +16,7 @@ import '../imports/interface.js';
 var TheJohn;
 
 karmas = [];
+lanes = [];
 
 Template.hello.onCreated(function helloOnCreated() {
   // counter starts at 0
@@ -46,7 +47,9 @@ Tracker.autorun(() => {
 	if(isReady) {
 		// get the lanes
 		var lanesCollection = Lanes.find({}).fetch();
-		var lanes = lanesCollection[0].lanes;
+		lanes = lanesCollection[0].lanes;
+    console.log("lanes.length" + lanes.length);
+
 
     // feed the lane Menu
     for (var i = 0; i < lanes.length; i++) {
@@ -151,8 +154,8 @@ Template.body.events({
     const formConcertDuration = Number(target.concertDuration.value);
     const formEventDurationMin = Number(target.eventDurationMin.value);
     const formEventDurationMax = Number(target.eventDurationMax.value);
-    const formNbPlayersMin = Number(target.nbPlayersMin.value);
-    const formNbPlayersMax = Number(target.nbPlayersMax.value);
+    const formNbPlayersMin = Math.max(0, Math.min(lanes.length, Number(target.nbPlayersMin.value)));
+    const formNbPlayersMax = Math.max(0, Math.min(lanes.length, Number(target.nbPlayersMax.value)));
 
     const formEventDurationSpan = formEventDurationMax - formEventDurationMin;
     const formNbPlayersSpan = formNbPlayersMax - formNbPlayersMin;
@@ -161,14 +164,22 @@ Template.body.events({
     var currentConcertDuration=0;
     var currentKarma = "par défaut";
 
+    console.log("creating score...");
+
+    // allPlayers contains indices of all active players
+    allPlayers = [];
+    for (var i = 0; i < lanes.length; i++) {
+       allPlayers.push(i);
+    }
+
     // iteratively create events and add them to the score
     // as long as not exceeding concert duration
-    while( currentConcertDuration < formConcertDuration ){
-      
-      var players = [0, 1, 2, 3, 4, 5, 6];
+    while(currentConcertDuration < formConcertDuration ){
+
+      // var players = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
       // decide how many players will play next sequence
       //var nPlayers = Math.floor(Math.random()*(players.length)); // should be decided by formular
-      var nPlayers = Math.floor((Math.random() * formNbPlayersSpan) + formNbPlayersMin); // should be decided by formular
+      var nPlayers = Math.floor(((Math.random()) * formNbPlayersSpan) + formNbPlayersMin); // should be decided by formular
 
       // define event's duration
       var currentEventDuration = jUtils.roundN(( Math.random() * formEventDurationSpan ) + formEventDurationMin, 10);
@@ -179,13 +190,23 @@ Template.body.events({
       var activePlayersForThisSequence = [];
       var uniqueRandoms = [];
   
+      //activePlayersForThisSequence = jUtils.getRandomItems(players, nPlayers );
+
+      // allPlayers contains indices of all active players
+      var playersSpliced =  allPlayers.slice(0);
+
       for (var i = 0; i < nPlayers; i++){
-          var index = Math.floor(Math.random() * players.length);
-          activePlayersForThisSequence.push(players[index]);
+          var index = Math.floor(Math.random() * playersSpliced.length);
+          activePlayersForThisSequence.push(playersSpliced[index]);
           // now remove that value from the array
-          players.splice(index, 1);
+          playersSpliced.splice(index, 1);
           //console.log(activePlayersForThisSequence);
       }
+
+      // trying to externalize the code above to jUtils, without success so far
+      //activePlayersForThisSequence = jUtils.uniqueRandomNumbers(allPlayers, nPlayers );
+
+
       console.log(activePlayersForThisSequence);
       for (var i = 0; i < activePlayersForThisSequence.length; i++){
         currentKarma = karmas[Math.floor(Math.random() * karmas.length)];
@@ -208,15 +229,27 @@ Template.body.events({
       e.preventDefault();
       scoreMakerViewHidden = !scoreMakerViewHidden;
       //console.log("You pressed the button");
-      if ( scoreMakerViewHidden ) $( ".score-maker" ).addClass("hidden");
-      else $( ".score-maker" ).removeClass("hidden");
+      if ( scoreMakerViewHidden ) {
+        $( ".score-maker" ).addClass("hidden");
+        $(".score-maker-view").html('&#x25b6; score maker');
+      }
+      else {
+        $( ".score-maker" ).removeClass("hidden");
+        $(".score-maker-view").html('&#x25bc; score maker');
+      }
     },
     'click .event-maker-view': function (e) {
       e.preventDefault();
       eventMakerViewHidden = !eventMakerViewHidden;
       //console.log("You pressed the button");
-      if ( eventMakerViewHidden ) $( ".event-maker" ).addClass("hidden");
-      else $( ".event-maker" ).removeClass("hidden");
+      if ( eventMakerViewHidden ) {
+        $( ".event-maker" ).addClass("hidden");
+        $(".event-maker-view").html('&#x25b6; event maker');
+      }
+      else {
+        $( ".event-maker" ).removeClass("hidden");
+        $(".event-maker-view").html('&#x25bc; event maker');
+      }
     },
     'click .event-delete': function(e) {
       // Prevent default browser form submit
@@ -242,7 +275,7 @@ Template.body.events({
       e.preventDefault();
       // erase previous outdated links
       $('#download_anchor').html("");
-      var myScore = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(John.items));
+      var myScore = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({score:John.items}));
       $('<a href="data:' + myScore + '" download="sequences.json">download JSON</a>').appendTo('#download_anchor');
     }
   });
@@ -398,5 +431,19 @@ function toggleConnection() {
 //    writeToScreen('SENT: ' + message);
 //    gConnection.send(message);
 //}
+
+function getRandomItems(arr, n) {
+    var result = new Array(n),
+        len = arr.length,
+        taken = new Array(len);
+    if (n > len)
+        throw new RangeError("getRandom: more elements taken than available");
+    while (n--) {
+        var x = Math.floor(Math.random() * len);
+        result[n] = arr[x in taken ? taken[x] : x];
+        taken[x] = --len in taken ? taken[len] : len;
+    }
+    return result;
+}
 
 init();
