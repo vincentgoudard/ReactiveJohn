@@ -1,0 +1,1189 @@
+{
+  "lanes": ["Pierre", "Serge", "Laurence", "Gyorgy", "Jean","Hugues","Vincent"],
+  "score": [
+    {
+      "_id": "hrN2JJ8tLxA2edfFB",
+      "lane": 0,
+      "karma": "Rebours",
+      "start": 0,
+      "end": 20,
+      "selected": false
+    },
+    {
+      "_id": "PkxSc2d8HRt3zhWYs",
+      "lane": 1,
+      "karma": "Rebours",
+      "start": 0,
+      "end": 20,
+      "selected": false
+    },
+    {
+      "_id": "pLtreQBijACAXufct",
+      "lane": 2,
+      "karma": "Rebours",
+      "start": 0,
+      "end": 20,
+      "selected": false
+    },
+    {
+      "_id": "2DvJnuQpc4N8FbxiA",
+      "lane": 3,
+      "karma": "Rebours",
+      "start": 0,
+      "end": 20,
+      "selected": false
+    },
+    {
+      "_id": "2uJq7GFdcSgsP3o9z",
+      "lane": 4,
+      "karma": "Rebours",
+      "start": 0,
+      "end": 20,
+      "selected": false
+    },
+    {
+      "_id": "Ew2kdqikvpk6mK7A7",
+      "lane": 5,
+      "karma": "Rebours",
+      "start": 0,
+      "end": 20,
+      "selected": false
+    },
+    {
+      "_id": "pMWtC7kWKDBjz62gJ",
+      "lane": 6,
+      "karma": "Rebours",
+      "start": 0,
+      "end": 20,
+      "selected": false
+    },
+    {
+      "_id": "3NW82Hbqx2SkZn3kX",
+      "lane": 2,
+      "karma": "Vivace",
+      "start": 20,
+      "end": 50,
+      "selected": false
+    },
+    {
+      "_id": "jKmDBZcZBfjgpGaLz",
+      "lane": 1,
+      "karma": "Vivace",
+      "start": 20,
+      "end": 50,
+      "selected": false
+    },
+    {
+      "_id": "PDN9vpf4AWLWnpjKF",
+      "lane": 3,
+      "karma": "Vivace",
+      "start": 20,
+      "end": 50,
+      "selected": false
+    },
+    {
+      "_id": "iqomZMpYC5mDMHF4y",
+      "lane": 4,
+      "karma": "Vivace",
+      "start": 20,
+      "end": 50,
+      "selected": false
+    },
+    {
+      "_id": "MDG6LTmGARv8k72JG",
+      "lane": 0,
+      "karma": "Vivace",
+      "start": 20,
+      "end": 50,
+      "selected": false
+    },
+    {
+      "_id": "o7eKFaP3Qzzgs53QM",
+      "lane": 6,
+      "karma": "Vivace",
+      "start": 20,
+      "end": 50,
+      "selected": false
+    },
+    {
+      "_id": "b9hPDRedh2hE5fZSE",
+      "lane": 4,
+      "karma": "Lointain",
+      "start": 50,
+      "end": 220,
+      "selected": false
+    },
+    {
+      "_id": "cTgf3yCiRR6GGp6Ny",
+      "lane": 6,
+      "karma": "Lointain",
+      "start": 50,
+      "end": 220,
+      "selected": false
+    },
+    {
+      "_id": "aAAJA2P9jWf6xZxHM",
+      "lane": 3,
+      "karma": "Lointain",
+      "start": 50,
+      "end": 220,
+      "selected": false
+    },
+    {
+      "_id": "vEek2tFMBxQpk2DCv",
+      "lane": 1,
+      "karma": "Lointain",
+      "start": 50,
+      "end": 220,
+      "selected": false
+    },
+    {
+      "_id": "tmqvKwRij3vnz9NWv",
+      "lane": 5,
+      "karma": "Lointain",
+      "start": 50,
+      "end": 220,
+      "selected": false
+    },
+    {
+      "_id": "z2cN3gSMnjsaX3Fr2",
+      "lane": 2,
+      "karma": "Lointain",
+      "start": 50,
+      "end": 220,
+      "selected": false
+    },
+    {
+      "_id": "6Xoh6pb9F5PCDXAy6",
+      "lane": 0,
+      "karma": "in C",
+      "start": 140,
+      "end": 170,
+      "selected": false
+    },
+    {
+      "_id": "eSijptqCjLfaW7a2G",
+      "lane": 5,
+      "karma": "in C",
+      "start": 220,
+      "end": 250,
+      "selected": false
+    },
+    {
+      "_id": "tXBBq42LC9f8MSN4w",
+      "lane": 6,
+      "karma": "in C",
+      "start": 220,
+      "end": 250,
+      "selected": false
+    },
+    {
+      "_id": "69mK8fQkCAZwnHAZu",
+      "lane": 4,
+      "karma": "in C",
+      "start": 220,
+      "end": 250,
+      "selected": false
+    },
+    {
+      "_id": "zMBnhuqCR4oPpGWTv",
+      "lane": 3,
+      "karma": "in C",
+      "start": 220,
+      "end": 250,
+      "selected": false
+    },
+    {
+      "_id": "ZQbuFCzQLTDLkQHQC",
+      "lane": 0,
+      "karma": "mécanique",
+      "start": 250,
+      "end": 350,
+      "selected": false
+    },
+    {
+      "_id": "tfNarWCeHoLruvsMq",
+      "lane": 5,
+      "karma": "mécanique",
+      "start": 250,
+      "end": 350,
+      "selected": false
+    },
+    {
+      "_id": "abWsE6rsqZbZCFn9Y",
+      "lane": 4,
+      "karma": "mécanique",
+      "start": 250,
+      "end": 350,
+      "selected": false
+    },
+    {
+      "_id": "J9SiTAS3CWy56FgMN",
+      "lane": 2,
+      "karma": "in C",
+      "start": 220,
+      "end": 250,
+      "selected": false
+    },
+    {
+      "_id": "9pyQqmCQaah3dWryh",
+      "lane": 1,
+      "karma": "à l'unison",
+      "start": 350,
+      "end": 380,
+      "selected": false
+    },
+    {
+      "_id": "8yKF2pqyrnWXtKaeu",
+      "lane": 6,
+      "karma": "à l'unison",
+      "start": 350,
+      "end": 380,
+      "selected": false
+    },
+    {
+      "_id": "SkvHzGgMZsoDwJ2RB",
+      "lane": 3,
+      "karma": "à l'unison",
+      "start": 350,
+      "end": 380,
+      "selected": false
+    },
+    {
+      "_id": "GbMCeg4mFL9g2Yzsi",
+      "lane": 2,
+      "karma": "Explosif",
+      "start": 380,
+      "end": 420,
+      "selected": false
+    },
+    {
+      "_id": "LjKGNK927tN94D8N5",
+      "lane": 4,
+      "karma": "Explosif",
+      "start": 380,
+      "end": 420,
+      "selected": false
+    },
+    {
+      "_id": "8zJToGWrH48K9xnGK",
+      "lane": 5,
+      "karma": "Explosif",
+      "start": 380,
+      "end": 420,
+      "selected": false
+    },
+    {
+      "_id": "s5yjQync7rmWKbeQT",
+      "lane": 3,
+      "karma": "Aquatique",
+      "start": 420,
+      "end": 510,
+      "selected": false
+    },
+    {
+      "_id": "YHS7poQpjj8ewwYHT",
+      "lane": 5,
+      "karma": "Aquatique",
+      "start": 420,
+      "end": 510,
+      "selected": false
+    },
+    {
+      "_id": "2AXvKgFKoAXoMLTfR",
+      "lane": 1,
+      "karma": "Aquatique",
+      "start": 420,
+      "end": 510,
+      "selected": false
+    },
+    {
+      "_id": "sr224RMXEPHadRxY6",
+      "lane": 2,
+      "karma": "Aquatique",
+      "start": 420,
+      "end": 510,
+      "selected": false
+    },
+    {
+      "_id": "Whps3DEkXSRbEYTji",
+      "lane": 2,
+      "karma": "Cristallin",
+      "start": 510,
+      "end": 570,
+      "selected": false
+    },
+    {
+      "_id": "DDDZN4JG5m6uDMCZT",
+      "lane": 1,
+      "karma": "Cristallin",
+      "start": 510,
+      "end": 570,
+      "selected": false
+    },
+    {
+      "_id": "z6fHL9LRt934NKc6w",
+      "lane": 5,
+      "karma": "Onomatopée",
+      "start": 570,
+      "end": 600,
+      "selected": false
+    },
+    {
+      "_id": "daCoywnRC63QgyvLj",
+      "lane": 1,
+      "karma": "Onomatopée",
+      "start": 570,
+      "end": 600,
+      "selected": false
+    },
+    {
+      "_id": "TNabMXLFfDx5d9LZg",
+      "lane": 6,
+      "karma": "mécanique",
+      "start": 600,
+      "end": 690,
+      "selected": false
+    },
+    {
+      "_id": "pMkTwM2y5Zihq5rYu",
+      "lane": 4,
+      "karma": "mécanique",
+      "start": 600,
+      "end": 690,
+      "selected": false
+    },
+    {
+      "_id": "xcqxQ5pgqyEkbMGHh",
+      "lane": 0,
+      "karma": "mécanique",
+      "start": 600,
+      "end": 690,
+      "selected": false
+    },
+    {
+      "_id": "w8c2WmsRDRi3fh4i8",
+      "lane": 3,
+      "karma": "mécanique",
+      "start": 600,
+      "end": 690,
+      "selected": false
+    },
+    {
+      "_id": "vTxMNreHhf48a8Zue",
+      "lane": 5,
+      "karma": "mécanique",
+      "start": 600,
+      "end": 690,
+      "selected": false
+    },
+    {
+      "_id": "J6vieJbKcZTrd3omN",
+      "lane": 1,
+      "karma": "Céleste",
+      "start": 690,
+      "end": 780,
+      "selected": false
+    },
+    {
+      "_id": "HmGwReS9j9yuGGK4f",
+      "lane": 4,
+      "karma": "Céleste",
+      "start": 690,
+      "end": 780,
+      "selected": false
+    },
+    {
+      "_id": "2aXE98y8zvWiHhasb",
+      "lane": 5,
+      "karma": "Céleste",
+      "start": 690,
+      "end": 780,
+      "selected": false
+    },
+    {
+      "_id": "TfC2GP68g48P9ZpaN",
+      "lane": 0,
+      "karma": "Céleste",
+      "start": 690,
+      "end": 780,
+      "selected": false
+    },
+    {
+      "_id": "hZaQRCkrwnAQnRHto",
+      "lane": 6,
+      "karma": "Céleste",
+      "start": 690,
+      "end": 780,
+      "selected": false
+    },
+    {
+      "_id": "pHsruYYmnG4pShHTf",
+      "lane": 6,
+      "karma": "élastique",
+      "start": 780,
+      "end": 840,
+      "selected": false
+    },
+    {
+      "_id": "cQkAdSd2t7BaNRQ88",
+      "lane": 5,
+      "karma": "élastique",
+      "start": 780,
+      "end": 840,
+      "selected": false
+    },
+    {
+      "_id": "ib2jDMeZjgrLcEzkN",
+      "lane": 5,
+      "karma": "Lointain",
+      "start": 840,
+      "end": 930,
+      "selected": false
+    },
+    {
+      "_id": "DqWWWC7oHSh6P3NTj",
+      "lane": 0,
+      "karma": "Lointain",
+      "start": 840,
+      "end": 930,
+      "selected": false
+    },
+    {
+      "_id": "T9XGgS6DSiJicyPNr",
+      "lane": 1,
+      "karma": "Vivace",
+      "start": 840,
+      "end": 930,
+      "selected": false
+    },
+    {
+      "_id": "YKS3ZYt7k6cNqnguF",
+      "lane": 4,
+      "karma": "Vivace",
+      "start": 840,
+      "end": 930,
+      "selected": false
+    },
+    {
+      "_id": "TRt83x6oE5YXeYE5x",
+      "lane": 2,
+      "karma": "Lointain",
+      "start": 840,
+      "end": 930,
+      "selected": false
+    },
+    {
+      "_id": "rSTStep3YhB9uQgTb",
+      "lane": 3,
+      "karma": "Lointain",
+      "start": 840,
+      "end": 930,
+      "selected": false
+    },
+    {
+      "_id": "dQRPqCPArnLbK46dq",
+      "lane": 4,
+      "karma": "Valse",
+      "start": 930,
+      "end": 1050,
+      "selected": false
+    },
+    {
+      "_id": "Fcjnu5bL8fFPAtRRe",
+      "lane": 3,
+      "karma": "Valse",
+      "start": 930,
+      "end": 1050,
+      "selected": false
+    },
+    {
+      "_id": "CmYvNNm4BKnxAKaM8",
+      "lane": 6,
+      "karma": "Valse",
+      "start": 930,
+      "end": 1050,
+      "selected": false
+    },
+    {
+      "_id": "7oS7B44vZsxWDSkau",
+      "lane": 5,
+      "karma": "Valse",
+      "start": 930,
+      "end": 1050,
+      "selected": false
+    },
+    {
+      "_id": "YyjkAZptSvyZwG2jr",
+      "lane": 1,
+      "karma": "Géologie sonore",
+      "start": 1050,
+      "end": 1110,
+      "selected": false
+    },
+    {
+      "_id": "riqqidpTrxqyvTqEY",
+      "lane": 5,
+      "karma": "Géologie sonore",
+      "start": 1050,
+      "end": 1110,
+      "selected": false
+    },
+    {
+      "_id": "JLXzogkJHQ2XWKyog",
+      "lane": 6,
+      "karma": "Géologie sonore",
+      "start": 1050,
+      "end": 1110,
+      "selected": false
+    },
+    {
+      "_id": "jgNw34YMTYAzvqKmj",
+      "lane": 3,
+      "karma": "Géologie sonore",
+      "start": 1050,
+      "end": 1110,
+      "selected": false
+    },
+    {
+      "_id": "6uff2ZWMcTPioCyzq",
+      "lane": 4,
+      "karma": "Géologie sonore",
+      "start": 1050,
+      "end": 1110,
+      "selected": false
+    },
+    {
+      "_id": "RKnqWXEtQgKPdYbr7",
+      "lane": 0,
+      "karma": "Presque rien",
+      "start": 1110,
+      "end": 1170,
+      "selected": false
+    },
+    {
+      "_id": "jiteDP4EFqntSRDvR",
+      "lane": 1,
+      "karma": "Presque rien",
+      "start": 1110,
+      "end": 1170,
+      "selected": false
+    },
+    {
+      "_id": "jTbjNezuMgkQaDoBb",
+      "lane": 2,
+      "karma": "Presque rien",
+      "start": 1110,
+      "end": 1170,
+      "selected": false
+    },
+    {
+      "_id": "QNkcsvsMSeB7DmvCa",
+      "lane": 3,
+      "karma": "Cristallin",
+      "start": 1110,
+      "end": 1170,
+      "selected": false
+    },
+    {
+      "_id": "5jBeg2bz7hfTAuSyc",
+      "lane": 4,
+      "karma": "Presque rien",
+      "start": 1110,
+      "end": 1170,
+      "selected": false
+    },
+    {
+      "_id": "rT75cmxwgLty3sBXa",
+      "lane": 0,
+      "karma": "Vivace",
+      "start": 1170,
+      "end": 1250,
+      "selected": false
+    },
+    {
+      "_id": "ZKheGz3D5kJc4tqAb",
+      "lane": 1,
+      "karma": "in C",
+      "start": 1170,
+      "end": 1250,
+      "selected": false
+    },
+    {
+      "_id": "BC8mRreBXd678Swye",
+      "lane": 5,
+      "karma": "En orbite",
+      "start": 1250,
+      "end": 1330,
+      "selected": false
+    },
+    {
+      "_id": "ptLsM4y9vePobMK64",
+      "lane": 6,
+      "karma": "En orbite",
+      "start": 1250,
+      "end": 1330,
+      "selected": false
+    },
+    {
+      "_id": "LbkCfFfZ9tpdkAumL",
+      "lane": 2,
+      "karma": "Cuivré",
+      "start": 1250,
+      "end": 1330,
+      "selected": false
+    },
+    {
+      "_id": "gEshtRCxxyTk5tGtq",
+      "lane": 1,
+      "karma": "Cuivré",
+      "start": 1250,
+      "end": 1330,
+      "selected": false
+    },
+    {
+      "_id": "i97ekM726REnk5b4q",
+      "lane": 4,
+      "karma": "Cuivré",
+      "start": 1250,
+      "end": 1330,
+      "selected": false
+    },
+    {
+      "_id": "EioeBEfu8gS3chv7h",
+      "lane": 0,
+      "karma": "En orbite",
+      "start": 1330,
+      "end": 1380,
+      "selected": false
+    },
+    {
+      "_id": "z7n2qNrubPp8jt7qc",
+      "lane": 1,
+      "karma": "En orbite",
+      "start": 1330,
+      "end": 1380,
+      "selected": false
+    },
+    {
+      "_id": "JhPC6zzj4wBzNfmtp",
+      "lane": 5,
+      "karma": "Aquatique",
+      "start": 1330,
+      "end": 1380,
+      "selected": false
+    },
+    {
+      "_id": "u5srXAF2oSdDT99ow",
+      "lane": 6,
+      "karma": "Aquatique",
+      "start": 1330,
+      "end": 1380,
+      "selected": false
+    },
+    {
+      "_id": "auqY9zW74YJpDLFBg",
+      "lane": 2,
+      "karma": "En orbite",
+      "start": 1330,
+      "end": 1380,
+      "selected": false
+    },
+    {
+      "_id": "q8TkQ6yhxTg3dkxoX",
+      "lane": 4,
+      "karma": "à l'unison",
+      "start": 1380,
+      "end": 1420,
+      "selected": false
+    },
+    {
+      "_id": "QBDuxsyMW9y4QPTWm",
+      "lane": 5,
+      "karma": "à l'unison",
+      "start": 1380,
+      "end": 1420,
+      "selected": false
+    },
+    {
+      "_id": "9yYhxhiqutJi47ocu",
+      "lane": 3,
+      "karma": "à l'unison",
+      "start": 1380,
+      "end": 1420,
+      "selected": false
+    },
+    {
+      "_id": "EcFiPs2F6yRDBefge",
+      "lane": 2,
+      "karma": "à l'unison",
+      "start": 1380,
+      "end": 1420,
+      "selected": false
+    },
+    {
+      "_id": "QhPCGjDToo5iHqw5J",
+      "lane": 6,
+      "karma": "à l'unison",
+      "start": 1380,
+      "end": 1420,
+      "selected": false
+    },
+    {
+      "_id": "csYfhuc5NTMdsqZhf",
+      "lane": 0,
+      "karma": "avec soupirs",
+      "start": 1420,
+      "end": 1520,
+      "selected": false
+    },
+    {
+      "_id": "vf5kLsHiLF5F2WDR6",
+      "lane": 4,
+      "karma": "avec soupirs",
+      "start": 1420,
+      "end": 1520,
+      "selected": false
+    },
+    {
+      "_id": "83zFrNCJaQj4hexft",
+      "lane": 2,
+      "karma": "avec soupirs",
+      "start": 1420,
+      "end": 1520,
+      "selected": false
+    },
+    {
+      "_id": "k8BybpAAXtG73GYjZ",
+      "lane": 5,
+      "karma": "anacrouse/desinence",
+      "start": 1520,
+      "end": 1560,
+      "selected": false
+    },
+    {
+      "_id": "64ENXjjpZESnXD3Kt",
+      "lane": 2,
+      "karma": "anacrouse/desinence",
+      "start": 1520,
+      "end": 1560,
+      "selected": false
+    },
+    {
+      "_id": "5xFkQxEpTCkeDDk6P",
+      "lane": 4,
+      "karma": "staccato",
+      "start": 1560,
+      "end": 1630,
+      "selected": false
+    },
+    {
+      "_id": "4FRRWAzvjLFqhSsiw",
+      "lane": 1,
+      "karma": "staccato",
+      "start": 1560,
+      "end": 1630,
+      "selected": false
+    },
+    {
+      "_id": "3mhKRPFj4RsuaZmca",
+      "lane": 2,
+      "karma": "staccato",
+      "start": 1560,
+      "end": 1630,
+      "selected": false
+    },
+    {
+      "_id": "2T5RnTHaAJ9skC7dD",
+      "lane": 2,
+      "karma": "pointilliste",
+      "start": 1630,
+      "end": 1710,
+      "selected": false
+    },
+    {
+      "_id": "eRK4Tx6eBJYxCCbeR",
+      "lane": 4,
+      "karma": "pointilliste",
+      "start": 1630,
+      "end": 1710,
+      "selected": false
+    },
+    {
+      "_id": "NQ3Dp5wPgvwF5a5Ky",
+      "lane": 0,
+      "karma": "Géologie sonore",
+      "start": 1630,
+      "end": 1710,
+      "selected": false
+    },
+    {
+      "_id": "qYmHbZeiQeZ4DGjLk",
+      "lane": 5,
+      "karma": "Géologie sonore",
+      "start": 1630,
+      "end": 1710,
+      "selected": false
+    },
+    {
+      "_id": "vbZcKQJcm2kyTDHEr",
+      "lane": 3,
+      "karma": "Géologie sonore",
+      "start": 1630,
+      "end": 1710,
+      "selected": false
+    },
+    {
+      "_id": "g78QpgFvv2x8Gggqg",
+      "lane": 6,
+      "karma": "Géologie sonore",
+      "start": 1630,
+      "end": 1710,
+      "selected": false
+    },
+    {
+      "_id": "4xErpJdebjNo3LRSL",
+      "lane": 1,
+      "karma": "élastique",
+      "start": 1710,
+      "end": 1810,
+      "selected": false
+    },
+    {
+      "_id": "YDAdhuWQrnAa5fWLo",
+      "lane": 0,
+      "karma": "élastique",
+      "start": 1710,
+      "end": 1810,
+      "selected": false
+    },
+    {
+      "_id": "kjrFq3h3Dq75Ee7JY",
+      "lane": 2,
+      "karma": "élastique",
+      "start": 1710,
+      "end": 1810,
+      "selected": false
+    },
+    {
+      "_id": "qAgCSWbZwpFexpaYx",
+      "lane": 5,
+      "karma": "élastique",
+      "start": 1710,
+      "end": 1810,
+      "selected": false
+    },
+    {
+      "_id": "jNMbbPGtyyMyfQ7be",
+      "lane": 6,
+      "karma": "élastique",
+      "start": 1710,
+      "end": 1810,
+      "selected": false
+    },
+    {
+      "_id": "SshGBayjc4o3ASNvK",
+      "lane": 4,
+      "karma": "élastique",
+      "start": 1710,
+      "end": 1810,
+      "selected": false
+    },
+    {
+      "_id": "74Hq5nitK3kAxZDFY",
+      "lane": 0,
+      "karma": "glissandi",
+      "start": 1810,
+      "end": 1910,
+      "selected": false
+    },
+    {
+      "_id": "W9aEiRMz79R7S4s3p",
+      "lane": 2,
+      "karma": "glissandi",
+      "start": 1810,
+      "end": 1910,
+      "selected": false
+    },
+    {
+      "_id": "xfaAKqeaRH9yRmdDa",
+      "lane": 0,
+      "karma": "immobile",
+      "start": 1910,
+      "end": 2020,
+      "selected": false
+    },
+    {
+      "_id": "pp5Dwp2rqGmBExvCr",
+      "lane": 6,
+      "karma": "immobile",
+      "start": 1910,
+      "end": 2020,
+      "selected": false
+    },
+    {
+      "_id": "uqXnSyrLaJ7pv5Gdz",
+      "lane": 2,
+      "karma": "immobile",
+      "start": 1910,
+      "end": 2020,
+      "selected": false
+    },
+    {
+      "_id": "cjAmZeTyobuzQYcaS",
+      "lane": 4,
+      "karma": "Lointain",
+      "start": 2020,
+      "end": 2080,
+      "selected": false
+    },
+    {
+      "_id": "3pnffPAP9RCvFNMku",
+      "lane": 5,
+      "karma": "Lointain",
+      "start": 2020,
+      "end": 2080,
+      "selected": false
+    },
+    {
+      "_id": "8YNmcbE35epccc5zh",
+      "lane": 6,
+      "karma": "Lointain",
+      "start": 2020,
+      "end": 2080,
+      "selected": false
+    },
+    {
+      "_id": "iDecWfzH2sQhgRefj",
+      "lane": 1,
+      "karma": "Lointain",
+      "start": 2020,
+      "end": 2080,
+      "selected": false
+    },
+    {
+      "_id": "eyjYHmtgniMAiFsT5",
+      "lane": 3,
+      "karma": "crescendi",
+      "start": 2020,
+      "end": 2080,
+      "selected": false
+    },
+    {
+      "_id": "SWxp3y3hSu8ampQf5",
+      "lane": 2,
+      "karma": "crescendi",
+      "start": 2020,
+      "end": 2080,
+      "selected": false
+    },
+    {
+      "_id": "BkPEPeuGLrrsARD83",
+      "lane": 5,
+      "karma": "tremblement",
+      "start": 2080,
+      "end": 2190,
+      "selected": false
+    },
+    {
+      "_id": "EkqnLJznmmcpJQhcc",
+      "lane": 2,
+      "karma": "tremblement",
+      "start": 2080,
+      "end": 2190,
+      "selected": false
+    },
+    {
+      "_id": "GDS2mb75cAFD4DYvH",
+      "lane": 3,
+      "karma": "tremblement",
+      "start": 2080,
+      "end": 2190,
+      "selected": false
+    },
+    {
+      "_id": "yPg6aM65gY2egMMmp",
+      "lane": 4,
+      "karma": "tremblement",
+      "start": 2080,
+      "end": 2190,
+      "selected": false
+    },
+    {
+      "_id": "bgdxmoEaAyu8QaYLd",
+      "lane": 5,
+      "karma": "onomatopée",
+      "start": 2190,
+      "end": 2260,
+      "selected": false
+    },
+    {
+      "_id": "ygB8Y23wkXkPmFkcX",
+      "lane": 2,
+      "karma": "onomatopée",
+      "start": 2190,
+      "end": 2260,
+      "selected": false
+    },
+    {
+      "_id": "HGa2geYYon3cFob6T",
+      "lane": 3,
+      "karma": "onomatopée",
+      "start": 2190,
+      "end": 2260,
+      "selected": false
+    },
+    {
+      "_id": "GwJYbdAfe8PsqRNjB",
+      "lane": 1,
+      "karma": "Aquatique",
+      "start": 2260,
+      "end": 2300,
+      "selected": false
+    },
+    {
+      "_id": "GLtsCfCqmDjQYc8KQ",
+      "lane": 3,
+      "karma": "Aquatique",
+      "start": 2260,
+      "end": 2300,
+      "selected": false
+    },
+    {
+      "_id": "igzhpo7nwur6XXR8n",
+      "lane": 4,
+      "karma": "Aquatique",
+      "start": 2260,
+      "end": 2300,
+      "selected": false
+    },
+    {
+      "_id": "5ufaSeKBHBMAq35YS",
+      "lane": 2,
+      "karma": "Aquatique",
+      "start": 2260,
+      "end": 2300,
+      "selected": false
+    },
+    {
+      "_id": "YMmeC4cXMu7ZhCFBT",
+      "lane": 6,
+      "karma": "Explosif",
+      "start": 2300,
+      "end": 2400,
+      "selected": false
+    },
+    {
+      "_id": "mBNCXuKbg22EMwC5j",
+      "lane": 0,
+      "karma": "Explosif",
+      "start": 2300,
+      "end": 2400,
+      "selected": false
+    },
+    {
+      "_id": "QKsqTNeFcDbjKxuW7",
+      "lane": 2,
+      "karma": "Explosif",
+      "start": 2300,
+      "end": 2400,
+      "selected": false
+    },
+    {
+      "_id": "cp43W9nyrQp9zRLkP",
+      "lane": 1,
+      "karma": "Explosif",
+      "start": 2300,
+      "end": 2400,
+      "selected": false
+    },
+    {
+      "_id": "ReonYXZngt3oDvgyD",
+      "lane": 4,
+      "karma": "Explosif",
+      "start": 2300,
+      "end": 2400,
+      "selected": false
+    },
+    {
+      "_id": "GrPjBPo7LpCmiDEir",
+      "lane": 3,
+      "karma": "Explosif",
+      "start": 2300,
+      "end": 2400,
+      "selected": false
+    },
+    {
+      "_id": "WZ3u8nEDfexEJhwEd",
+      "lane": 5,
+      "karma": "Vivace",
+      "start": 20,
+      "end": 50,
+      "selected": false
+    },
+    {
+      "_id": "Aq4XqMssTEXrqmKSx",
+      "lane": 0,
+      "karma": "Explosif",
+      "start": 380,
+      "end": 420,
+      "selected": false
+    },
+    {
+      "_id": "MaEuMh46XdyMyzaSY",
+      "lane": 0,
+      "karma": "Nuit",
+      "start": 2400,
+      "end": 2410,
+      "selected": false
+    },
+    {
+      "_id": "k6eJBYRWNCQtAdsci",
+      "lane": 1,
+      "karma": "Nuit",
+      "start": 2400,
+      "end": 2410,
+      "selected": false
+    },
+    {
+      "_id": "d6uzTJPuHvmZMKsgW",
+      "lane": 2,
+      "karma": "Nuit",
+      "start": 2400,
+      "end": 2410,
+      "selected": false
+    },
+    {
+      "_id": "LXPyosJeX3ndTiQEP",
+      "lane": 3,
+      "karma": "Nuit",
+      "start": 2400,
+      "end": 2410,
+      "selected": false
+    },
+    {
+      "_id": "PqMS4ZHrM4u3drG2W",
+      "lane": 4,
+      "karma": "Nuit",
+      "start": 2400,
+      "end": 2410,
+      "selected": false
+    },
+    {
+      "_id": "SfwPJdq2f2PeYjjMY",
+      "lane": 5,
+      "karma": "Nuit",
+      "start": 2400,
+      "end": 2410,
+      "selected": false
+    },
+    {
+      "_id": "vexpQ3trex5APrujR",
+      "lane": 6,
+      "karma": "Nuit",
+      "start": 2400,
+      "end": 2410,
+      "selected": false
+    }
+  ]
+}
