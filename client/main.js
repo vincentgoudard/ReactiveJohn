@@ -1,7 +1,7 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 
-import { Sequences, Lanes, Karmas, TheTime }  from '../imports/api/sequences.js';
+import { Sequences, Lanes, Karmas, Nuances, TheTime }  from '../imports/api/sequences.js';
 
 import '../imports/d3/d3.v5.js';
 import './lib/utils.js';
@@ -13,10 +13,15 @@ import './main.html';
 import '../imports/zepto.js';
 import '../imports/interface.js';
 
+import screenfull from 'screenfull';
+
+
 var TheJohn;
 
 karmas = [];
+nuances = [];
 lanes = [];
+
 
 ////////////////////////////////////////////////////
 // Test for reactive vars
@@ -45,7 +50,7 @@ const handle = Meteor.subscribe('john.public');
 
 Tracker.autorun(() => {
 	const isReady = handle.ready();
-	console.log(`Handle is ${isReady ? 'ready' : 'not ready'}`);
+	console.log(`John handle is ${isReady ? 'ready' : 'not ready'}`);
 
 	if(isReady) {
 		// get the lanes
@@ -60,15 +65,23 @@ Tracker.autorun(() => {
       $( ".laneMenu" ).append( myElement );
     }
 
-    // get the karmas
+    // get the karmas and nuances
     var karmasCollection = Karmas.find({}).fetch();
     karmas = karmasCollection[0].karmas;
+    var nuancesCollection = Nuances.find({}).fetch();
+    nuances = nuancesCollection[0].nuances;
     //console.log(karmas);
 
     // feed the karma Menu(s)
     for (var i = 0; i < karmas.length; i++) {
       var myElement = "<option value=" + karmas[i] + ">" + karmas[i] + "</option>";
       $( ".karmaMenu" ).append( myElement );
+    }
+
+        // feed the nuance Menu(s)
+    for (var i = 0; i < nuances.length; i++) {
+      var myElement = "<option value=" + nuances[i] + ">" + nuances[i] + "</option>";
+      $( ".nuanceMenu" ).append( myElement );
     }
 
     // get the events
@@ -127,6 +140,7 @@ Template.body.events({
     //const text = target.text.value;
     const lane = Number(target.laneMenu.value);
     const karma = target.karmaMenu.value;
+    const nuance = target.nuanceMenu.value;
     const start = Number(target.start.value);
     const end = Number(target.end.value);
 
@@ -136,11 +150,12 @@ Template.body.events({
     //  createdAt: new Date(), // current time
     //});
 
-    Sequences.insert({"lane": lane, "karma": karma, "start": start, "end": end});
+    Sequences.insert({"lane": lane, "karma": karma, "nuance" : nuance, "start": start, "end": end});
 
     // Clear form
     target.laneMenu.value = '0';
     target.karmaMenu.value = 'Doux';
+    target.nuanceMenu.value = 'mf';
     target.start.value = '0';
     target.end.value = '1000';
 
@@ -166,6 +181,8 @@ Template.body.events({
 
     var currentConcertDuration=0;
     var currentKarma = "par défaut";
+    var currentNuance = "mf";
+
 
     console.log("creating score...");
 
@@ -213,8 +230,10 @@ Template.body.events({
       console.log(activePlayersForThisSequence);
       for (var i = 0; i < activePlayersForThisSequence.length; i++){
         currentKarma = karmas[Math.floor(Math.random() * karmas.length)];
-        console.log("currentKarma:" + currentKarma);
-        Sequences.insert({"lane": activePlayersForThisSequence[i], "karma": currentKarma, "start": currentConcertDuration, "end": currentConcertDuration + currentEventDuration});        
+        currentNuance = nuances[Math.floor(Math.random() * nuances.length)];
+
+        console.log("currentKarma: " + currentKarma + " currentNuance: " + currentNuance);
+        Sequences.insert({"lane": activePlayersForThisSequence[i], "karma": currentKarma, "nuance": currentNuance, "start": currentConcertDuration, "end": currentConcertDuration + currentEventDuration});        
       }
 
       currentConcertDuration += currentEventDuration;
@@ -280,6 +299,16 @@ Template.body.events({
       $('#download_anchor').html("");
       var myScore = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({score:John.items}));
       $('<a href="data:' + myScore + '" download="sequences.json">download JSON</a>').appendTo('#download_anchor');
+    },
+    'click .button.fullscreen': function(e) {
+      const john_score_el = $('#john_anchor_1')[0]; // Get DOM element from jQuery collection
+      console.log("click");
+      if (screenfull.enabled) {
+        screenfull.request(john_score_el);
+      }
+    },
+    'click .button.play': function(e) {
+      $(".button.play").find('i').toggleClass('fa-play fa-pause');
     }
   });
 ///////////////////////////////////////////////////////
@@ -323,28 +352,6 @@ function init() {
     style:'normal'
   });
   
-//  xypad = new Interface.XY({
-//    background:"#fff",
-//    stroke:"#000",
-//    childWidth: 40,
-//    numChildren: 1,
-//    bounds:[0,0.06,0.9,0.9],
-//    usePhysics : false,
-//    friction : 1,
-//    activeTouch : true,
-//    maxVelocity : 100,
-//    detectCollisions : true,
-//    onvaluechange : function() {
-//      if(gConnection) 
-//        gConnection.send(JSON.stringify(this.values[0], function(key, val) {
-//                                              return val.toFixed ? Number(val.toFixed(3)) : val;
-//                                          })
-//        );
-//    },
-//    oninit: function() { this.rainbow() }
-//  });
-  
-//  panel.add(connectButton, label, xypad);
 }
 
 function writeToScreen (message) {

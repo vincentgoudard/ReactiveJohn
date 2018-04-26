@@ -1,48 +1,63 @@
 <head>
   <title>John the Meteor</title>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
 </head>
 
 
 <body>
-  <h1>John, the semi-conductor</h1>
+<div class="john-header-wrap">
+
+  <section class="john-header-playbar" role="main">
+      <button class="button fullscreen"><i class="fas fa-expand"></i></button>
+      <button class='button play'><i class="fa fa-play"></i></button>
+  </section>
+  
+  <nav class="john-header-title" role="navigation">
+    <h1>John, the semi-conductor</h1>
+  </nav>
+  
+  <aside class="john-header-info" role="complementary">
+    infos
+  </aside>
+    
+</div>
 
   <div id="john_anchor_1"></div>
-
     <div class="clear-score">
       <!-- <input type="submit" name="clear-score" value="clear score"> -->
       <button class="clear-score">clear score</button>
     </div>
     <div class="score-maker-container GUI-container">
-      <button class="score-maker-view">&#x25b6; score maker</button>
-      <div class="score-maker hidden">
-            <form class="new-score">
-                <section>
-                    <div style="float:left;margin-right:20px;">
-                        <label for="duration">concert duration</label>
-                        <input type="number" name="concertDuration" min="0" value="3600">
-                    </div>
-                    <div style="float:left;margin-right:20px;">
-                        <label for="duration">event duration min</label>
-                        <input type="number" name="eventDurationMin" min="1" max="300" value="30">
-                    </div>
-                    <div style="float:left;margin-right:20px;">
-                        <label for="email">event duration max</label>
-                        <input type="number" name="eventDurationMax" min="1" max="300" value="300">
-                    </div>
-                    <div style="float:left;margin-right:20px;">
-                        <label for="number">nb of players min</label>
-                        <input type="number" name="nbPlayersMin" min="0" max="7" value="1">
-                    </div>
-                    <div style="float:left;margin-right:20px;">
-                        <label for="number">nb of players max</label>
-                        <input type="number" name="nbPlayersMax" min="0" value="7">
-                    </div>
-                </section>
-                <input type="submit" value="create score">
-                <div style="clear:both"></div>
-            </form>
-  
-      </div>
+      <form class="new-score">
+        <!-- <button class="score-maker-view">&#x25b6; score maker</button> -->
+        <button class="score-maker-view">&#x25b6; score maker</button>
+        <input style="float:right;margin-right:20px;" type="submit" value="create score">
+        <div class="score-maker hidden">
+            <section>
+              <div style="float:left;margin-right:20px;">
+                  <label for="duration">concert duration</label>
+                  <input type="number" name="concertDuration" min="0" value="3600">
+              </div>
+              <div style="float:left;margin-right:20px;">
+                  <label for="duration">event duration min</label>
+                  <input type="number" name="eventDurationMin" min="1" max="300" value="30">
+              </div>
+              <div style="float:left;margin-right:20px;">
+                  <label for="email">event duration max</label>
+                  <input type="number" name="eventDurationMax" min="1" max="300" value="300">
+              </div>
+              <div style="float:left;margin-right:20px;">
+                  <label for="number">nb of players min</label>
+                  <input type="number" name="nbPlayersMin" min="0" max="7" value="1">
+              </div>
+              <div style="float:left;margin-right:20px;">
+                  <label for="number">nb of players max</label>
+                  <input type="number" name="nbPlayersMax" min="0" value="7">
+              </div>
+            </section>
+        </div>              
+        <div style="clear:both"></div>
+      </form>
     </div>
     <div class="clearfix"></div>
 
@@ -54,6 +69,10 @@
                   <!-- this menu is filled dynamically from the collection -->
                 </select>
                 <select class="karmaMenu" name="karmaMenu">
+                  <!-- this menu is filled dynamically from the collection -->
+                  <!-- <option value="doux">doux</option-->
+                </select>
+                <select class="nuanceMenu" name="nuanceMenu">
                   <!-- this menu is filled dynamically from the collection -->
                   <!-- <option value="doux">doux</option-->
                 </select>

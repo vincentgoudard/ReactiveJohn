@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 
-import { Sequences, Lanes, Karmas, TheTime } from '../imports/api/sequences.js';
+import { Sequences, Lanes, Karmas, Nuances, TheTime } from '../imports/api/sequences.js';
 
 const starline = "******************************************************"
 console.log(starline);
@@ -66,6 +66,7 @@ Meteor.startup(() => {
 	Lanes.remove({});
 	Sequences.remove({});
 	Karmas.remove({});
+	Nuances.remove({});
 
 	var myScoreFile = {};
 	myScoreFile = JSON.parse(Assets.getText("sequences.json"));
@@ -78,8 +79,9 @@ Meteor.startup(() => {
 	//Lanes.insert({"lanes" : ["Pierre","Serge","Laurence", "Gyorgy", "Jean", "Hugues", "Vincent"]});
 	Lanes.insert({"lanes" : myLanes});
 
-	// add sample karmas
+	// add sample karmas and nuances
 	Karmas.insert({"karmas" : ["Test", "Rebours", "Nuit", "Jour", "Agitato", "glissandi", "Presque rien", "4’33", "cosmique", "élastique", "pointilliste", "Doux","Valse","Sériel", "Explosif", "Aquatique", "Géologie sonore", "Vivace","Shuffling","Cristallin","Céleste", "Lointain", "Onomatopée", "à l'unison", "in C", "Cuivré", "En orbite", "mécanique"]});
+	Nuances.insert({"nuances" : ["ppp", "pp", "p", "mp", "mf", "f", "ff", "fff"]});
 
 	// add sample events
 	for (var i=0; i<myScore.length; i++)
@@ -105,7 +107,7 @@ Meteor.startup(() => {
 			}).fetch();
 
 		activeItems.forEach(function (item){
-			multicastOscSend(clientsIP, '/items/alive', [parseInt(item.lane), item.karma]);
+			multicastOscSend(clientsIP, '/items/alive', [parseInt(item.lane), item.karma, item.nuance]);
 		});
 		multicastOscSend(clientsIP, '/items/alive', 'done');
 

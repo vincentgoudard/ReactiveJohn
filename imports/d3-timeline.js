@@ -112,7 +112,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 				.attr("height", miniHeight)
 				.attr("class", "mini");
 
-	//main lanes and texts
+	//main lanes lines and players names
 	main.append("g").selectAll(".laneLines")
 		.data(items)
 		.enter().append("line")
@@ -120,7 +120,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		.attr("y1", function(d) {return y1(d.lane);})
 		.attr("x2", totalWidth)
 		.attr("y2", function(d) {return y1(d.lane);})
-		.attr("stroke", "lightgray")
+		.attr("stroke", "#657b83")
 	main.append("g").selectAll(".laneText")
 		.data(lanes)
 		.enter().append("text")
@@ -129,8 +129,9 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		.attr("y", function(d, i) {return y1(i + .5);})
 		.attr("dy", ".5ex")
 		.attr("text-anchor", "end")
-		.attr("class", "laneText")
-		.style("fill", function(d, i) {return "hsl(" + i / laneLength * 360. + ",50%,40%)";});// a color for each lane
+		//.attr("class", function(d, i) {return "laneText" + ' colorClass' + i;});
+		.attr("class", 'laneText');
+		//.style("fill", function(d, i) {return "hsl(" + i / laneLength * 360. + ",70%,50%)";});// a color for each lane
  
 
 	//mini lanes and texts
@@ -174,7 +175,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	mini.append("g").selectAll(".miniLabels")
 		.data(items)
 		.enter().append("text")
-		.text(function(d) {return d.karma;})
+		.text(function(d) {return d.karma + ' - ' + d.nuance;})
 		.attr("x", function(d) {return x(d.start) + 1;})
 		.attr("y", function(d) {return y2(d.lane + .5);})
 		.attr("dy", ".5ex");
@@ -204,7 +205,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
       .attr("transform", "translate(0," + miniHeight + ")")
       .call(xAxis);
 
-	var rects, labels, rbrushes, deleteButtons;
+	var rects, labels, nuanceLabels, rbrushes, deleteButtons;
 	var deleteButtonsSize = 10;
 
 	function display() {
@@ -233,15 +234,18 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.attr("x", function(d) {return x1(d.start);})
 			.attr("width", function(d) {return x1(d.end) - x1(d.start);});
 
+
+		var solarizePalette = ["#b58900", "#cb4b16", "#dc322f", "#d33682", "#6c71c4", "#268bd2", "#2aa198", "#859900"];
+
 		rects.enter().append("rect")
-			.attr("class", function(d) {return "miniItem" + d.lane;})
+			.attr("class", function(d) {return "miniItem" + d.lane + ' colorClass' + (d.lane%8);})
 			.attr("x", function(d) {return x1(d.start);})
 			.attr("y", function(d) {return y1(d.lane) + 5;})
 			.attr("width", function(d) {return x1(d.end) - x1(d.start);})
 			.attr("height", function(d) {return .8 * y1(1);})
 			.style("stroke-width", "1")
 			.style("stroke", "rgb(0,0,0)")
-			.style("fill", function(d, i) {return "hsl(" + d.lane / laneLength * 360. + ",50%,40%)";}) // a color for each lane
+			//.style("fill", function(d, i) {return "hsl(" + d.lane / laneLength * 360. + ",70%,40%)";}) // a color for each lane
 			.style("fill-opacity", "0.7")
 			.call(drag);
 		rects.exit().remove();
@@ -270,12 +274,25 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.data(visItems, function (d) { return d._id; })
 			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 1);});
 		labels.enter().append("text")
-			.text(function(d) {return (d.karma + ' - ' + d.start + ' - ' + d.end );})
+			.text(function(d) {return (d.karma + ' - ' + (d.end - d.start));})
 			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 1);})
-			.attr("y", function(d) {return y1(d.lane + .5);})
+			.attr("y", function(d) {return y1(d.lane + .4);})
 			.attr("_id", function(d){return d._id;})
 			.attr("text-anchor", "start");
 		labels.exit().remove();
+
+		nuanceLabels = itemRects.selectAll('.nuanceLabel')
+			.data(visItems, function (d) { return d._id; })
+			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 1);});
+		nuanceLabels.enter().append("text")
+			.text(function(d) {return  (d.nuance);})
+			.attr("class", "nuanceLabel")
+			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 2);})
+			.attr("y", function(d) {return y1(d.lane + .75);})
+			.attr("_id", function(d){return d._id;})
+			.attr("text-anchor", "start");
+		nuanceLabels.exit().remove();
+
 
 		// delete buttons action
 		deleteButtons.on('click', function(){
@@ -410,10 +427,11 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 		////update mongo collection
 		//console.log("d.id : ", d._id);
-		Sequences.update({"_id":d._id}, {"lane":d.lane, "karma": d.karma, "start":d.start, "end":d.end });
+		Sequences.update({"_id":d._id}, {"lane":d.lane, "karma": d.karma, "nuance": d.nuance, "start":d.start, "end":d.end });
 
 		//console.log(Sequences.find({}).fetch());
 
 	}
 
 };
+
