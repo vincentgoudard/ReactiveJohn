@@ -4,7 +4,7 @@ import { Sequences, Lanes, Karmas, TheTime } from '../imports/api/sequences.js';
 
 const starline = "******************************************************"
 console.log(starline);
-console.log("Hello world, je suis le server meteor et je printe ici");
+console.log("Hello world, I am John's server and I print here!");
 console.log(starline);
 console.log();
 
@@ -207,17 +207,16 @@ var myTimeHandle = myTimeCursor.observe({
 // Sending OSC with OSC-min //
 //////////////////////////////
 
-var dgram, osc, outport, sendHeartbeat, client;
+import osc from 'osc-min';
+// equivalent node.js syntax : osc = require('osc-min');
+import dgram from 'dgram';
+// equivalent node.js syntax : dgram = require("dgram");
 
-osc = require('osc-min');
-dgram = require("dgram");
-client = dgram.createSocket("udp4");
-
-outport = 7474;
-host = 'localhost';
+var client = dgram.createSocket("udp4");
+var host = 'localhost';
+var outport = 7474;
 
 console.log("sending heartbeat messages to http://localhost:" + outport);
-
 
 multicastOscSend = function(IPlist, zeAddress, zeArgs) {
   var buf;

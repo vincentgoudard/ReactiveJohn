@@ -41,30 +41,31 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	var laneLength = lanes.length;
 
 	// find biggest value for time end
-	var timeBegin = 0,
-		timeEnd = 3600;
-
-//		timeEnd = -Infinity;
-	var i;
-	for(i=0; i < items.length; i++) {
+	var timeBegin = 0, timeEnd = 0;
+	for(var i=0; i < items.length; i++) {
 		if( items[i].end > timeEnd) timeEnd = items[i].end;
 	}
+
 	console.log("max time: ", timeEnd);
+	
+	console.log("dyn-width", $('#john_anchor_1').width());
 
 
 	// définit les dimensions du graph
 	var m = [20, 15, 15, 120], //top right bottom left
-		w = 1200 - m[1] - m[3],
-		h = 500 - m[0] - m[2],
-		miniHeight = laneLength * laneLength + 50,
-		mainHeight = h - miniHeight - 50;
+		//w = 1200 - m[1] - m[3],
+		//totalWidth = 1200 - m[1] - m[3],
+		totalWidth = $('#john_anchor_1').width() - m[1] - m[3],
+		mainHeight = laneLength*50,
+		miniHeight = laneLength * 12,
+		totalHeight = mainHeight + miniHeight + 20;
 
 	//scales
 	var x = d3.scale.linear()
 			.domain([timeBegin, timeEnd])
-			.range([0, w]);
+			.range([0, totalWidth]);
 	var x1 = d3.scale.linear()
-			.range([0, w]);
+			.range([0, totalWidth]);
 	var y1 = d3.scale.linear()
 			.domain([0, laneLength])
 			.range([0, mainHeight]);
@@ -76,8 +77,9 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	// create the chart as an svg element
 	var chart = d3.select(main_anchor)
 				.append("svg")
-				.attr("width", w + m[1] + m[3])
-				.attr("height", h + m[0] + m[2])
+				.attr("width", '100%') // width is defined in CSS
+				//.attr('viewBox','0 0 '+Math.min(width,height)+' '+Math.min(width,height))
+				.attr("height", totalHeight + m[0] + m[2])
 				.attr("class", "chart");
 
 	// and a start/stop button underneath
@@ -95,18 +97,18 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	chart.append("defs").append("clipPath")
 		.attr("id", "clip")
 		.append("rect")
-		.attr("width", w)
+		.attr("width", totalWidth)
 		.attr("height", mainHeight);
 
 	// definit les attributs d'affichage pour main et mini
 	var main = chart.append("g")
 				.attr("transform", "translate(" + m[3] + "," + m[0] + ")")
-				.attr("width", w)
+				.attr("width", totalWidth)
 				.attr("height", mainHeight)
 				.attr("class", "main");
 	var mini = chart.append("g")
-				.attr("transform", "translate(" + m[3] + "," + (mainHeight + m[0]) + ")")
-				.attr("width", w)
+				.attr("transform", "translate(" + m[3] + "," + (mainHeight + m[0] + 20) + ")")
+				.attr("width", totalWidth)
 				.attr("height", miniHeight)
 				.attr("class", "mini");
 
@@ -116,7 +118,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		.enter().append("line")
 		.attr("x1", m[1])
 		.attr("y1", function(d) {return y1(d.lane);})
-		.attr("x2", w)
+		.attr("x2", totalWidth)
 		.attr("y2", function(d) {return y1(d.lane);})
 		.attr("stroke", "lightgray")
 	main.append("g").selectAll(".laneText")
@@ -137,7 +139,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		.enter().append("line")
 		.attr("x1", m[1])
 		.attr("y1", function(d) {return y2(d.lane);})
-		.attr("x2", w)
+		.attr("x2", totalWidth)
 		.attr("y2", function(d) {return y2(d.lane);})
 		.attr("stroke", "lightgray");
 	mini.append("g").selectAll(".laneText")
@@ -299,7 +301,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 		// make condition that stop cursor if time exceeds graph domain
 		if (currentTime > timeEnd ) {
-			console.log(w);
+			console.log("time overflow");
 			return;
 		}
 
@@ -338,6 +340,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		
 		var minExtent = brush.extent()[0],
 			maxExtent = brush.extent()[1];
+
 		//console.log('min/max brush', minExtent, maxExtent);
 
 		var thisDatum = d;
@@ -373,7 +376,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	
 	  	var minExtent = brush.extent()[0],
 			maxExtent = brush.extent()[1];
-		
+
 		//x1.domain([0, maxExtent-minExtent]);
 
 		// scale function from graph position to data value
