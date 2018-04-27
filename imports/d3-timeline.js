@@ -112,9 +112,13 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 				.attr("height", miniHeight)
 				.attr("class", "mini");
 
+
+	var visibleLanes = [0,4,6];
+		visibleLanesItems = lanes.filter(function(d, i) { return (($.inArray(i, visibleLanes))!=-1)});
+
 	//main lanes lines and players names
 	main.append("g").selectAll(".laneLines")
-		.data(lanes)
+		.data(visibleLanesItems)
 		.enter().append("line")
 		.attr("x1", m[1])
 		.attr("y1", function(d, i) {return y1(i);})
@@ -122,7 +126,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		.attr("y2", function(d, i) {return y1(i);})
 		.attr("stroke", "#657b83")
 	main.append("g").selectAll(".laneText")
-		.data(lanes)
+		.data(visibleLanesItems)
 		.enter().append("text")
 		.text(function(d) {return d;})
 		.attr("x", -m[1])
@@ -213,11 +217,11 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		var minExtent = brush.extent()[0],
 			maxExtent = brush.extent()[1];
 
-		// get a list with items inside the visible scope
+		// get a list with items inside the brush' scope
 		var	visItems = items.filter(function(d) {return d.start < maxExtent && d.end > minExtent;});
 
 		// mask hidden lanes
-		var visibleLanes = [0,4,6];
+		visibleLanes = [0,4,6];
 		visItems = visItems.filter(function(d) { return (($.inArray(d.lane, visibleLanes))!=-1)});
 
 		mini.select(".brush")
@@ -232,19 +236,18 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
       	//	.attr("transform", "translate(0," + mainHeight + ")")
       	//	.call(xAxis2);
 
+		var solarizePalette = ["#b58900", "#cb4b16", "#dc322f", "#d33682", "#6c71c4", "#268bd2", "#2aa198", "#859900"];
+
 		//update main item rects
 		rects = itemRects.selectAll("rect")
 			.data(visItems, function(d) { return d._id; })
 			.attr("x", function(d) {return x1(d.start);})
 			.attr("width", function(d) {return x1(d.end) - x1(d.start);});
-
-
-		var solarizePalette = ["#b58900", "#cb4b16", "#dc322f", "#d33682", "#6c71c4", "#268bd2", "#2aa198", "#859900"];
-
 		rects.enter().append("rect")
 			.attr("class", function(d) {return "miniItem" + d.lane + ' colorClass' + (d.lane%8);})
 			.attr("x", function(d) {return x1(d.start);})
-			.attr("y", function(d) {return y1(d.lane) + 5;})
+			//.attr("y", function(d) {return y1(d.lane) + 5;})
+			.attr("y", function(d) {return y1(($.inArray(d.lane, visibleLanes))) + 5;})
 			.attr("width", function(d) {return x1(d.end) - x1(d.start);})
 			.attr("height", function(d) {return .8 * y1(1);})
 			.style("stroke-width", "1")
@@ -261,7 +264,8 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		deleteButtons.enter().append("rect")
 			.attr("class", function(d) {return "deleteButtons";})
 			.attr("x", function(d) {return (x1(d.end) - deleteButtonsSize);})
-			.attr("y", function(d) {return y1(d.lane) + 5;})
+			//.attr("y", function(d) {return y1(d.lane) + 5;})
+			.attr("y", function(d) {return y1(($.inArray(d.lane, visibleLanes))) + 5;})
 			.attr("width", function(d) {return deleteButtonsSize;})
 			.attr("height", function(d) {return deleteButtonsSize;})
 			.attr("_id", function(d){return d._id;})
@@ -280,7 +284,8 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		labels.enter().append("text")
 			.text(function(d) {return (d.karma + ' - ' + (d.end - d.start));})
 			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 1);})
-			.attr("y", function(d) {return y1(d.lane + .4);})
+			//.attr("y", function(d) {return y1(d.lane + .4);})
+			.attr("y", function(d) {return y1($.inArray(d.lane, visibleLanes)+ 0.4);})
 			.attr("_id", function(d){return d._id;})
 			.attr("text-anchor", "start");
 		labels.exit().remove();
@@ -292,7 +297,8 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.text(function(d) {return  (d.nuance);})
 			.attr("class", "nuanceLabel")
 			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 2);})
-			.attr("y", function(d) {return y1(d.lane + .75);})
+			//.attr("y", function(d) {return y1(d.lane + .75);})
+			.attr("y", function(d) {return y1($.inArray(d.lane, visibleLanes)+ .75);})
 			.attr("_id", function(d){return d._id;})
 			.attr("text-anchor", "start");
 		nuanceLabels.exit().remove();
