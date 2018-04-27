@@ -40,6 +40,10 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 	var laneLength = lanes.length;
 
+	var visibleLanes = [0, 1, 2, 3, 4, 5, 6];
+		visibleLanesItems = lanes.filter(function(d, i) { return (($.inArray(i, visibleLanes))!=-1)});
+
+
 	// find biggest value for time end
 	var timeBegin = 0, timeEnd = 0;
 	for(var i=0; i < items.length; i++) {
@@ -56,23 +60,28 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		//w = 1200 - m[1] - m[3],
 		//totalWidth = 1200 - m[1] - m[3],
 		totalWidth = $('#john_anchor_1').width() - m[1] - m[3],
-		mainHeight = laneLength*50,
+		mainHeight = 600; // laneLength * 50,
 		miniHeight = laneLength * 12,
 		totalHeight = mainHeight + miniHeight + 20;
 
-	//scales
-	var x = d3.scale.linear()
+	var x, x1, y1, y2;
+
+	function computeScales() {
+		//scales
+		x = d3.scale.linear()
 			.domain([timeBegin, timeEnd])
 			.range([0, totalWidth]);
-	var x1 = d3.scale.linear()
+		x1 = d3.scale.linear()
 			.range([0, totalWidth]);
-	var y1 = d3.scale.linear()
-			.domain([0, laneLength])
+		y1 = d3.scale.linear()
+			.domain([0, visibleLanes.length])
 			.range([0, mainHeight]);
-	var y2 = d3.scale.linear()
+		y2 = d3.scale.linear()
 			.domain([0, laneLength])
 			.range([0, miniHeight]);
-	
+	}
+
+	computeScales();
 
 	// create the chart as an svg element
 	var chart = d3.select(main_anchor)
@@ -112,10 +121,6 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 				.attr("height", miniHeight)
 				.attr("class", "mini");
 
-
-	var visibleLanes = [0,4,6];
-		visibleLanesItems = lanes.filter(function(d, i) { return (($.inArray(i, visibleLanes))!=-1)});
-
 	//main lanes lines and players names
 	main.append("g").selectAll(".laneLines")
 		.data(visibleLanesItems)
@@ -147,10 +152,11 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		.attr("x2", totalWidth)
 		.attr("y2", function(d) {return y2(d.lane);})
 		.attr("stroke", "lightgray");
-	mini.append("g").selectAll(".laneText")
+	var miniLaneText = mini.append("g").selectAll(".laneText")
 		.data(lanes)
 		.enter().append("text")
 		.text(function(d) {return d;})
+		.attr("_laneid", function(d, i){return i;})
 		.attr("x", -m[1])
 		.attr("y", function(d, i) {return y2(i + .5);})
 		.attr("dy", ".5ex")
@@ -212,6 +218,22 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	var rects, labels, nuanceLabels, rbrushes, deleteButtons;
 	var deleteButtonsSize = 10;
 
+	// toggle lane visibility by clicking on miniLane texts
+	miniLaneText.on('click', function(){
+		//var theQuery = this.getAttribute('lane');
+		// var theQuery = {'_id':this.getAttribute('_id')};
+		var laneID = Number(this.getAttribute('_laneid'));
+		var index = visibleLanes.indexOf(laneID);
+   		if (index === -1) {
+   		    visibleLanes.push(laneID);
+   		} else {
+   		    visibleLanes.splice(index, 1);
+   		}
+   		console.log(visibleLanes);
+		computeScales();
+   		display();
+	});
+
 	function display() {
 
 		var minExtent = brush.extent()[0],
@@ -221,7 +243,6 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		var	visItems = items.filter(function(d) {return d.start < maxExtent && d.end > minExtent;});
 
 		// mask hidden lanes
-		visibleLanes = [0,4,6];
 		visItems = visItems.filter(function(d) { return (($.inArray(d.lane, visibleLanes))!=-1)});
 
 		mini.select(".brush")
