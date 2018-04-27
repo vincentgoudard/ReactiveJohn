@@ -114,12 +114,12 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 	//main lanes lines and players names
 	main.append("g").selectAll(".laneLines")
-		.data(items)
+		.data(lanes)
 		.enter().append("line")
 		.attr("x1", m[1])
-		.attr("y1", function(d) {return y1(d.lane);})
+		.attr("y1", function(d, i) {return y1(i);})
 		.attr("x2", totalWidth)
-		.attr("y2", function(d) {return y1(d.lane);})
+		.attr("y2", function(d, i) {return y1(i);})
 		.attr("stroke", "#657b83")
 	main.append("g").selectAll(".laneText")
 		.data(lanes)
@@ -216,6 +216,10 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		// get a list with items inside the visible scope
 		var	visItems = items.filter(function(d) {return d.start < maxExtent && d.end > minExtent;});
 
+		// mask hidden lanes
+		var visibleLanes = [0,4,6];
+		visItems = visItems.filter(function(d) { return (($.inArray(d.lane, visibleLanes))!=-1)});
+
 		mini.select(".brush")
 			.call(brush.extent([minExtent, maxExtent]));
 
@@ -230,7 +234,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 		//update main item rects
 		rects = itemRects.selectAll("rect")
-				.data(visItems, function(d) { return d._id; })
+			.data(visItems, function(d) { return d._id; })
 			.attr("x", function(d) {return x1(d.start);})
 			.attr("width", function(d) {return x1(d.end) - x1(d.start);});
 
@@ -251,7 +255,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		rects.exit().remove();
 
 		deleteButtons = itemRects.selectAll("rect.deleteButtons")
-				.data(visItems, function(d) { return d._id; })
+			.data(visItems, function(d) { return d._id; })
 			.attr("x", function(d) {return (x1(d.end) - deleteButtonsSize);})
 			.attr("width", function(d) {return deleteButtonsSize;});
 		deleteButtons.enter().append("rect")
