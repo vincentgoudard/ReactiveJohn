@@ -2,8 +2,8 @@
 
 Draft for a reactive web version of [John sequencer](http://vincentgoudard.com/john/).
 
-As a Meteor app, John consist of 
-- a server requiring some installation (see below).
+As a Meteor app, John consists of :
+- a server requiring some installation (see below);
 - a client that will run on any web browser without needing to install anything.
 
 
