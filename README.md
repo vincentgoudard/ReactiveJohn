@@ -1,5 +1,5 @@
 # ReactiveJohn (draft)
-
+======
 Draft for a reactive web version of [John sequencer](http://vincentgoudard.com/john/).
 
 As a Meteor app, John consists of :
@@ -8,7 +8,7 @@ As a Meteor app, John consists of :
 
 
 ## Installation
-
+------
 To install and run John server :
 
 1. [Install Meteor](https://www.meteor.com/install);
@@ -35,7 +35,7 @@ meteor run
 
 
 ## Usage
-
+------
 You can then create a random score (with the score maker).
 You can move events (horizontal drag) and rescale them (vertical drag).
 You can navigate in the score with the bottom view area in blue.
