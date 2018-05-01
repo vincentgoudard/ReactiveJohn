@@ -40,3 +40,8 @@ John is also sending OSC messages over UDP on port 7474.
 You can find an example [Max](http://cycling74.com/) patch in the Max folder.
 
 For OSC communication, John relies on [osc-min](https://github.com/russellmcc/node-osc-min) by @russellmcc.
+
+Licence
+------
+If you happen to use John, please let me know what uts about!
+And if you have troubles using it, please let me knos abouotutè
