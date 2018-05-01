@@ -31,7 +31,7 @@ meteor run
 => Started your app.
 => App running at: http://localhost:4000/
 ```
-7. Say "hell yes!" and open a browser at url http://localhost:4000/ (you should maybe allow your firewall to accept that)
+7. Scream "hell yes!" and open a browser at url http://localhost:4000/ (you should maybe allow your firewall to accept that)
 
 
 ##Usage
