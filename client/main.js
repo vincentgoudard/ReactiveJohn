@@ -306,10 +306,11 @@ Template.body.events({
       if (screenfull.enabled) {
         screenfull.request(john_score_el);
       }
-    },
-    'click .button.play': function(e) {
-      $(".button.play").find('i').toggleClass('fa-play fa-pause');
     }
+    //,
+    //'click .button.play': function(e) {
+    //  $(".button.play").find('i').toggleClass('fa-play fa-pause');
+    //}
   });
 ///////////////////////////////////////////////////////
 

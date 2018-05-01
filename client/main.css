@@ -79,7 +79,7 @@ h1 {
 	font-style: normal;
 	font-variant: normal;
 	font-weight: 500;
-	line-height: 26.4px;
+
 }
 h2, h3 {
 	font-family: Trebuchet MS,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Tahoma,sans-serif;
@@ -290,9 +290,15 @@ div.GUI-container{
  }
 
  .john-header-playbar {
-  width: 10%;
+  width: 200px;
   text-align: center;
 }
+
+.current_time {
+	margin-left:20px;
+	font-size : 24px;
+}
+
 .john-header-title,
 .john-header-info {
   -webkit-box-flex: 1;      /* OLD - iOS 6-, Safari 3.1-6 */
@@ -334,12 +340,11 @@ div.GUI-container{
 
 .button {
 	font-size: 16px;
-	padding:0;
+	padding: 0;
   	border: 0;
  	background: #93a1a1;
   	width: 24px;
   	height: 24px;
-  	text-align: center;
 }
 
 .button:hover {
