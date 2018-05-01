@@ -8,7 +8,7 @@ As a Meteor app, John consists of :
 - a client that will run on any web browser without needing to install anything.
 
 
-Installation
+Installing John server
 ------
 To install and run John server :
 
@@ -32,7 +32,7 @@ meteor run
 7. Scream "hell yes!" and open a browser at url http://localhost:4000/ (you should maybe allow your firewall to accept that)
 
 
-Usage
+Using John clients
 ------
 You can then create a random score (with the score maker).
 You can move events (horizontal drag) and rescale them (vertical drag).
