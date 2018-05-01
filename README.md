@@ -10,8 +10,6 @@ As a Meteor app, John consists of :
 
 Installing John server
 ------
-To install and run John server :
-
 1. [Install Meteor](https://www.meteor.com/install);
 2. Clone this repository or download it as zip;
 3. Unzip it, open a bash and go to root folder;
