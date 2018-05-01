@@ -1,5 +1,6 @@
 # ReactiveJohn (draft)
 ======
+
 Draft for a reactive web version of [John sequencer](http://vincentgoudard.com/john/).
 
 As a Meteor app, John consists of :
