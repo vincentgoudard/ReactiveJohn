@@ -14,10 +14,7 @@ To install and run John server :
 1. [Install Meteor](https://www.meteor.com/install);
 2. Clone this repository or download it as zip;
 3. Unzip it, open a bash and go to root folder;
-3. Install [screenfull](https://www.npmjs.com/package/screenfull) package by running
-```Bash
-meteor npm install --save @babel/runtime screenfull
-```
+3. Install [screenfull](https://www.npmjs.com/package/screenfull) package by running `meteor npm install --save @babel/runtime screenfull`
 4. Install [osc-min](https://www.npmjs.com/package/osc-min) package by running
 ```Bash
 meteor npm install --save osc-min
