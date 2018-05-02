@@ -50,16 +50,16 @@ const handle = Meteor.subscribe('john.public');
 
 Tracker.autorun(() => {
 	const isReady = handle.ready();
-	console.log(`John handle is ${isReady ? 'ready' : 'not ready'}`);
+	console.log(`John < I am ${isReady ? 'ready' : 'not ready'}`);
 
 	if(isReady) {
 		// get the lanes
 		var lanesCollection = Lanes.find({}).fetch();
 		lanes = lanesCollection[0].lanes;
-    console.log("lanes.length" + lanes.length);
+    console.log("John < lanes.length: " + lanes);
 
 
-    // feed the lane Menu
+    // feed the lane Menus
     for (var i = 0; i < lanes.length; i++) {
       var myElement = "<option value=" + i + ">" + lanes[i] + "</option>";
       $( ".laneMenu" ).append( myElement );
@@ -70,7 +70,8 @@ Tracker.autorun(() => {
     karmas = karmasCollection[0].karmas;
     var nuancesCollection = Nuances.find({}).fetch();
     nuances = nuancesCollection[0].nuances;
-    //console.log(karmas);
+    console.log('John < nuances : ' + nuances);   
+    console.log('John < karmas : ' + karmasCollection[0].karmas);
 
     // feed the karma Menu(s)
     for (var i = 0; i < karmas.length; i++) {
@@ -177,14 +178,14 @@ Template.body.events({
 
     const formEventDurationSpan = formEventDurationMax - formEventDurationMin;
     const formNbPlayersSpan = formNbPlayersMax - formNbPlayersMin;
-    console.log("formNbPlayersSpan " + formNbPlayersSpan);
+    console.log('John < formNbPlayersSpan: ' + formNbPlayersSpan);
 
     var currentConcertDuration=0;
     var currentKarma = "par défaut";
     var currentNuance = "mf";
 
 
-    console.log("creating score...");
+    console.log('John < creating score...');
 
     // allPlayers contains indices of all active players
     allPlayers = [];
@@ -205,7 +206,7 @@ Template.body.events({
       var currentEventDuration = jUtils.roundN(( Math.random() * formEventDurationSpan ) + formEventDurationMin, 10);
 
       //var activePlayersForThisSequence = Meteor.myFunctions.shuffle(players).slice(nPlayers);
-      console.log("currentConcertDuration: " + currentConcertDuration + " - nPlayers: " + nPlayers + " - event duration: " + currentEventDuration);
+      console.log('John < currentConcertDuration: ' + currentConcertDuration + ' - nPlayers: ' + nPlayers + ' - event duration: ' + currentEventDuration);
 
       var activePlayersForThisSequence = [];
       var uniqueRandoms = [];
@@ -232,7 +233,7 @@ Template.body.events({
         currentKarma = karmas[Math.floor(Math.random() * karmas.length)];
         currentNuance = nuances[Math.floor(Math.random() * nuances.length)];
 
-        console.log("currentKarma: " + currentKarma + " currentNuance: " + currentNuance);
+        console.log("John < currentKarma: " + currentKarma + " currentNuance: " + currentNuance);
         Sequences.insert({"lane": activePlayersForThisSequence[i], "karma": currentKarma, "nuance": currentNuance, "start": currentConcertDuration, "end": currentConcertDuration + currentEventDuration});        
       }
 
@@ -276,7 +277,7 @@ Template.body.events({
     'click .event-delete': function(e) {
       // Prevent default browser form submit
       e.preventDefault();
-      console.log("yohou");
+      console.log('John < deleted event ' + element._id);
       // Get value from form element        
       function deleteSelectedItem(element) {
         if (element.selected){

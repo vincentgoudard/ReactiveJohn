@@ -120,28 +120,32 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		.attr("width", totalWidth)
 		.attr("height", mainHeight);
 
-	// definit les attributs d'affichage pour main et mini
-	var main = chart.append("g")
-				.attr("transform", "translate(" + m[3] + "," + m[0] + ")")
-				.attr("width", totalWidth)
-				.attr("height", mainHeight)
-				.attr("class", "main");
-	var mini = chart.append("g")
-				.attr("transform", "translate(" + m[3] + "," + (mainHeight + m[0] + 20) + ")")
-				.attr("width", totalWidth)
-				.attr("height", miniHeight)
-				.attr("class", "mini");
+	// Create svg groups
+	var main = chart.append("g");
+	var mini = chart.append("g");
+	var mainlaneLines = main.append("g");
+	var mainlaneText = main.append("g");
+
+	main.attr("transform", "translate(" + m[3] + "," + m[0] + ")")
+		.attr("width", totalWidth)
+		.attr("height", mainHeight)
+		.attr("class", "main");
+	mini.attr("transform", "translate(" + m[3] + "," + (mainHeight + m[0] + 20) + ")")
+		.attr("width", totalWidth)
+		.attr("height", miniHeight)
+		.attr("class", "mini");
 
 	//main lanes lines and players names
-	main.append("g").selectAll(".laneLines")
+	mainlaneLines.selectAll(".laneLines")
 		.data(visibleLanesItems)
 		.enter().append("line")
 		.attr("x1", m[1])
 		.attr("y1", function(d, i) {return y1(i);})
 		.attr("x2", totalWidth)
 		.attr("y2", function(d, i) {return y1(i);})
-		.attr("stroke", "#657b83")
-	main.append("g").selectAll(".laneText")
+		.attr("stroke", "#657b83");
+		
+	mainlaneText.selectAll(".laneText")
 		.data(visibleLanesItems)
 		.enter().append("text")
 		.text(function(d) {return d;})
@@ -162,7 +166,8 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		.attr("y1", function(d) {return y2(d.lane);})
 		.attr("x2", totalWidth)
 		.attr("y2", function(d) {return y2(d.lane);})
-		.attr("stroke", "lightgray");
+		.attr("class", function(d) {return "miniItem separatorLine" + ' laneIndex' + (d.lane%8);})
+		.attr("stroke", "#657b83");
 	var miniLaneText = mini.append("g").selectAll(".laneText")
 		.data(lanes)
 		.enter().append("text")
@@ -190,7 +195,11 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		.attr("width", function(d) {return x(d.end - d.start);})
 		.attr("height", 12)
 		//.style("fill", function(d, i) {return "hsl(" + d.lane / laneLength * 360. + ",50%,40%)";}) // a color for each lane
-		.style("fill-opacity", "0.7");
+		.style("fill-opacity", "0.7")
+		.style("stroke-width", "1")
+		.style("stroke", "#073642")
+		.attr("z-index", function(d){return d.start;});
+
 
 	//mini labels
 	mini.append("g").selectAll(".miniLabels")
@@ -199,7 +208,8 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		.text(function(d) {return d.karma + ' - ' + d.nuance;})
 		.attr("x", function(d) {return x(d.start) + 1;})
 		.attr("y", function(d) {return y2(d.lane + .5);})
-		.attr("dy", ".5ex");
+		.attr("dy", ".5ex")
+		.attr("z-index", function(d){return d.start;});
 
 
 	//brush - define the "brush" (selected area) and make the display() function the listener when brush moves

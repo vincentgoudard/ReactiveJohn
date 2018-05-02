@@ -4,7 +4,7 @@ import { Sequences, Lanes, Karmas, Nuances, TheTime } from '../imports/api/seque
 
 const starline = "******************************************************"
 console.log(starline);
-console.log("Hello world, I am John's server and I print here!");
+console.log("* Hello world, I am John's server and I print here!  *");
 console.log(starline);
 console.log();
 
@@ -72,8 +72,9 @@ Meteor.startup(() => {
 	myScoreFile = JSON.parse(Assets.getText("sequences.json"));
 	myScore = myScoreFile.score;
 	myLanes = myScoreFile.lanes;
-	console.log(myScore);
-	console.log(myLanes);
+	//console.log(myScore);
+	console.log('John < I loaded a score from /private/sequences.json with players:');
+	console.log('     <   ' +  myLanes);
 
 	// add sample players
 	//Lanes.insert({"lanes" : ["Pierre","Serge","Laurence", "Gyorgy", "Jean", "Hugues", "Vincent"]});
@@ -184,27 +185,6 @@ Meteor.startup(() => {
 //udpPort.open();
 //
 
-
-// DB cursor to detecte any change on sequences collection.
-// found here http://stackoverflow.com/questions/10103541/how-does-meteor-receive-updates-to-the-results-of-a-mongodb-query
-var mySequenceCursor = Sequences.find({});
-// watch the cursor for changes
-var mySequenceHandle = mySequenceCursor.observe({
-  added: function (post) { multicastOscSend(clientsIP, '/items/add', post._id) }, // run when post is added
-  changed: function (post) { multicastOscSend(clientsIP, '/items/changed', post._id)  }, // run when post is changed
-  removed: function (post) { multicastOscSend(clientsIP, '/items/removed', post._id)  } // run when post is removed
-});
-
-var myTimeCursor = TheTime.find({});
-var myTimeHandle = myTimeCursor.observe({
-  changed: function (post) {
-  	if(post.playing==true){
-   		//console.log(post); 
-  		multicastOscSend(clientsIP, '/time', (post.time - post.john_start));		
-  	}
-  }, // run when post is changed
-});
-
 //////////////////////////////
 // Sending OSC with OSC-min //
 //////////////////////////////
@@ -218,7 +198,7 @@ var client = dgram.createSocket("udp4");
 var host = 'localhost';
 var outport = 7474;
 
-console.log("sending heartbeat messages to http://localhost:" + outport);
+console.log("John < I'm sending heartbeat messages to http://localhost:" + outport);
 
 multicastOscSend = function(IPlist, zeAddress, zeArgs) {
   var buf;
@@ -240,6 +220,27 @@ OscSend = function(zeAddress, zeArgs) {
   });
   return client.send(buf, 0, buf.length, outport, host);
 };
+
+// DB cursor to detecte any change on sequences collection.
+// found here http://stackoverflow.com/questions/10103541/how-does-meteor-receive-updates-to-the-results-of-a-mongodb-query
+var mySequenceCursor = Sequences.find({});
+// watch the cursor for changes
+var mySequenceHandle = mySequenceCursor.observe({
+  added: function (post) { multicastOscSend(clientsIP, '/items/add', post._id) }, // run when post is added
+  changed: function (post) { multicastOscSend(clientsIP, '/items/changed', post._id)  }, // run when post is changed
+  removed: function (post) { multicastOscSend(clientsIP, '/items/removed', post._id)  } // run when post is removed
+});
+
+var myTimeCursor = TheTime.find({});
+var myTimeHandle = myTimeCursor.observe({
+  changed: function (post) {
+  	if(post.playing==true){
+   		//console.log(post); 
+  		multicastOscSend(clientsIP, '/time', (post.time - post.john_start));		
+  	}
+  }, // run when post is changed
+});
+
 
 // send heartbeat to connected clients every 2 seconds
 setInterval(function(){multicastOscSend(clientsIP, '/heartbeat')}, 2000);
