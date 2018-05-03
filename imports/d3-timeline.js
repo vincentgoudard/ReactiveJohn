@@ -16,17 +16,21 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 	var selectedEvents = [];
 	var TheSharedTime;
+
 	this.setTime = function(time, start_time, playing) {
 		TheSharedTime = time;
 
 		if(playing)
 		{
-			start_button.text("stop").style("background-color", "LightGreen");
+			console.log(start_time);
 			timeOffset = start_time;
+			$(".button.play").find('i').addClass('fa-pause');
+			$(".button.play").find('i').removeClass('fa-play');
 			animate();
 		}
 		else {
-		   start_button.text("start").style("background-color", "LightCoral");
+			$(".button.play").find('i').addClass('fa-play');
+			$(".button.play").find('i').removeClass('fa-pause');
 		}
 	}
 
@@ -39,6 +43,12 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
     .on("dragend", dragend);
 
 	var laneLength = lanes.length;
+
+	// visibleLanes defines the indices of visible lanes
+	var visibleLanes = [0, 1, 2, 3, 4, 5, 6];
+	// filter out elements from score which do not belong to visible lanes
+		visibleLanesItems = lanes.filter(function(d, i) { return (($.inArray(i, visibleLanes))!=-1)});
+
 
 	// find biggest value for time end
 	var timeBegin = 0, timeEnd = 0;
@@ -55,24 +65,39 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	var m = [20, 15, 15, 120], //top right bottom left
 		//w = 1200 - m[1] - m[3],
 		//totalWidth = 1200 - m[1] - m[3],
-		totalWidth = $('#john_anchor_1').width() - m[1] - m[3],
-		mainHeight = laneLength*50,
-		miniHeight = laneLength * 12,
-		totalHeight = mainHeight + miniHeight + 20;
+		totalWidth,
+		mainHeight, // fixed height for main view,
+		miniHeight, // fixed LANE height for mini view,
+		totalHeight;
 
-	//scales
-	var x = d3.scale.linear()
+	var x, x1, y1, y2;
+
+	function computeScales() {
+
+		totalWidth = $('#john_anchor_1').width() - m[1] - m[3];
+		mainHeight = 600; // fixed height for main view,
+		miniHeight = laneLength * 14; // fixed LANE height for mini view,
+		totalHeight = mainHeight + miniHeight + 30;
+		//scales
+		x = d3.scale.linear()
 			.domain([timeBegin, timeEnd])
 			.range([0, totalWidth]);
-	var x1 = d3.scale.linear()
+		x1 = d3.scale.linear()
 			.range([0, totalWidth]);
-	var y1 = d3.scale.linear()
-			.domain([0, laneLength])
+		y1 = d3.scale.linear()
+			.domain([0, visibleLanes.length])
 			.range([0, mainHeight]);
-	var y2 = d3.scale.linear()
+		y2 = d3.scale.linear()
 			.domain([0, laneLength])
 			.range([0, miniHeight]);
-	
+	}
+
+	computeScales();
+
+	$( window).resize(function() {
+  		computeScales();
+	});
+
 
 	// create the chart as an svg element
 	var chart = d3.select(main_anchor)
@@ -82,16 +107,11 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 				.attr("height", totalHeight + m[0] + m[2])
 				.attr("class", "chart");
 
-	// and a start/stop button underneath
-	var start_button = d3.select(main_anchor)
-						.append("button")
-						.text("start")
-						.on("click", function() {start_callback(TheSharedTime);});
+	// and assign callback to play button
+	var start_button = d3.select('.button.play').on("click", function() {
+							start_callback(TheSharedTime);
+						});
 
-	// and a display of the current transport time
-	var sequenceTimeDisplay = d3.select(main_anchor)
-						.append("div")
-						.text("current time : 0s");
 
 	// define a clip-path matching main height to prevent rects to spread ontop of lanes names
 	chart.append("defs").append("clipPath")
@@ -100,29 +120,33 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		.attr("width", totalWidth)
 		.attr("height", mainHeight);
 
-	// definit les attributs d'affichage pour main et mini
-	var main = chart.append("g")
-				.attr("transform", "translate(" + m[3] + "," + m[0] + ")")
-				.attr("width", totalWidth)
-				.attr("height", mainHeight)
-				.attr("class", "main");
-	var mini = chart.append("g")
-				.attr("transform", "translate(" + m[3] + "," + (mainHeight + m[0] + 20) + ")")
-				.attr("width", totalWidth)
-				.attr("height", miniHeight)
-				.attr("class", "mini");
+	// Create svg groups
+	var main = chart.append("g");
+	var mini = chart.append("g");
+	var mainlaneLines = main.append("g");
+	var mainlaneText = main.append("g");
+
+	main.attr("transform", "translate(" + m[3] + "," + m[0] + ")")
+		.attr("width", totalWidth)
+		.attr("height", mainHeight)
+		.attr("class", "main");
+	mini.attr("transform", "translate(" + m[3] + "," + (mainHeight + m[0] + 20) + ")")
+		.attr("width", totalWidth)
+		.attr("height", miniHeight)
+		.attr("class", "mini");
 
 	//main lanes lines and players names
-	main.append("g").selectAll(".laneLines")
-		.data(lanes)
+	mainlaneLines.selectAll(".laneLines")
+		.data(visibleLanesItems)
 		.enter().append("line")
 		.attr("x1", m[1])
 		.attr("y1", function(d, i) {return y1(i);})
 		.attr("x2", totalWidth)
 		.attr("y2", function(d, i) {return y1(i);})
-		.attr("stroke", "#657b83")
-	main.append("g").selectAll(".laneText")
-		.data(lanes)
+		.attr("stroke", "#657b83");
+		
+	mainlaneText.selectAll(".laneText")
+		.data(visibleLanesItems)
 		.enter().append("text")
 		.text(function(d) {return d;})
 		.attr("x", -m[1])
@@ -142,17 +166,19 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		.attr("y1", function(d) {return y2(d.lane);})
 		.attr("x2", totalWidth)
 		.attr("y2", function(d) {return y2(d.lane);})
-		.attr("stroke", "lightgray");
-	mini.append("g").selectAll(".laneText")
+		.attr("class", function(d) {return "miniItem separatorLine" + ' laneIndex' + (d.lane%8);})
+		.attr("stroke", "#657b83");
+	var miniLaneText = mini.append("g").selectAll(".laneText")
 		.data(lanes)
 		.enter().append("text")
 		.text(function(d) {return d;})
+		.attr("_laneid", function(d, i){return i;})
 		.attr("x", -m[1])
 		.attr("y", function(d, i) {return y2(i + .5);})
 		.attr("dy", ".5ex")
 		.attr("text-anchor", "end")
-		.attr("class", "laneText")
-		.style("fill", function(d, i) {return "hsl(" + i / laneLength * 360. + ",50%,40%)";}); // a color for each lane
+		.attr("class", "laneText");
+		//.style("fill", function(d, i) {return "hsl(" + i / laneLength * 360. + ",50%,40%)";}); // a color for each lane
 
 
 
@@ -163,13 +189,17 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	mini.append("g").selectAll("miniItems")
 		.data(items)
 		.enter().append("rect")
-		.attr("class", function(d) {return "miniItem" + d.lane;})
+		.attr("class", function(d) {return "miniItem" + d.lane + ' colorClass' + (d.lane%8);})
 		.attr("x", function(d) {return x(d.start);})
 		.attr("y", function(d) {return y2(d.lane + .5) - 5;})
 		.attr("width", function(d) {return x(d.end - d.start);})
-		.attr("height", 10)
-		.style("fill", function(d, i) {return "hsl(" + d.lane / laneLength * 360. + ",50%,40%)";}) // a color for each lane
-		.style("fill-opacity", "0.7");
+		.attr("height", 12)
+		//.style("fill", function(d, i) {return "hsl(" + d.lane / laneLength * 360. + ",50%,40%)";}) // a color for each lane
+		.style("fill-opacity", "0.7")
+		.style("stroke-width", "1")
+		.style("stroke", "#073642")
+		.attr("z-index", function(d){return d.start;});
+
 
 	//mini labels
 	mini.append("g").selectAll(".miniLabels")
@@ -178,7 +208,8 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		.text(function(d) {return d.karma + ' - ' + d.nuance;})
 		.attr("x", function(d) {return x(d.start) + 1;})
 		.attr("y", function(d) {return y2(d.lane + .5);})
-		.attr("dy", ".5ex");
+		.attr("dy", ".5ex")
+		.attr("z-index", function(d){return d.start;});
 
 
 	//brush - define the "brush" (selected area) and make the display() function the listener when brush moves
@@ -205,19 +236,35 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
       .attr("transform", "translate(0," + miniHeight + ")")
       .call(xAxis);
 
-	var rects, labels, nuanceLabels, rbrushes, deleteButtons;
+	var rects, karmaLabels, nuanceLabels, rbrushes, deleteButtons;
 	var deleteButtonsSize = 10;
+
+	// toggle lane visibility by clicking on miniLane texts
+	miniLaneText.on('click', function(){
+		//var theQuery = this.getAttribute('lane');
+		// var theQuery = {'_id':this.getAttribute('_id')};
+		var laneID = Number(this.getAttribute('_laneid'));
+		var index = visibleLanes.indexOf(laneID);
+   		if (index === -1) {
+   		    visibleLanes.push(laneID);
+   		} else {
+   		    visibleLanes.splice(index, 1);
+   		}
+   		console.log(visibleLanes);
+		computeScales();
+   		display();
+	});
 
 	function display() {
 
-		var minExtent = brush.extent()[0],
-			maxExtent = brush.extent()[1];
 
-		// get a list with items inside the visible scope
+		var minExtent = brush.extent()[0],
+			maxExtent = Math.min(timeEnd, brush.extent()[1]);
+
+		// get a list with items inside the brush' scope
 		var	visItems = items.filter(function(d) {return d.start < maxExtent && d.end > minExtent;});
 
 		// mask hidden lanes
-		var visibleLanes = [0,4,6];
 		visItems = visItems.filter(function(d) { return (($.inArray(d.lane, visibleLanes))!=-1)});
 
 		mini.select(".brush")
@@ -232,69 +279,81 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
       	//	.attr("transform", "translate(0," + mainHeight + ")")
       	//	.call(xAxis2);
 
+		var solarizePalette = ["#b58900", "#cb4b16", "#dc322f", "#d33682", "#6c71c4", "#268bd2", "#2aa198", "#859900"];
+
 		//update main item rects
 		rects = itemRects.selectAll("rect")
 			.data(visItems, function(d) { return d._id; })
 			.attr("x", function(d) {return x1(d.start);})
-			.attr("width", function(d) {return x1(d.end) - x1(d.start);});
-
-
-		var solarizePalette = ["#b58900", "#cb4b16", "#dc322f", "#d33682", "#6c71c4", "#268bd2", "#2aa198", "#859900"];
-
-		rects.enter().append("rect")
-			.attr("class", function(d) {return "miniItem" + d.lane + ' colorClass' + (d.lane%8);})
-			.attr("x", function(d) {return x1(d.start);})
-			.attr("y", function(d) {return y1(d.lane) + 5;})
+			.attr("y", function(d) {return y1(($.inArray(d.lane, visibleLanes))) + 5;})
+			.attr("height", function(d) {return .9 * y1(1);})
 			.attr("width", function(d) {return x1(d.end) - x1(d.start);})
-			.attr("height", function(d) {return .8 * y1(1);})
-			.style("stroke-width", "1")
-			.style("stroke", "rgb(0,0,0)")
+			.attr("z-index", function(d){return d.start;});
+		rects.enter().append("rect")
+			.attr("class", function(d) {return "mainItem" + d.lane + ' colorClass' + (d.lane%8);})
+			.attr("x", function(d) {return x1(d.start);})
+			//.attr("y", function(d) {return y1(d.lane) + 5;})
+			.attr("y", function(d) {return y1(($.inArray(d.lane, visibleLanes))) + 5;})
+			.attr("width", function(d) {return x1(d.end) - x1(d.start);})
+			.attr("height", function(d) {return .9 * y1(1);})
+			.style("stroke-width", "3")
+			.style("stroke", "#073642")
 			//.style("fill", function(d, i) {return "hsl(" + d.lane / laneLength * 360. + ",70%,40%)";}) // a color for each lane
-			.style("fill-opacity", "0.7")
+			.style("fill-opacity", "1")
+			.attr("z-index", function(d){return d.start;})
 			.call(drag);
 		rects.exit().remove();
 
 		deleteButtons = itemRects.selectAll("rect.deleteButtons")
 			.data(visItems, function(d) { return d._id; })
 			.attr("x", function(d) {return (x1(d.end) - deleteButtonsSize);})
-			.attr("width", function(d) {return deleteButtonsSize;});
+			.attr("width", function(d) {return deleteButtonsSize;})
+			.attr("z-index", function(d){return d.start;});
 		deleteButtons.enter().append("rect")
 			.attr("class", function(d) {return "deleteButtons";})
 			.attr("x", function(d) {return (x1(d.end) - deleteButtonsSize);})
-			.attr("y", function(d) {return y1(d.lane) + 5;})
+			//.attr("y", function(d) {return y1(d.lane) + 5;})
+			.attr("y", function(d) {return y1(($.inArray(d.lane, visibleLanes))) + 5;})
 			.attr("width", function(d) {return deleteButtonsSize;})
 			.attr("height", function(d) {return deleteButtonsSize;})
 			.attr("_id", function(d){return d._id;})
 			.style("stroke-width", "1")
 			.style("stroke", "rgb(0,0,0)")
+			.attr("z-index", function(d){return d.start;})
 			.style("fill", function(d, i) {return "hsl(" + d.lane / laneLength * 360. + ",10%,10%)";}) // a color for each lane
 			.style("fill-opacity", "0.7");
 		deleteButtons.exit().remove();
 		// updates rbrushes
 		//rbrushes = 
 
-		//update the item labels
-		labels = itemRects.selectAll("text")
+		//update the item karmas
+		karmaLabels = itemRects.selectAll('.karmaLabel')
 			.data(visItems, function (d) { return d._id; })
 			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 1);});
-		labels.enter().append("text")
+		karmaLabels.enter().append("text")
 			.text(function(d) {return (d.karma + ' - ' + (d.end - d.start));})
-			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 1);})
-			.attr("y", function(d) {return y1(d.lane + .4);})
+			.attr("class", "karmaLabel")
+			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 2);})
+			//.attr("y", function(d) {return y1(d.lane + .4);})
+			.attr("y", function(d) {return y1($.inArray(d.lane, visibleLanes)+ 0.4);})
 			.attr("_id", function(d){return d._id;})
-			.attr("text-anchor", "start");
-		labels.exit().remove();
+			.attr("text-anchor", "start")
+			.attr("z-index", function(d){return d.start;});
+		karmaLabels.exit().remove();
 
 		nuanceLabels = itemRects.selectAll('.nuanceLabel')
 			.data(visItems, function (d) { return d._id; })
-			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 1);});
+			.attr("y", function(d) {return y1($.inArray(d.lane, visibleLanes)+ .75);})
+			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 2);});
 		nuanceLabels.enter().append("text")
 			.text(function(d) {return  (d.nuance);})
 			.attr("class", "nuanceLabel")
 			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 2);})
-			.attr("y", function(d) {return y1(d.lane + .75);})
+			//.attr("y", function(d) {return y1(d.lane + .75);})
+			.attr("y", function(d) {return y1($.inArray(d.lane, visibleLanes)+ .75);})
 			.attr("_id", function(d){return d._id;})
-			.attr("text-anchor", "start");
+			.attr("text-anchor", "start")
+			.attr("z-index", function(d){return d.start;});
 		nuanceLabels.exit().remove();
 
 
@@ -315,13 +374,20 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 	function animate() {
 
-		currentTime = ( TheSharedTime - timeOffset ) / 1000;
+		var playingSpeed = 1;
+		currentTime = playingSpeed * ( TheSharedTime - timeOffset ) / 1000;
 		//console.log(TheSharedTime);
 
-		sequenceTimeDisplay.text("current time : " + currentTime.toFixed(2) + "s");
+		var currentTimeFormatted = new Date(null);
+		currentTimeFormatted.setSeconds(currentTime); // specify value for SECONDS here
+		currentTimeFormatted = currentTimeFormatted.toISOString().substr(11, 8);
+
+		// sequenceTimeDisplay.text("current time : " + currentTime.toFixed(2) + "s");
+		$('.john-header-playbar .current_time').text(currentTimeFormatted);
 
 		// make condition that stop cursor if time exceeds graph domain
 		if (currentTime > timeEnd ) {
+			playing = 0;
 			console.log("time overflow");
 			return;
 		}
@@ -339,8 +405,9 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 	// init display
 	function init(){
+
 		mini.select(".brush")
-			.call(brush.extent([currentTime, currentTime+brushSize]));
+			.call(brush.extent([currentTime, Math.min(timeEnd,currentTime+brushSize)]));
 		display();
 	}
 
@@ -357,17 +424,17 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	}
 	
 	function dragmove(d) {
-		//console.log(d3.event, d3.event);
+		console.log(d3.event, d3.event);
 		
 		var minExtent = brush.extent()[0],
 			maxExtent = brush.extent()[1];
 
-		//console.log('min/max brush', minExtent, maxExtent);
+		console.log('min/max brush', minExtent, maxExtent);
 
 		var thisDatum = d;
 		x1.domain([0, maxExtent-minExtent]);
 
-		var newPosition = Math.max(0, Math.min(w - 10, jUtils.roundN(d3.event.x, x1(10))));
+		var newPosition = Math.max(0, Math.min(totalWidth - 10, jUtils.roundN(d3.event.x, x1(10))));
 		var newWidth = Math.max(jUtils.roundN(d3.event.y,x1(10)), 10);
 
 		// move item rect
@@ -378,8 +445,11 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		d3.select("rect[_id='"+d._id+"']")
 				.attr("x", newPosition + newWidth - deleteButtonsSize);
 		// move labels
-		d3.select("text[_id='"+d._id+"']")
-				.attr("x", newPosition);
+		d3.select(".karmaLabel[_id='"+d._id+"']")
+				.attr("x", newPosition + 2);
+
+		d3.select(".nuanceLabel[_id='"+d._id+"']")
+				.attr("x", newPosition + 2);
 	}
 	
 	function dragend(d) {
@@ -389,11 +459,10 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 		d3.select(this).style("stroke", "black");
 
-		// toggle selection
+		// toggle selection and update slection color class
 		d.selected = !d.selected;
-
-		if (d.selected)	d3.select(this).style("fill", "red")
-			else d3.select(this).style("fill", function(d, i) {return "hsl(" + d.lane / laneLength * 360. + ",50%,40%)";});
+		if (d.selected)	d3.select(this).attr("class", function(d) {return "mainItem" + d.lane + ' colorClass' + (d.lane%8) + ' selected';})
+			else d3.select(this).attr("class", function(d) {return "mainItem" + d.lane + ' colorClass' + (d.lane%8);});
 	
 	  	var minExtent = brush.extent()[0],
 			maxExtent = brush.extent()[1];
@@ -402,7 +471,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 		// scale function from graph position to data value
 		var invX = d3.scale.linear()
-				.domain([0, w])
+				.domain([0, totalWidth])
 				.range([minExtent, maxExtent]);
 
 		//console.log("min-max brush: ", minExtent, maxExtent);
