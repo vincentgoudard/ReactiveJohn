@@ -290,7 +290,7 @@ Template.body.events({
       } 
       John.items.forEach(deleteSelectedItem);
     },
-    'click .clear-score': function(e) {
+    'click button.clear-score': function(e) {
       e.preventDefault();
       Meteor.call('removeAllSequences');
     },

@@ -290,7 +290,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.attr("width", function(d) {return x1(d.end) - x1(d.start);})
 			.attr("z-index", function(d){return d.start;});
 		rects.enter().append("rect")
-			.attr("class", function(d) {return "miniItem" + d.lane + ' colorClass' + (d.lane%8);})
+			.attr("class", function(d) {return "mainItem" + d.lane + ' colorClass' + (d.lane%8);})
 			.attr("x", function(d) {return x1(d.start);})
 			//.attr("y", function(d) {return y1(d.lane) + 5;})
 			.attr("y", function(d) {return y1(($.inArray(d.lane, visibleLanes))) + 5;})
@@ -459,11 +459,10 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 		d3.select(this).style("stroke", "black");
 
-		// toggle selection
+		// toggle selection and update slection color class
 		d.selected = !d.selected;
-
-		if (d.selected)	d3.select(this).style("fill", "red")
-			else d3.select(this).style("fill", function(d, i) {return "hsl(" + d.lane / laneLength * 360. + ",50%,40%)";});
+		if (d.selected)	d3.select(this).attr("class", function(d) {return "mainItem" + d.lane + ' colorClass' + (d.lane%8) + ' selected';})
+			else d3.select(this).attr("class", function(d) {return "mainItem" + d.lane + ' colorClass' + (d.lane%8);});
 	
 	  	var minExtent = brush.extent()[0],
 			maxExtent = brush.extent()[1];

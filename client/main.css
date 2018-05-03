@@ -252,8 +252,7 @@ div.GUI-container{
 
 
 .colorClass0 {
-    color: #c82829;
-    fill: #c82829;
+    fill: #2aa198;
 }
 .colorClass2 {
     fill: #f5871f;
@@ -275,6 +274,9 @@ div.GUI-container{
 }
 .colorClass7 {
 	fill: #859900;
+}
+.selected{
+	fill: #FFF;
 }
 
 /*************************************/
