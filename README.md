@@ -7,6 +7,9 @@ As a Meteor app, John consists of :
 - a server requiring some installation (see below);
 - a client that will run on any web browser without needing to install anything.
 
+Screenshots
+------
+![Alt text](/medias/screenshot.png?raw=true "Screenshot")
 
 Installing John server
 ------
