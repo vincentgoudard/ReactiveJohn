@@ -314,10 +314,21 @@ Template.body.events({
     },
     'click button.download-score': function(e) {
       e.preventDefault();
-      // erase previous outdated links
-      $('#download_anchor').html("");
+      // format date to name file
+      var d = new Date();
+      var formattedDate = (
+      d.getFullYear() +
+      ("00" + (d.getMonth() + 1)).slice(-2) + 
+      ("00" + d.getDate()).slice(-2) + "." +
+      ("00" + d.getHours()).slice(-2) +
+      ("00" + d.getMinutes()).slice(-2) +
+      ("00" + d.getSeconds()).slice(-2));
+
       var myScore = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({score:John.items}));
-      $('<a href="data:' + myScore + '" download="sequences.json">download JSON</a>').appendTo('#download_anchor');
+      var dlAnchorElem = document.getElementById('download_anchor');
+      dlAnchorElem.setAttribute("href",     myScore     );
+      dlAnchorElem.setAttribute("download", formattedDate+".JohnScore.json");
+      dlAnchorElem.click();
     },
     'click button.fullscreen': function(e) {
       const john_score_el = $('#john_anchor_1')[0]; // Get DOM element from jQuery collection
@@ -326,10 +337,6 @@ Template.body.events({
         screenfull.request(john_score_el);
       }
     }
-    //,
-    //'click .button.play': function(e) {
-    //  $(".button.play").find('i').toggleClass('fa-play fa-pause');
-    //}
   });
 ///////////////////////////////////////////////////////
 
