@@ -100,11 +100,17 @@ Tracker.autorun(() => {
 	}
 });
 
+// the tracker below is automatically called when the data on the server is updated
+// this means at least every 100ms, since it is the delay we compute currentTime on the server
+var transportLock = true;
 Tracker.autorun(() => {
-	var currentTime = TheTime.find('timer').fetch();
-	if(currentTime.length == 1) {
-		John.setTime(currentTime[0].time, currentTime[0].john_start, currentTime[0].playing);
-	}
+//  if(transportLock){
+  console.log('hey');
+    var theTimeCollection = TheTime.find('timer').fetch();
+    if(theTimeCollection.length == 1) {
+       //John.setTime(currentTime[0].time, currentTime[0].john_start, currentTime[0].playing);
+       John.setTime(theTimeCollection[0].currentTime, theTimeCollection[0].playing);
+    }
 });
 
 Template.body.events({
@@ -117,25 +123,18 @@ Template.body.events({
     const newKarma = target.karmaMenu.value;
     const newNuance = target.nuanceMenu.value;
 
-    console.log('ttt ' + newKarma +' ' + newKarma);
-
     function editEventForSelectedItem(element) {
       if (element.selected){
         // element.karma = newKarma;
         Sequences.update({"_id":element._id}, {"lane":element.lane, "karma": newKarma, "nuance": newNuance,"start":element.start, "end":element.end });
       }
     }
-
     John.items.forEach(editEventForSelectedItem);
-
-
-//    Sequences.insert({"lane": lane, "karma": karma, "start": start, "end": end});
-
     // Clear form
     target.karmaMenu.value = 'Doux';
     target.nuanceMenu.value = 'mf';
-
   },
+
   'submit .new-event'(event) {
     // Prevent default browser form submit
     event.preventDefault();
@@ -251,6 +250,8 @@ Template.body.events({
 var scoreMakerViewHidden = 1;
 var eventMakerViewHidden = 1;
 var eventModifierViewHidden = 1;
+var playing = false;
+var clientTransport = undefined;
 
 Template.body.events({
     'click button.score-maker-view': function (e) {
@@ -295,11 +296,11 @@ Template.body.events({
     'click button.event-delete': function(e) {
       // Prevent default browser form submit
       e.preventDefault();
-      console.log('John < deleted event ' + element._id);
+
       // Get value from form element        
       function deleteSelectedItem(element) {
         if (element.selected){
-          console.log("element._id:", element._id);
+          console.log('John < deleted event ' + element._id);
           // element.karma = newKarma;
           //Sequences.remove({"_id"=element._id});
           var theQuery = {"_id": element._id};
@@ -331,10 +332,50 @@ Template.body.events({
       dlAnchorElem.click();
     },
     'click button.fullscreen': function(e) {
+      e.preventDefault();
       const john_score_el = $('#john_anchor_1')[0]; // Get DOM element from jQuery collection
-      console.log("click");
       if (screenfull.enabled) {
         screenfull.request(john_score_el);
+      }
+    },
+    'click button.lock': function(e) {
+      e.preventDefault();
+      if(transportLock)
+        {
+          //timeOffset = TheSharedTime - start_time;
+          $(".btn.lock").find('i').addClass('fa-lock-open');
+          $(".btn.lock").find('i').removeClass('fa-lock');
+          transportLock = false;
+        }
+        else {
+          //pauseTime = currentTime * 1000;
+          $(".btn.lock").find('i').addClass('fa-lock');
+          $(".btn.lock").find('i').removeClass('fa-lock-open');
+          clearInterval(clientTransport);
+          transportLock = true;
+        }
+        console.log('John < transport lock set to', transportLock);
+    },
+    'click button.play': function(e) {
+      e.preventDefault();
+      var currentClientTimeStart;
+      var currentClientTime;
+
+      if (!transportLock){
+        if(playing){
+          playing = false;
+          John.setTime(currentClientTime, 0);
+          clearInterval(clientTransport);
+        }
+        else {
+          playing = true;
+          currentClientTimeStart = Date.now();
+          clientTransport = setInterval(function(){
+            currentClientTime = (Date.now() - currentClientTimeStart)/1000;
+            console.log('je run');
+            John.setTime(currentClientTime, 1);
+            }, 100);           
+        }
       }
     }
   });
@@ -482,5 +523,6 @@ function getRandomItems(arr, n) {
     }
     return result;
 }
+
 
 init();

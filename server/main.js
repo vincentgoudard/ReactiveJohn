@@ -88,19 +88,42 @@ Meteor.startup(() => {
 	for (var i=0; i<myScore.length; i++)
 	Sequences.insert(myScore[i]);
 
-	var the_time = 0;
+	var serverUpTime = null;
 	var the_offset = Date.now();
-	var delay_milliseconds = 100;
+	var delay_milliseconds = 100; // clock period for sending time to client
+
+	var wasPlaying = false;
+	var startTime = Date.now();
+	var currentTime = 0;
 
 	var interval = setInterval(Meteor.bindEnvironment(function (err, res) {
 		//TheTime.upsert('timer', {$set:{"time": the_time++}});
-		var theTime = Date.now() - the_offset;
-		TheTime.upsert('timer', {$set:{"time": theTime }});
+		var serverUpTime = Date.now() - the_offset;
+		//console.log('serverUpTime: ', serverUpTime, 'the_offset: ', the_offset);
+		TheTime.upsert('timer', {$set:{"time": serverUpTime }});
 		// console.log('actives :', clientsIP);
 
 		// find active event
 		var TheTimeColl = TheTime.find('timer').fetch()[0];
-		var currentTime = (TheTimeColl.time - TheTimeColl.john_start) / 1000.;
+
+		//console.log(TheTimeColl.john_start);
+		//console.log(TheTimeColl.playing);
+		if ((TheTimeColl.playing)&&(!wasPlaying)){
+			wasPlaying = true;
+			startTime = Date.now();
+			console.log("John < transport is ON");
+		}
+		if ((!TheTimeColl.playing)&&(wasPlaying)){
+			wasPlaying = false;
+			pauseTime = Date.now();
+			console.log("John < transport is OFF");
+		}
+		if (TheTimeColl.playing){
+			currentTime = (Date.now() - startTime) / 1000.;
+			TheTime.upsert('timer', {$set:{"currentTime": currentTime }});
+			//console.log(currentTime);
+		}
+
 		var activeItems = Sequences.find(
 			{ 
 				start: { $lt: currentTime },

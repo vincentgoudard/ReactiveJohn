@@ -15,25 +15,31 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	this.items = items;
 
 	var selectedEvents = [];
-	var TheSharedTime;
 
+	var TheSharedTime; // the global time broadcasted by John Server
+	var currentTime = 0; // the score time displayed in the client and acting as a playhead
+	var timeOffset = 0; // running difference between running TheSharedTime and the value it had when play button was pressed
+	var pauseTime = 0; // value timeOffset had when we stopped playing
 	var playingSpeed = 1;
+	var wasPlaying = false;
 
-
-	this.setTime = function(time, start_time, playing) {
+	this.setTime = function(time, playing) {
 		TheSharedTime = time;
 
-		if(playing)
-		{
-			console.log(start_time);
-			timeOffset = start_time;
-			$(".btn.play").find('i').addClass('fa-pause');
-			$(".btn.play").find('i').removeClass('fa-play');
+		if (playing) {
 			animate();
+			if(!wasPlaying){
+				//timeOffset = TheSharedTime - start_time;
+				$(".btn.play").find('i').addClass('fa-pause');
+				$(".btn.play").find('i').removeClass('fa-play');
+				wasPlaying = true;
+			}
 		}
-		else {
+		else if ((!playing)&&(wasPlaying)){
+			//pauseTime = currentTime * 1000;
 			$(".btn.play").find('i').addClass('fa-play');
 			$(".btn.play").find('i').removeClass('fa-pause');
+			wasPlaying = false;
 		}
 	}
 
@@ -132,6 +138,13 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	// and assign callback to play button
 	var start_button = d3.select('.btn.play').on("click", function() {
 							start_callback(TheSharedTime);
+						});
+	// and assign callback to play button
+	var rewind_button = d3.select('.btn.rewind').on("click", function() {
+							currentTime = 0;
+							pauseTime = 0;
+							start_time = TheSharedTime;
+							timeOffset = 0;
 						});
 
 
@@ -426,18 +439,15 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		});
 	}
 
-
-
-
-	var currentTime = 0;
 	var brushSize = 500;
-	var timeOffset;
 	var requestId = undefined;
 
 	function animate() {
 
 		playingSpeed = 1;
-		currentTime = playingSpeed * ( TheSharedTime - timeOffset ) / 1000;
+		//console.log('timeOffset TheSharedTime: ', timeOffset, TheSharedTime);
+		//currentTime = playingSpeed * ( timeOffset + pauseTime) / 1000;
+		currentTime = playingSpeed * (TheSharedTime);
 		//console.log(TheSharedTime);
 
 		var currentTimeFormatted = new Date(null);
@@ -460,9 +470,9 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 		display();
 
-		var text = chart.selectAll("text")
-								.enter()
-								.append("text");
+		//var text = chart.selectAll("text")
+		//						.enter()
+		//						.append("text");
 	}
 
 	// init display

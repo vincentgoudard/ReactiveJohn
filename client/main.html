@@ -25,7 +25,9 @@
             <button class='mr-1 btn btn-info fullscreen'><i class="fas fa-expand"></i></button>
             <button class='mr-1 btn btn-info rewind'><i class="fa fa-fast-backward"></i></button>
             <button class='mr-1 btn btn-info play'><i class="fa fa-play"></i></button>
-            <time class='ml-2 current_time'>00:00:00</time>
+            <button class='mr-1 btn btn-warning lock'><i class="fas fa-lock"></i></button>
+            <time class='ml-2 mr-1 current_time'>00:00:00</time>
+            <input class="ml-2 form-control" type="number" value="42" id="example-number-input">
           </div>
         </div>
         <div class="col-lg1 text-right">
@@ -173,9 +175,6 @@
       <button class="btn btn-sm btn-info download-score">DOWNLOAD SCORE</button>
       <a id="download_anchor" style="display:none">></a>
     </div> <!-- end button group -->
-
-
-    <div id='panel' class='interfacePanel'></div>
 
 
     {{> info}}
