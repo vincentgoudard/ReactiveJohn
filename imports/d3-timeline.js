@@ -19,6 +19,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 	var playingSpeed = 1;
 
+
 	this.setTime = function(time, start_time, playing) {
 		TheSharedTime = time;
 
@@ -36,13 +37,25 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		}
 	}
 
-	// define drag callbacks
+	// define drag callbacks on items
 	var drag = d3.behavior.drag()
-    //.origin(function(d) { return {x:x1(d.start),y:y1(d.lane)}; })
-	.origin(function(d) { return {x:x1(d.start),y:(x1(d.end) - x1(d.start))}; })
-    .on("dragstart", dragstart)
-    .on("drag", dragmove)
-    .on("dragend", dragend);
+				.origin(function(d) { return {x:x1(d.start),y:(x1(d.end) - x1(d.start))}; })
+    			.on("dragstart", dragstart)
+    			.on("drag", dragmove)
+    			.on("dragend", dragend);
+
+    // define drag callbacks on dragbars
+	var dragLeft = d3.behavior.drag()
+				.origin(function(d) { return {x:x1(d.start),y:(x1(d.end) - x1(d.start))}; })
+    			.on("dragstart", dragbarLstart)
+    			.on("drag", dragbarLmove)
+    			.on("dragend", dragbarLend);
+    var dragRight = d3.behavior.drag()
+				.origin(function(d) { return {x:x1(d.end),y:(x1(d.end) - x1(d.start))}; })
+    			.on("dragstart", dragbarRstart)
+    			.on("drag", dragbarRmove)
+    			.on("dragend", dragbarRend);
+
 
 	var laneLength = lanes.length;
 
@@ -59,7 +72,6 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	}
 
 	console.log("max time: ", timeEnd);
-	
 	console.log("dyn-width", $('#john_anchor_1').width());
 
 
@@ -73,6 +85,14 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		totalHeight;
 
 	var x, x1, y1, y2;
+	// dimensions de la dragbar
+    var dragbarWidth = 3;
+
+    //var dragRight = d3.behavior.drag()
+    //	.origin(Object)
+    //	.on("drag", rdragresize);
+
+
 
 	function computeScales() {
 
@@ -238,7 +258,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
       .attr("transform", "translate(0," + miniHeight + ")")
       .call(xAxis);
 
-	var rects, karmaLabels, nuanceLabels, rbrushes, deleteButtons;
+	var rects, dragbarleft, dragbarright, karmaLabels, nuanceLabels, rbrushes, deleteButtons;
 	var deleteButtonsSize = 10;
 
 	// toggle lane visibility by clicking on miniLane texts
@@ -265,7 +285,6 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 		// get a list with items inside the brush' scope
 		var	visItems = items.filter(function(d) {return d.start < maxExtent && d.end > minExtent;});
-
 		// mask hidden lanes
 		visItems = visItems.filter(function(d) { return (($.inArray(d.lane, visibleLanes))!=-1)});
 
@@ -288,6 +307,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.data(visItems, function(d) { return d._id; })
 			.attr("x", function(d) {return x1(d.start);})
 			.attr("y", function(d) {return y1(($.inArray(d.lane, visibleLanes))) + 5;})
+			.attr("_id", function(d){return 'mainItem'+d._id;})
 			.attr("height", function(d) {return .9 * y1(1);})
 			.attr("width", function(d) {return x1(d.end) - x1(d.start);})
 			.attr("z-index", function(d){return d.start;});
@@ -295,6 +315,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.attr("class", function(d) {return "mainItem" + d.lane + ' colorClass' + (d.lane%8);})
 			.attr("x", function(d) {return x1(d.start);})
 			//.attr("y", function(d) {return y1(d.lane) + 5;})
+			.attr("_id", function(d){return 'mainItem'+d._id;})
 			.attr("y", function(d) {return y1(($.inArray(d.lane, visibleLanes))) + 5;})
 			.attr("width", function(d) {return x1(d.end) - x1(d.start);})
 			.attr("height", function(d) {return .9 * y1(1);})
@@ -305,6 +326,49 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.attr("z-index", function(d){return d.start;})
 			.call(drag);
 		rects.exit().remove();
+
+      	dragbarleft = itemRects.selectAll("rect.dragbarleft")
+			.data(visItems, function(d) { return d._id; })
+			.attr("x", function(d) {return x1(d.start);})
+			.attr("width", function(d) {return dragbarWidth;})
+			.attr("z-index", function(d){return d.start;});
+		dragbarleft.enter().append("rect")
+			.attr("class", function(d) {return "dragbarleft";})
+			.attr("x", function(d) {return x1(d.start);})
+			.attr("y", function(d) {return y1(($.inArray(d.lane, visibleLanes))) + 5;})
+			.attr("width", function(d) {return dragbarWidth;})
+			.attr("height", function(d) {return .9 * y1(1);})
+			.attr("_id", function(d){return d._id;})
+			.style("stroke-width", "1")
+			.style("stroke", "rgb(0,0,0)")
+			.attr("z-index", function(d){return d.start;})
+			.style("fill", "#000")
+			.style("fill-opacity", "0.3")
+			.attr("cursor", "ew-resize")
+      		.call(dragLeft);
+		dragbarleft.exit().remove();
+
+		dragbarright = itemRects.selectAll("rect.dragbarright")
+			.data(visItems, function(d) { return d._id; })
+			.attr("x", function(d) {return x1(d.end);})
+			.attr("width", function(d) {return dragbarWidth;})
+			.attr("z-index", function(d){return d.start;});
+		dragbarright.enter().append("rect")
+			.attr("class", function(d) {return "dragbarright";})
+			.attr("x", function(d) {return x1(d.end);})
+			.attr("y", function(d) {return y1(($.inArray(d.lane, visibleLanes))) + 5;})
+			.attr("width", function(d) {return dragbarWidth;})
+			.attr("height", function(d) {return .9 * y1(1);})
+			.attr("_id", function(d){return d._id;})
+			.style("stroke-width", "1")
+			.style("stroke", "rgb(0,0,0)")
+			.attr("z-index", function(d){return d.start;})
+			.style("fill", "#000")
+			.style("fill-opacity", "0.3")
+			.attr("cursor", "ew-resize")
+      		.call(dragRight);
+		dragbarright.exit().remove();
+
 
 		deleteButtons = itemRects.selectAll("rect.deleteButtons")
 			.data(visItems, function(d) { return d._id; })
@@ -325,18 +389,15 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.style("fill", function(d, i) {return "hsl(" + d.lane / laneLength * 360. + ",10%,10%)";}) // a color for each lane
 			.style("fill-opacity", "0.7");
 		deleteButtons.exit().remove();
-		// updates rbrushes
-		//rbrushes = 
 
 		//update the item karmas
 		karmaLabels = itemRects.selectAll('.karmaLabel')
 			.data(visItems, function (d) { return d._id; })
-			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 1);});
+			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 4;});
 		karmaLabels.enter().append("text")
 			.text(function(d) {return (d.karma + ' - ' + (d.end - d.start));})
 			.attr("class", "karmaLabel")
-			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 2);})
-			//.attr("y", function(d) {return y1(d.lane + .4);})
+			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 4;})
 			.attr("y", function(d) {return y1($.inArray(d.lane, visibleLanes)+ 0.4);})
 			.attr("_id", function(d){return d._id;})
 			.attr("text-anchor", "start")
@@ -345,13 +406,12 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 		nuanceLabels = itemRects.selectAll('.nuanceLabel')
 			.data(visItems, function (d) { return d._id; })
-			.attr("y", function(d) {return y1($.inArray(d.lane, visibleLanes)+ .75);})
-			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 2);});
+			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 6;})
+			.attr("y", function(d) {return y1($.inArray(d.lane, visibleLanes)+ .75);});
 		nuanceLabels.enter().append("text")
 			.text(function(d) {return  (d.nuance);})
 			.attr("class", "nuanceLabel")
-			.attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 2);})
-			//.attr("y", function(d) {return y1(d.lane + .75);})
+			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 6;})
 			.attr("y", function(d) {return y1($.inArray(d.lane, visibleLanes)+ .75);})
 			.attr("_id", function(d){return d._id;})
 			.attr("text-anchor", "start")
@@ -418,24 +478,16 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	// add a "selected" field for events
 	items.forEach(function(obj){obj.selected = false});
 
+
+	//// Drag function attached to the mainItem ////
 	function dragstart(d) {
-		//d3.select(this).style("fill", "pink");
 		d3.select(this).style("stroke", "red");
-		 //console.log(d3.select(this));
-		//	selectedEvents.push(d._id);
 	}
-	
-	function dragmove(d) {
-		console.log(d3.event, d3.event);
-		
+	function dragmove(d) {		
 		var minExtent = brush.extent()[0],
 			maxExtent = brush.extent()[1];
 
-		console.log('min/max brush', minExtent, maxExtent);
-
-		var thisDatum = d;
 		x1.domain([0, maxExtent-minExtent]);
-
 		var newPosition = Math.max(0, Math.min(totalWidth - 10, jUtils.roundN(d3.event.x, x1(10))));
 		var newWidth = Math.max(jUtils.roundN(d3.event.y,x1(10)), 10);
 
@@ -444,69 +496,130 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.attr("x", newPosition)
 			.attr("width", newWidth);
 		// move deleteButton
-		d3.select("rect[_id='"+d._id+"']")
+		d3.select("rect.deleteButtons[_id='"+d._id+"']")
 				.attr("x", newPosition + newWidth - deleteButtonsSize);
 		// move labels
 		d3.select(".karmaLabel[_id='"+d._id+"']")
-				.attr("x", newPosition + 2);
-
+				.attr("x", newPosition + 4);
 		d3.select(".nuanceLabel[_id='"+d._id+"']")
-				.attr("x", newPosition + 2);
-	}
-	
+				.attr("x", newPosition + 6);
+		// move dragbars
+		d3.select(".dragbarleft[_id='"+d._id+"']")
+				.attr("x", newPosition);
+		d3.select(".dragbarright[_id='"+d._id+"']")
+				.attr("x", newPosition + newWidth);
+	}	
 	function dragend(d) {
-		//console.log(d3.select(this));
-		//console.log(xb(d3.select(this)[0][0].x.baseVal.value));
-		//console.log(d);
-
 		d3.select(this).style("stroke", "black");
 
 		// toggle selection and update slection color class
 		d.selected = !d.selected;
 		if (d.selected)	d3.select(this).attr("class", function(d) {return "mainItem" + d.lane + ' colorClass' + (d.lane%8) + ' selected';})
 			else d3.select(this).attr("class", function(d) {return "mainItem" + d.lane + ' colorClass' + (d.lane%8);});
-	
+		
+		// scale function from graph position to data value
 	  	var minExtent = brush.extent()[0],
 			maxExtent = brush.extent()[1];
-
-		//x1.domain([0, maxExtent-minExtent]);
-
-		// scale function from graph position to data value
 		var invX = d3.scale.linear()
 				.domain([0, totalWidth])
 				.range([minExtent, maxExtent]);
-
-		//console.log("min-max brush: ", minExtent, maxExtent);
-
-		// color back to normal
-		//d3.select(this).style("fill", null);
-	
-		// update data info
-		//var duration = (d.end - d.start);
-		//console.log('this :', this);
-
-		//console.log('new width :', this.getAttribute('width'));
 		var newStart = jUtils.roundN(invX(this.getAttribute('x')*1), 10);
-
 		invX.range([0, maxExtent - minExtent]);
-		var duration = jUtils.roundN(invX(this.getAttribute('width')*1), 10); // *1 converts string to number
-
-		//console.log('new duration :', duration);
+		var newDuration = jUtils.roundN(invX(this.getAttribute('width')*1), 10); // *1 converts string to number
 
 		// convert graph position to data value
 		d.start = newStart; // 
-		d.end = d.start + duration;
+		d.end = d.start + newDuration;
 	
-		// update display to move label along
-		// display();
-
-		////update mongo collection
-		//console.log("d.id : ", d._id);
+		// update mongo collection
 		Sequences.update({"_id":d._id}, {"lane":d.lane, "karma": d.karma, "nuance": d.nuance, "start":d.start, "end":d.end });
-
-		//console.log(Sequences.find({}).fetch());
-
 	}
 
-};
 
+	//// Drag function attached to the left dragbar ////
+	function dragbarLstart(d) {
+		d3.select(this).style("stroke", "red");
+	}
+	function dragbarLmove(d) {
+		var minExtent = brush.extent()[0],
+			maxExtent = brush.extent()[1];
+		x1.domain([0, maxExtent-minExtent]);
+		var newPosition = Math.max(0, Math.min(totalWidth - 10, jUtils.roundN(d3.event.x, x1(10))));
+
+    	//move the right drag handle
+    	d3.select(this).attr("x", newPosition);
+		// move deleteButton
+		d3.select("rect[_id=mainItem"+d._id+"]")
+				.attr("x", newPosition)
+				.attr("width", function(d) {return x1(d.end) - newPosition;})
+		// move labels
+		d3.select(".karmaLabel[_id='"+d._id+"']")
+				.attr("x", newPosition + 4);
+		d3.select(".nuanceLabel[_id='"+d._id+"']")
+				.attr("x", newPosition + 6);
+	}
+	function dragbarLend(d) {
+		d3.select(this).style("stroke", "black");
+	
+		// retrieve "parent" item which this dragbar refers to
+		var parentItem = (d3.select("rect[_id=mainItem"+d._id+"]"))[0][0];
+
+		// scale function from graph position to data value
+	  	var minExtent = brush.extent()[0],
+			maxExtent = brush.extent()[1];
+		var invX = d3.scale.linear()
+				.domain([0, totalWidth])
+				.range([minExtent, maxExtent]);
+		var newStart = jUtils.roundN(invX(parentItem.getAttribute('x')*1), 10);
+		invX.range([0, maxExtent - minExtent]);
+		var newDuration = jUtils.roundN(invX(parentItem.getAttribute('width')*1), 10); // *1 converts string to number
+
+		// convert graph position to data value
+		d.start = newStart; // 
+		d.end = d.start + newDuration;
+		// update mongo collection
+		Sequences.update({"_id":d._id}, {"lane":d.lane, "karma": d.karma, "nuance": d.nuance, "start":d.start, "end":d.end });
+	}
+
+	//// Drag function attached to the left dragbar ////
+	function dragbarRstart(d) {
+		d3.select(this).style("stroke", "red");
+	}
+	function dragbarRmove(d) {
+		var minExtent = brush.extent()[0],
+			maxExtent = brush.extent()[1];
+		x1.domain([0, maxExtent-minExtent]);
+		var newPosition = Math.max(0, Math.min(totalWidth - 10, jUtils.roundN(d3.event.x, x1(10))));
+
+    	//move the right drag handle
+    	d3.select(this).attr("x", newPosition);
+		// update item duration
+		d3.select("rect[_id=mainItem"+d._id+"]")
+				.attr("width", function(d) {return newPosition - x1(d.start);});
+		// update delete button position
+		d3.select("rect.deleteButtons[_id='"+d._id+"']")
+				.attr("x", newPosition - deleteButtonsSize);
+	}
+	function dragbarRend(d) {
+		d3.select(this).style("stroke", "black");
+	
+		// retrieve "parent" item which this dragbar refers to
+		var parentItem = (d3.select("rect[_id=mainItem"+d._id+"]"))[0][0];
+
+		// scale function from graph position to data value
+	  	var minExtent = brush.extent()[0],
+			maxExtent = brush.extent()[1];
+		var invX = d3.scale.linear()
+				.domain([0, totalWidth])
+				.range([minExtent, maxExtent]);
+		var newStart = jUtils.roundN(invX(parentItem.getAttribute('x')*1), 10);
+		invX.range([0, maxExtent - minExtent]);
+		var newDuration = jUtils.roundN(invX(parentItem.getAttribute('width')*1), 10); // *1 converts string to number
+
+		// convert graph position to data value
+		d.end = d.start + newDuration;
+		// update mongo collection
+		Sequences.update({"_id":d._id}, {"lane":d.lane, "karma": d.karma, "nuance": d.nuance, "start":d.start, "end":d.end });
+
+	}
+};
