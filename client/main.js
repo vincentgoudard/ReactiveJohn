@@ -356,28 +356,28 @@ function init() {
 //    useRelativeSizesAndPositions : true
 //  }); 
   
-  connectButton = new Interface.Button({ 
-    background:"#fff",
-    bounds:[0.,0.,0.2,0.05 ],  
-    label:'WebSocket Connect',    
-    size:14,
-    stroke:"#000",
-    style:'normal',
-    onvaluechange: function() {
-      this.clear();
-      toggleConnection();
-    }
-  });
-  
-  label = new Interface.Label({ 
-    bounds:[0.21,0.,0.9, 0.05],
-    value:'',
-    hAlign:'left',
-    vAlign:'middle',
-    size:12,
-    stroke:"#000",
-    style:'normal'
-  });
+//  connectButton = new Interface.Button({ 
+//    background:"#fff",
+//    bounds:[0.,0.,0.2,0.05 ],  
+//    label:'WebSocket Connect',    
+//    size:14,
+//    stroke:"#000",
+//    style:'normal',
+//    onvaluechange: function() {
+//      this.clear();
+//      toggleConnection();
+//    }
+//  });
+//  
+//  label = new Interface.Label({ 
+//    bounds:[0.21,0.,0.9, 0.05],
+//    value:'',
+//    hAlign:'left',
+//    vAlign:'middle',
+//    size:12,
+//    stroke:"#000",
+//    style:'normal'
+//  });
   
 }
 

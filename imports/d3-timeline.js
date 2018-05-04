@@ -17,6 +17,8 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	var selectedEvents = [];
 	var TheSharedTime;
 
+	var playingSpeed = 1;
+
 	this.setTime = function(time, start_time, playing) {
 		TheSharedTime = time;
 
@@ -374,7 +376,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 	function animate() {
 
-		var playingSpeed = 1;
+		playingSpeed = 1;
 		currentTime = playingSpeed * ( TheSharedTime - timeOffset ) / 1000;
 		//console.log(TheSharedTime);
 
