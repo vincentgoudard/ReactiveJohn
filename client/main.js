@@ -108,28 +108,32 @@ Tracker.autorun(() => {
 });
 
 Template.body.events({
-  'submit .karma-edit'(event) {
+  'submit .modify-event'(event) {
     // Prevent default browser form submit
     event.preventDefault();
     //console.log(John.items);
     // Get value from form element
     const target = event.target;
     const newKarma = target.karmaMenu.value;
+    const newNuance = target.nuanceMenu.value;
 
-    function editKarmaForSelectedItem(element) {
+    console.log('ttt ' + newKarma +' ' + newKarma);
+
+    function editEventForSelectedItem(element) {
       if (element.selected){
         // element.karma = newKarma;
-        Sequences.update({"_id":element._id}, {"lane":element.lane, "karma": newKarma, "start":element.start, "end":element.end });
+        Sequences.update({"_id":element._id}, {"lane":element.lane, "karma": newKarma, "nuance": newNuance,"start":element.start, "end":element.end });
       }
     }
 
-    John.items.forEach(editKarmaForSelectedItem);
+    John.items.forEach(editEventForSelectedItem);
 
 
 //    Sequences.insert({"lane": lane, "karma": karma, "start": start, "end": end});
 
     // Clear form
     target.karmaMenu.value = 'Doux';
+    target.nuanceMenu.value = 'mf';
 
   },
   'submit .new-event'(event) {
@@ -246,35 +250,49 @@ Template.body.events({
 
 var scoreMakerViewHidden = 1;
 var eventMakerViewHidden = 1;
+var eventModifierViewHidden = 1;
 
 Template.body.events({
-    'click .score-maker-view': function (e) {
+    'click button.score-maker-view': function (e) {
       e.preventDefault();
       scoreMakerViewHidden = !scoreMakerViewHidden;
       //console.log("You pressed the button");
       if ( scoreMakerViewHidden ) {
         $( ".score-maker" ).addClass("hidden");
-        $(".score-maker-view").html('&#x25b6; score maker');
+        $(".score-maker-view").html('&#x25b6; SCORE MAKER');
       }
       else {
         $( ".score-maker" ).removeClass("hidden");
-        $(".score-maker-view").html('&#x25bc; score maker');
+        $(".score-maker-view").html('&#x25bc; SCORE MAKER');
       }
     },
-    'click .event-maker-view': function (e) {
+    'click button.event-maker-view': function (e) {
       e.preventDefault();
       eventMakerViewHidden = !eventMakerViewHidden;
       //console.log("You pressed the button");
       if ( eventMakerViewHidden ) {
         $( ".event-maker" ).addClass("hidden");
-        $(".event-maker-view").html('&#x25b6; event maker');
+        $(".event-maker-view").html('&#x25b6; EVENT MAKER');
       }
       else {
         $( ".event-maker" ).removeClass("hidden");
-        $(".event-maker-view").html('&#x25bc; event maker');
+        $(".event-maker-view").html('&#x25bc; EVENT MAKER');
       }
     },
-    'click .event-delete': function(e) {
+    'click button.event-modifier-view': function (e) {
+      e.preventDefault();
+      eventModifierViewHidden = !eventModifierViewHidden;
+      //console.log("You pressed the button");
+      if ( eventModifierViewHidden ) {
+        $( ".event-modifier" ).addClass("hidden");
+        $(".event-modifier-view").html('&#x25b6; EVENT MODIFIER');
+      }
+      else {
+        $( ".event-modifier" ).removeClass("hidden");
+        $(".event-modifier-view").html('&#x25bc; EVENT MODIFIER');
+      }
+    },
+    'click button.event-delete': function(e) {
       // Prevent default browser form submit
       e.preventDefault();
       console.log('John < deleted event ' + element._id);
@@ -294,14 +312,14 @@ Template.body.events({
       e.preventDefault();
       Meteor.call('removeAllSequences');
     },
-    'click .download-score': function(e) {
+    'click button.download-score': function(e) {
       e.preventDefault();
       // erase previous outdated links
       $('#download_anchor').html("");
       var myScore = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({score:John.items}));
       $('<a href="data:' + myScore + '" download="sequences.json">download JSON</a>').appendTo('#download_anchor');
     },
-    'click .button.fullscreen': function(e) {
+    'click button.fullscreen': function(e) {
       const john_score_el = $('#john_anchor_1')[0]; // Get DOM element from jQuery collection
       console.log("click");
       if (screenfull.enabled) {

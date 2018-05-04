@@ -24,13 +24,13 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		{
 			console.log(start_time);
 			timeOffset = start_time;
-			$(".button.play").find('i').addClass('fa-pause');
-			$(".button.play").find('i').removeClass('fa-play');
+			$(".btn.play").find('i').addClass('fa-pause');
+			$(".btn.play").find('i').removeClass('fa-play');
 			animate();
 		}
 		else {
-			$(".button.play").find('i').addClass('fa-play');
-			$(".button.play").find('i').removeClass('fa-pause');
+			$(".btn.play").find('i').addClass('fa-play');
+			$(".btn.play").find('i').removeClass('fa-pause');
 		}
 	}
 
@@ -108,7 +108,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 				.attr("class", "chart");
 
 	// and assign callback to play button
-	var start_button = d3.select('.button.play').on("click", function() {
+	var start_button = d3.select('.btn.play').on("click", function() {
 							start_callback(TheSharedTime);
 						});
 

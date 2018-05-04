@@ -1,110 +1,195 @@
 <head>
-  <title>John the Meteor</title>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="bootstrap-darkly.min.css">
+  <!-- Overriding with CSS -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+  <title>John, the Semi-Conductor</title>
 </head>
 
-
 <body>
-  
-<div class="john-header-wrap">
-  <section class="john-header-playbar" role="main">
-      <button class="btn fullscreen"><i class="fas fa-expand"></i></button>
-      <button class='btn rewind'><i class="fa fa-fast-backward"></i></button>
-      <button class='btn play'><i class="fa fa-play"></i></button>
-      <span class='current_time'>00:00:00</span>
-  </section>
+  <div class="container-fluid">
 
-  <nav class="john-header-title" role="navigation">
-    <h1>John, the semi-conductor</h1>
-  </nav>
-  
-  <aside class="john-header-info" role="complementary">
-    infos
-  </aside>   
-</div> <!-- end john-header-wrap -->
-
-  <div id="john_anchor_1"></div>
-    <div class="row">
-      <!-- <input type="submit" name="clear-score" value="clear score"> -->
-      <button class="btn btn-block btn-lg btn-primary clear-score">clear score</button>
-    </div>
-    <div class="score-maker-container GUI-container">
-      <form class="new-score">
-        <!-- <button class="score-maker-view">&#x25b6; score maker</button> -->
-        <button class="btn score-maker-view">&#x25b6; score maker</button>
-        <input style="float:right;margin-right:20px;" type="submit" value="create score">
-        <div class="score-maker hidden">
-            <section>
-              <div style="float:left;margin-right:20px;">
-                  <label for="duration">concert duration</label>
-                  <input type="number" name="concertDuration" min="0" value="3600">
-              </div>
-              <div style="float:left;margin-right:20px;">
-                  <label for="duration">event duration min</label>
-                  <input type="number" name="eventDurationMin" min="1" max="300" value="30">
-              </div>
-              <div style="float:left;margin-right:20px;">
-                  <label for="email">event duration max</label>
-                  <input type="number" name="eventDurationMax" min="1" max="300" value="300">
-              </div>
-              <div style="float:left;margin-right:20px;">
-                  <label for="number">nb of players min</label>
-                  <input type="number" name="nbPlayersMin" min="0" max="7" value="1">
-              </div>
-              <div style="float:left;margin-right:20px;">
-                  <label for="number">nb of players max</label>
-                  <input type="number" name="nbPlayersMax" min="0" value="7">
-              </div>
-            </section>
-        </div>              
-        <div style="clear:both"></div>
-      </form>
-    </div>
-    <div class="clearfix"></div>
-
-    <div class="event-maker-container GUI-container">
-        <button class="event-maker-view">&#x25b6; event maker</button>
-        <div class="event-maker hidden">
-            <form class="new-event">
-                <select class="laneMenu" name="laneMenu">
-                  <!-- this menu is filled dynamically from the collection -->
-                </select>
-                <select class="karmaMenu" name="karmaMenu">
-                  <!-- this menu is filled dynamically from the collection -->
-                  <!-- <option value="doux">doux</option-->
-                </select>
-                <select class="nuanceMenu" name="nuanceMenu">
-                  <!-- this menu is filled dynamically from the collection -->
-                  <!-- <option value="doux">doux</option-->
-                </select>
-                <input type="number" name="start" min="0" value="0">
-                <input type="number" name="end" min="0" value="1000">
-                <input type="submit" value="Submit">
-            </form>
+    <!-- NAVBAR -->
+    <div class="mt-2"></div>
+    <div class="bs-component">
+      <div class="d-flex justify-content-between">
+        <div class="col-lg1 align-middle">
+          <h3>John, the semi-conductor</h3>
         </div>
+        <div class="col-lg10">
+          <div class="input-group john-header-playbar" role="main">
+            <button class='mr-1 btn btn-info fullscreen'><i class="fas fa-expand"></i></button>
+            <button class='mr-1 btn btn-info rewind'><i class="fa fa-fast-backward"></i></button>
+            <button class='mr-1 btn btn-info play'><i class="fa fa-play"></i></button>
+            <time class='ml-2 current_time'>00:00:00</time>
+          </div>
+        </div>
+        <div class="col-lg1 text-right">
+          <h3>about</h3>
+        </div>
+      </div>
     </div>
 
-  <div id="karma_edit_anchor" class="GUI-container">
-      <p>Select events to change their karmas</p>
-      <form class="karma-edit">
-          <select class="karmaMenu" name="karmaMenu"></select>
-          <input type="submit" value="ok">
-      </form>
-  </div>
-  <div id="event_delete_anchor" class="GUI-container">
-      <p>Select events to delete them </p>
-      <button class="event-delete">delete selected events</button>
-  </div>
+    <!-- MAIN JOHN GRAPH-->
+    <div id="john_anchor_1"></div>
 
-  {{> info}}
-  {{> hello}}
+    <!-- SCORE MAKER-->
+    <form class="new-score">
+      <div class="card border-primary mb-3">
+        <div class="card-header">
+         <div class="form-group row mb-0">
+          <div class="col-sm-10">
+            <button type="button" class="btn btn-sm btn-secondary score-maker-view">&#x25b6; SCORE MAKER</button>
+          </div>
+          <div class="col-sm-2 text-right">
+            <button type="submit" class="btn btn-sm btn-primary text-right">CREATE SCORE</button>
+          </div>
+        </div>      
+      </div>
+        <div class="card-body score-maker hidden">
+          <div class="form-group score-maker hidden">
+            <div style="float:left;margin-right:20px;">
+              <label for="duration">concert duration</label>
+              <input class="form-control" type="number" name="concertDuration" min="0" value="3600">
+            </div>
+            <div style="float:left;margin-right:20px;">
+              <label for="duration">event duration min</label>
+              <input class="form-control" type="number" name="eventDurationMin" min="1" max="300" value="30">
+            </div>
+            <div style="float:left;margin-right:20px;">
+              <label for="duration">event duration max</label>
+              <input class="form-control" type="number" name="eventDurationMax" min="1" max="300" value="300">
+            </div>
+            <div style="float:left;margin-right:20px;">
+              <label for="number">nb of players min</label>
+              <input class="form-control" type="number" name="nbPlayersMin" min="0" max="7" value="1">
+            </div>
+            <div style="float:left;margin-right:20px;">
+              <label for="number">nb of players max</label>
+              <input class="form-control" type="number" name="nbPlayersMax" min="0" value="7">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <!-- END SCORE MAKER-->
 
-  <button class="download-score">download score</button>
-  <div id="download_anchor"></div>
+    <!-- EVENT MAKER-->
+    <form class="new-event">
+      <div class="card border-primary mb-3">
+        <div class="card-header">
+         <div class="form-group row mb-0">
+          <div class="col-sm-10">
+            <button type="button" class="btn btn-sm btn-secondary event-maker-view">&#x25b6; EVENT MAKER</button>
+          </div>
+          <div class="col-sm-2 text-right">
+            <button type="submit" class="btn btn-sm btn-primary text-right">CREATE EVENT</button>
+          </div>
+        </div>      
+      </div>
+        <div class="card-body event-maker hidden">
+          <div class="form-group event-maker hidden">
+            <div style="float:left;margin-right:20px;">
+              <label for="duration">choose player</label>
+              <select class="form-control laneMenu" name="laneMenu">
+                <!-- this menu is filled dynamically from the collection -->
+              </select>            
+            </div>
+            <div style="float:left;margin-right:20px;">
+              <label for="duration">choose karma</label>
+              <select class="form-control karmaMenu" name="karmaMenu">
+                <!-- this menu is filled dynamically from the collection -->
+                <!-- <option value="doux">doux</option-->
+              </select>
+            </div>
+            <div style="float:left;margin-right:20px;">
+              <label for="email">choose nuance</label>
+              <select class="form-control nuanceMenu" name="nuanceMenu">
+                <!-- this menu is filled dynamically from the collection -->
+                <!-- <option value="doux">doux</option-->
+              </select>            
+            </div>
+            <div style="float:left;margin-right:20px;">
+              <label for="number">start time</label>
+              <input class="form-control" type="number" name="start" min="0" value="0">
+            </div>
+            <div style="float:left;margin-right:20px;">
+              <label for="number">end time</label>
+              <input class="form-control" type="number" name="end" min="0" value="1000">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <!-- END EVENT MAKER-->
 
-  <div id='panel' class='interfacePanel'></div>
+     <!-- EVENT CHANGER-->
+    <form class="modify-event">
+      <div class="card border-primary mb-3">
+        <div class="card-header">
+         <div class="form-group row mb-0">
+          <div class="col-sm-10">
+            <button type="button" class="btn btn-sm btn-secondary event-modifier-view">&#x25b6; EVENT MODIFIER</button>
+          </div>
+          <div class="col-sm-2 text-right">
+            <button type="submit" class="btn btn-sm btn-primary text-right">UPDATE EVENT</button>
+          </div>
+        </div>      
+      </div>
+        <div class="card-body event-modifier hidden">
+          <p>Select events to change their karmas</p>
+          <div class="form-group event-modifier hidden">
+            <div style="float:left;margin-right:20px;">
+              <label for="karma">choose karma</label>
+              <select class="form-control karmaMenu" name="karmaMenu">
+                <!-- this menu is filled dynamically from the collection -->
+                <!-- <option value="doux">doux</option-->
+              </select>
+            </div>
+            <div style="float:left;margin-right:20px;">
+              <label for="nuance">choose nuance</label>
+              <select class="form-control nuanceMenu" name="nuanceMenu">
+                <!-- this menu is filled dynamically from the collection -->
+                <!-- <option value="doux">doux</option-->
+              </select>            
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <!-- END EVENT MAKER-->
 
+    <!-- button group -->
+    <div class="border border-primary rounded mb-3 bs-component p-2">
+      <!-- CLEAR BUTTON-->
+      <button class="btn btn-sm btn-danger clear-score mr-2">CLEAR SCORE</button>
+      <!-- DELETE EVENT BUTTON-->
+      <button class="btn btn-sm btn-warning event-delete mr-2">DELETE SELECTED EVENT</button>
+      <!-- DOWNLOAD BUTTON-->
+      <button class="btn btn-sm btn-info download-score">DOWNLOAD SCORE</button>
+      <div id="download_anchor"></div>
+    </div> <!-- end button group -->
+
+
+    <div id='panel' class='interfacePanel'></div>
+
+
+    {{> info}}
+    {{> hello}}
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+  </div> <!-- class="container" -->
 </body>
+
 
 <template name="hello">
   <button>Show John timeline</button>
@@ -112,7 +197,6 @@
 </template>
 
 <template name="info">
-  <p>This is John's footer</p>
 </template>
 
 
