@@ -22,6 +22,15 @@ karmas = [];
 nuances = [];
 lanes = [];
 
+//variables for local time transport
+var local_isPlaying = 0;
+local_currentTime = 0;
+currentTime = 0;
+var local_timeIncrement = 0;
+var local_playingSpeed = 1;
+var local_newTime = 0;
+var local_prevTime = 0;
+transportLock = true;
 
 ////////////////////////////////////////////////////
 // Test for reactive vars
@@ -60,6 +69,7 @@ Tracker.autorun(() => {
 
 
     // feed the lane Menus
+    $('.laneMenu').empty();
     for (var i = 0; i < lanes.length; i++) {
       var myElement = "<option value=" + i + ">" + lanes[i] + "</option>";
       $( ".laneMenu" ).append( myElement );
@@ -74,12 +84,14 @@ Tracker.autorun(() => {
     console.log('John < karmas : ' + karmasCollection[0].karmas);
 
     // feed the karma Menu(s)
+    $('.karmaMenu').empty();
     for (var i = 0; i < karmas.length; i++) {
       var myElement = "<option value=" + karmas[i] + ">" + karmas[i] + "</option>";
       $( ".karmaMenu" ).append( myElement );
     }
 
-        // feed the nuance Menu(s)
+    // feed the nuance Menu(s)
+    $('.nuanceMenu').empty();
     for (var i = 0; i < nuances.length; i++) {
       var myElement = "<option value=" + nuances[i] + ">" + nuances[i] + "</option>";
       $( ".nuanceMenu" ).append( myElement );
@@ -90,28 +102,55 @@ Tracker.autorun(() => {
 
     // create a view for timeline
 		John.create(Sequences, lanes, eventsCollection, "#john_anchor_1", function(time){
-			var currentTime = TheTime.find('timer').fetch();
+			//var currentTime = TheTime.find('timer').fetch();
 			// inverse playing
-			var playing = !currentTime[0].playing;
+			//local_isPlaying = !currentTime[0].playing;
 
-			TheTime.upsert('timer', {$set:{"john_start": time}});
-			TheTime.upsert('timer', {$set:{"playing": playing}});
+			//TheTime.upsert('timer', {$set:{"john_start": time}}); // no need, time is computed on server
+			//TheTime.upsert('timer', {$set:{"playing": playing}});
 		});
 	}
 });
 
 // the tracker below is automatically called when the data on the server is updated
 // this means at least every 100ms, since it is the delay we compute currentTime on the server
-var transportLock = true;
+
 Tracker.autorun(() => {
 //  if(transportLock){
-  console.log('hey');
+  //console.log('hey');
     var theTimeCollection = TheTime.find('timer').fetch();
     if(theTimeCollection.length == 1) {
        //John.setTime(currentTime[0].time, currentTime[0].john_start, currentTime[0].playing);
-       John.setTime(theTimeCollection[0].currentTime, theTimeCollection[0].playing);
+       //John.setTime(theTimeCollection[0].currentTime, theTimeCollection[0].playing);
     }
 });
+
+
+// funtion update time is called by both client-side interval 
+function updateLocalTime() {
+  local_newTime = Date.now();
+  local_timeIncrement = local_newTime  - local_prevTime;
+  local_prevTime = local_newTime;
+  local_currentTime += local_playingSpeed * local_timeIncrement / 1000;
+  currentTime = local_currentTime;
+  John.setTime(currentTime);
+  //console.log('John < updating local transport',local_currentTime, local_newTime, local_prevTime, local_timeIncrement)
+
+}
+
+function updateTransportFromServer() {
+  console.log('John < updating server transport')
+  var theTimeCollection = TheTime.find('timer').fetch();
+  if(theTimeCollection.length == 1) {
+    currentTime = theTimeCollection[0].currentTime;
+    //John.setTime(currentTime[0].time, currentTime[0].john_start, currentTime[0].playing);
+    John.setTime(currentTime);
+  }
+}
+
+var localTransport;
+var serverTransport;
+
 
 Template.body.events({
   'submit .modify-event'(event) {
@@ -243,15 +282,12 @@ Template.body.events({
       currentConcertDuration += currentEventDuration;
 
     }
-
-  }
+  } //end submit .new-score
 });
 
 var scoreMakerViewHidden = 1;
 var eventMakerViewHidden = 1;
 var eventModifierViewHidden = 1;
-var playing = false;
-var clientTransport = undefined;
 
 Template.body.events({
     'click button.score-maker-view': function (e) {
@@ -340,175 +376,98 @@ Template.body.events({
     },
     'click button.lock': function(e) {
       e.preventDefault();
-      if(transportLock)
-        {
-          //timeOffset = TheSharedTime - start_time;
-          $(".btn.lock").find('i').addClass('fa-lock-open');
-          $(".btn.lock").find('i').removeClass('fa-lock');
-          transportLock = false;
-        }
-        else {
-          //pauseTime = currentTime * 1000;
-          $(".btn.lock").find('i').addClass('fa-lock');
-          $(".btn.lock").find('i').removeClass('fa-lock-open');
-          clearInterval(clientTransport);
-          transportLock = true;
-        }
-        console.log('John < transport lock set to', transportLock);
+      transportLock = !transportLock;
+      console.log('John < transport lock set to', transportLock);
+
+      //var theTimeCollection = TheTime.find('timer').fetch();
+      // inverse playing
+      //local_isPlaying = !currentTime[0].playing;
+
+
+      // update icons
+      if(transportLock) {
+        clearInterval(localTransport);
+        $(".btn.lock").find('i').addClass('fa-lock');
+        $(".btn.lock").find('i').removeClass('fa-lock-open');
+        $(".btn.lock").addClass('btn-info');
+        $(".btn.lock").removeClass('btn-warning');    
+        console.log('John < cleared local transport');
+      }
+      else {
+        clearInterval(serverTransport);
+        $(".btn.lock").find('i').addClass('fa-lock-open');
+        $(".btn.lock").find('i').removeClass('fa-lock');
+        $(".btn.lock").addClass('btn-warning');
+        $(".btn.lock").removeClass('btn-info');    
+      }
     },
     'click button.play': function(e) {
       e.preventDefault();
-      var currentClientTimeStart;
-      var currentClientTime;
+      console.log('John < activateTransport before',local_isPlaying );
+      local_isPlaying = !local_isPlaying;
+      console.log('John < activateTransport after ',local_isPlaying );
 
-      if (!transportLock){
-        if(playing){
-          playing = false;
-          John.setTime(currentClientTime, 0);
-          clearInterval(clientTransport);
+      if (transportLock){
+        Meteor.call('activateTransport', local_isPlaying);
+        if (local_isPlaying){
+          //TheTime.upsert('timer', {$set:{"playing": local_isPlaying}}); // this should be done by the server
+          serverTransport = setInterval(function () { updateTransportFromServer();}, 40);        
         }
-        else {
-          playing = true;
-          currentClientTimeStart = Date.now();
-          clientTransport = setInterval(function(){
-            currentClientTime = (Date.now() - currentClientTimeStart)/1000;
-            console.log('je run');
-            John.setTime(currentClientTime, 1);
-            }, 100);           
+        else{
+          clearInterval(serverTransport);
         }
       }
+      else {
+        if (local_isPlaying){
+          local_prevTime = Date.now();
+          localTransport = setInterval(function () { updateLocalTime();}, 40); 
+        }
+        else { 
+          clearInterval(localTransport);
+          console.log('John < cleared local transport');
+        }
+      }
+      // update icons
+      if (local_isPlaying) {
+        $(".btn.play").find('i').addClass('fa-pause');
+        $(".btn.play").find('i').removeClass('fa-play');
+      }
+      else {
+        $(".btn.play").find('i').addClass('fa-play');
+        $(".btn.play").find('i').removeClass('fa-pause');
+      }
+    },
+    'click button.rewind': function(e) {
+      e.preventDefault();
+      local_currentTime = 0;
+      // if (transportLock){TheTime.upsert('timer', {$set:{"currentTime": local_currentTime}});}
+      if (transportLock){
+        Meteor.call('setServerTime', 0);
+        updateTransportFromServer();
+      }
+      else {
+        John.setTime(local_currentTime);
+      }
+    },
+    'click button.about': function(e) {
+      e.preventDefault();
+      $('.modal').css( "display", "block" );
+    },
+    'click button.aboutclose': function(e) {
+      e.preventDefault();
+      $('.modal').css( "display", "none" );
+    },
+    'change input.playing_speed': function(e) {
+      e.preventDefault();
+      local_playingSpeed = $('input.playing_speed').val();
+      console.log('John < setting playingSpeed to: ', local_playingSpeed);
+      // if (transportLock){TheTime.upsert('timer', {$set:{"currentTime": local_currentTime}});}
+      if (transportLock){Meteor.call('setServerPlayingSpeed', local_playingSpeed);}
+      //John.setTime(local_currentTime);
     }
-  });
+});
+
 ///////////////////////////////////////////////////////
-
-
-var gConnection; // websocket gConnection
-var gConnectionID = -1;
-var panel;
-var connectButton;
-var label;
-var xypad;
-
-function init() {  
-//   panel = new Interface.Panel({  
-//    background:"#fff", 
-//    stroke:"#000",
-//    container:$("#panel"),
-//    useRelativeSizesAndPositions : true
-//  }); 
-  
-//  connectButton = new Interface.Button({ 
-//    background:"#fff",
-//    bounds:[0.,0.,0.2,0.05 ],  
-//    label:'WebSocket Connect',    
-//    size:14,
-//    stroke:"#000",
-//    style:'normal',
-//    onvaluechange: function() {
-//      this.clear();
-//      toggleConnection();
-//    }
-//  });
-//  
-//  label = new Interface.Label({ 
-//    bounds:[0.21,0.,0.9, 0.05],
-//    value:'',
-//    hAlign:'left',
-//    vAlign:'middle',
-//    size:12,
-//    stroke:"#000",
-//    style:'normal'
-//  });
-  
-}
-
-function writeToScreen (message) {
-  label.clear();
-  label.setValue(message);
-}
-
-function ws_connect() {
-    if ('WebSocket' in window) {
-
-        writeToScreen('Connecting');
-        gConnection = new WebSocket('ws://' + window.location.host + '/maxmsp');
-        gConnection.onopen = function(ev) {
-        
-            connectButton.label = "WebSocket Disconnect";
-//            document.getElementById("update").disabled=false;
-//            document.getElementById("update").innerHTML = "Disable Update";
-            writeToScreen('CONNECTED');
-            var message = 'update on';
-            writeToScreen('SENT: ' + message);
-            gConnection.send(message);
-        };
-
-        gConnection.onclose = function(ev) {
-//            document.getElementById("update").disabled=true;
-//            document.getElementById("update").innerHTML = "Enable Update";
-            connectButton.label = "WebSocket Connect";
-            writeToScreen('DISCONNECTED');
-        };
-
-        gConnection.onmessage = function(ev) {
-          //TODO: handle messages
-          if(ev.data.substr(0, 3) == "rx ")
-          {
-            json = ev.data.substr(3);
-            
-            if(json.substr(0, 7) == "set_id ")
-            {
-              gConnectionID = parseInt(json.substr(7));
-              writeToScreen('Connection ID ' + gConnectionID);
-            }
-            else if(json.substr(0, 5) == "move ")
-            {
-              values = JSON.parse(json.substr(5));
-              xypad.children[0].x = values.x * xypad._width();
-              xypad.children[0].y = values.y * xypad._height();
-              //console.log(xypad.children[0]);
-              xypad.refresh();
-            }
-          }
-          
-          writeToScreen('RECEIVED: ' + ev.data);
-        };
-
-        gConnection.onerror = function(ev) {
-            alert("WebSocket error");
-        };
-
-    } else {
-        alert("WebSocket is not available!!!\n" +
-              "Demo will not function.");
-    }
-}
-
-// user connect/disconnect
-function toggleConnection() {
-    if (connectButton.label == "WebSocket Connect") {
-      ws_connect();
-    }
-    else {
-      gConnection.close();
-    }
-}
-//
-//// user turn updates on/off
-//function toggleUpdate(el) {
-//    var tag=el.innerHTML;
-//    var message;
-//    if (tag == "Enable Update") {
-//        message = 'update on';
-//        el.innerHTML = "Disable Update";
-//    }
-//    else {
-//        message = 'update off';
-//        el.innerHTML = "Enable Update";
-//    }
-//    writeToScreen('SENT: ' + message);
-//    gConnection.send(message);
-//}
 
 function getRandomItems(arr, n) {
     var result = new Array(n),
@@ -523,6 +482,3 @@ function getRandomItems(arr, n) {
     }
     return result;
 }
-
-
-init();

@@ -88,57 +88,54 @@ Meteor.startup(() => {
 	for (var i=0; i<myScore.length; i++)
 	Sequences.insert(myScore[i]);
 
-	var serverUpTime = null;
-	var the_offset = Date.now();
 	var delay_milliseconds = 100; // clock period for sending time to client
 
-	var wasPlaying = false;
-	var startTime = Date.now();
-	var currentTime = 0;
+	var isPlaying = false;
+
+	var server_currentTime = 0;
+	var server_timeIncrement = 0;
+	var server_playingSpeed = 1;
+	var server_newTime;
+	var server_prevTime = Date.now();
 
 	var interval = setInterval(Meteor.bindEnvironment(function (err, res) {
-		//TheTime.upsert('timer', {$set:{"time": the_time++}});
-		var serverUpTime = Date.now() - the_offset;
-		//console.log('serverUpTime: ', serverUpTime, 'the_offset: ', the_offset);
-		TheTime.upsert('timer', {$set:{"time": serverUpTime }});
-		// console.log('actives :', clientsIP);
 
-		// find active event
-		var TheTimeColl = TheTime.find('timer').fetch()[0];
+		if (isPlaying){
+			server_newTime = Date.now();
+ 			server_timeIncrement = server_newTime  - server_prevTime;
+ 			server_prevTime = server_newTime;
+  			server_currentTime += server_playingSpeed * server_timeIncrement / 1000;
+	
+			// find active event
+			var TheTimeColl = TheTime.find('timer').fetch()[0];
+	
+			//console.log(TheTimeColl.john_start);
+			//console.log(TheTimeColl.playing);
+			//if ((TheTimeColl.playing)&&(!wasPlaying)){
+			//	wasPlaying = true;
+			//	console.log("John < transport is ON");
+			//}
+			//if ((!TheTimeColl.playing)&&(wasPlaying)){
+			//	wasPlaying = false;
+			//	console.log("John < transport is OFF");
+			//}
 
-		//console.log(TheTimeColl.john_start);
-		//console.log(TheTimeColl.playing);
-		if ((TheTimeColl.playing)&&(!wasPlaying)){
-			wasPlaying = true;
-			startTime = Date.now();
-			console.log("John < transport is ON");
+			//if (TheTimeColl.playing){
+			TheTime.upsert('timer', {$set:{"currentTime": server_currentTime }});
+				//console.log(currentTime);
+			//}
+	
+			var activeItems = Sequences.find(
+				{ 
+					start: { $lt: server_currentTime },
+					end: { $gt: server_currentTime }
+				}).fetch();
+	
+			activeItems.forEach(function (item){
+				multicastOscSend(clientsIP, '/items/alive', [parseInt(item.lane), item.karma, item.nuance]);
+			});
+			multicastOscSend(clientsIP, '/items/alive', 'done');
 		}
-		if ((!TheTimeColl.playing)&&(wasPlaying)){
-			wasPlaying = false;
-			pauseTime = Date.now();
-			console.log("John < transport is OFF");
-		}
-		if (TheTimeColl.playing){
-			currentTime = (Date.now() - startTime) / 1000.;
-			TheTime.upsert('timer', {$set:{"currentTime": currentTime }});
-			//console.log(currentTime);
-		}
-
-		var activeItems = Sequences.find(
-			{ 
-				start: { $lt: currentTime },
-				end: { $gt: currentTime }
-			}).fetch();
-
-		activeItems.forEach(function (item){
-			multicastOscSend(clientsIP, '/items/alive', [parseInt(item.lane), item.karma, item.nuance]);
-		});
-		multicastOscSend(clientsIP, '/items/alive', 'done');
-
-		//console.log('currentTime: ', currentTime);
-		//console.log(starline);
-		//console.log('activeEvents: ', activeEvents);
-
 	}), delay_milliseconds);
 
 	Meteor.publish('john.public', function() {
@@ -153,9 +150,53 @@ Meteor.startup(() => {
 		removeSequences: function(selectionOfItems) {
 			console.log('removing sequences : ', selectionOfItems);
 			return Sequences.remove(selectionOfItems);
+		},
+		setServerTime: function(time) {
+			server_currentTime = time;
+			console.log('John < setting server time to ', time);
+		},
+		setServerPlayingSpeed: function(speed) {
+			server_playingSpeed = speed;
+			console.log('John < setting server_playingSpeed to ', speed);
+		},
+		activateTransport: function(state) {
+			isPlaying = state;
+			server_prevTime = Date.now();
+			console.log('John < transport set to: ', isPlaying);
+			//if(isPlaying) {
+			//	serverTransport = setInterval(function () { updateServerTime();}, 100);
+			//}
+			//else { 
+          	//	clearInterval(serverTransport);
+          	//}
 		}
 	});
 });
+
+
+// funtion update time is called by both client-side interval 
+//function updateServerTime() {
+//  	server_newTime = Date.now();
+//  	server_timeIncrement = server_newTime  - server_prevTime;
+//  	server_prevTime = server_newTime;
+//  	server_currentTime += local_playingSpeed * server_timeIncrement / 1000;
+//
+//  	// find active event
+//	TheTime.upsert('timer', {$set:{"currentTime": server_currentTime }});
+//
+//
+//	var activeItems = Sequences.find(
+//		{ 
+//			start: { $lt: server_currentTime },
+//			end: { $gt: server_currentTime }
+//		}).fetch();
+//
+//	activeItems.forEach(function (item){
+//		multicastOscSend(clientsIP, '/items/alive', [parseInt(item.lane), item.karma, item.nuance]);
+//	});
+//	multicastOscSend(clientsIP, '/items/alive', 'done');
+//}
+
 
 
 /****************

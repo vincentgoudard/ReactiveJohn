@@ -8,7 +8,7 @@ export const John = { extensions: {} };
 import '../client/lib/utils.js';
 
 John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
-	console.log("john created");
+	console.log("John < john created");
 	// clear whatever already exists in main anchor
 	d3.select(main_anchor).html("");
 
@@ -16,31 +16,18 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 	var selectedEvents = [];
 
-	var TheSharedTime; // the global time broadcasted by John Server
-	var currentTime = 0; // the score time displayed in the client and acting as a playhead
-	var timeOffset = 0; // running difference between running TheSharedTime and the value it had when play button was pressed
-	var pauseTime = 0; // value timeOffset had when we stopped playing
-	var playingSpeed = 1;
 	var wasPlaying = false;
 
-	this.setTime = function(time, playing) {
-		TheSharedTime = time;
+	var displayTime = 0;
 
-		if (playing) {
-			animate();
-			if(!wasPlaying){
-				//timeOffset = TheSharedTime - start_time;
-				$(".btn.play").find('i').addClass('fa-pause');
-				$(".btn.play").find('i').removeClass('fa-play');
-				wasPlaying = true;
-			}
-		}
-		else if ((!playing)&&(wasPlaying)){
-			//pauseTime = currentTime * 1000;
-			$(".btn.play").find('i').addClass('fa-play');
-			$(".btn.play").find('i').removeClass('fa-pause');
-			wasPlaying = false;
-		}
+	// build playhead object
+	var playHeadDatum = [{'x':0}];
+
+
+	this.setTime = function(time) {
+		displayTime = time;
+		playHeadDatum[0].x = displayTime;
+		animate();
 	}
 
 	// define drag callbacks on items
@@ -62,11 +49,19 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
     			.on("drag", dragbarRmove)
     			.on("dragend", dragbarRend);
 
+    // define drag callbacks on dragbars
+	var dragTime = d3.behavior.drag()
+				.origin(function(d) { return {x:x(d.x),y:0}; })
+    			.on("dragstart", dragTimeStart)
+    			.on("drag", dragTimeMove)
+    			.on("dragend", dragTimeEnd);
+
 
 	var laneLength = lanes.length;
 
 	// visibleLanes defines the indices of visible lanes
-	var visibleLanes = [0, 1, 2, 3, 4, 5, 6];
+	var visibleLanes = [0, 1, 2, 3, 4, 5, 6]; // TODO : this should not be hard coded! :-(
+	//var visibleLanes = [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
 	// filter out elements from score which do not belong to visible lanes
 		visibleLanesItems = lanes.filter(function(d, i) { return (($.inArray(i, visibleLanes))!=-1)});
 
@@ -137,14 +132,10 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 	// and assign callback to play button
 	var start_button = d3.select('.btn.play').on("click", function() {
-							start_callback(TheSharedTime);
+							start_callback(displayTime);
 						});
 	// and assign callback to play button
 	var rewind_button = d3.select('.btn.rewind').on("click", function() {
-							currentTime = 0;
-							pauseTime = 0;
-							start_time = TheSharedTime;
-							timeOffset = 0;
 						});
 
 
@@ -191,18 +182,17 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		//.attr("class", function(d, i) {return "laneText" + ' colorClass' + i;});
 		.attr("class", 'laneText');
 		//.style("fill", function(d, i) {return "hsl(" + i / laneLength * 360. + ",70%,50%)";});// a color for each lane
- 
 
-	//mini lanes and texts
 	mini.append("g").selectAll(".laneLines")
-		.data(items)
+		.data(lanes)
 		.enter().append("line")
 		.attr("x1", m[1])
-		.attr("y1", function(d) {return y2(d.lane);})
+		.attr("y1", function(d, i) {return y2(i);})
 		.attr("x2", totalWidth)
-		.attr("y2", function(d) {return y2(d.lane);})
-		.attr("class", function(d) {return "miniItem separatorLine" + ' laneIndex' + (d.lane%8);})
+		.attr("y2", function(d, i) {return y2(i);})
+		.attr("class", function(d, i) {return "miniItem separatorLine" + ' laneIndex' + (i%8);})
 		.attr("stroke", "#657b83");
+
 	var miniLaneText = mini.append("g").selectAll(".laneText")
 		.data(lanes)
 		.enter().append("text")
@@ -214,8 +204,6 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		.attr("text-anchor", "end")
 		.attr("class", "laneText");
 		//.style("fill", function(d, i) {return "hsl(" + i / laneLength * 360. + ",50%,40%)";}); // a color for each lane
-
-
 
 	var itemRects = main.append("g")
 						.attr("clip-path", "url(#clip)");
@@ -252,7 +240,6 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 						.x(x)
 						.on("brush", display); /*choix entre brushstart, brush, brushend*/
 
-
 	mini.append("g")
 		.attr("class", "x brush")
 		.call(brush)
@@ -264,14 +251,41 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	var xAxis = d3.svg.axis().scale(x).ticks(20).orient("bottom"),
 	    xAxis2 = d3.svg.axis().scale(x1).orient("bottom");
 
-
-
 	mini.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + miniHeight + ")")
       .call(xAxis);
 
-	var rects, dragbarleft, dragbarright, karmaLabels, nuanceLabels, rbrushes, deleteButtons;
+    // time cursor handle
+   	mini.append("g")
+		.datum(playHeadDatum)
+		.append("rect")
+		.attr("class", "timeCursorHandle")
+		.attr("x", function(d) {return d.x;})
+		//.attr("x", 0)
+		.attr("y", -10)
+		.attr("width", 1)
+		.attr("height", miniHeight+20)
+		.style("fill-opacity", "0.5")
+		.style("stroke-width", "2")
+		.style("stroke", "#F00")
+		.call(dragTime);
+	//console.log("playHeadDatum",playHeadDatum[0].x );
+
+
+	mainlaneText.selectAll(".laneText")
+		.data(visibleLanesItems)
+		.enter().append("text")
+		.text(function(d) {return d;})
+		.attr("x", -m[1])
+		.attr("y", function(d, i) {return y1(i + .5);})
+		.attr("dy", ".5ex")
+		.attr("text-anchor", "end")
+		//.attr("class", function(d, i) {return "laneText" + ' colorClass' + i;});
+		.attr("class", 'laneText');
+
+
+	var rects, dragbarleft, dragbarright, timeCursorHandle, karmaLabels, nuanceLabels, rbrushes, deleteButtons;
 	var deleteButtonsSize = 10;
 
 	// toggle lane visibility by clicking on miniLane texts
@@ -289,6 +303,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		computeScales();
    		display();
 	});
+
 
 	function display() {
 
@@ -325,7 +340,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.attr("width", function(d) {return x1(d.end) - x1(d.start);})
 			.attr("z-index", function(d){return d.start;});
 		rects.enter().append("rect")
-			.attr("class", function(d) {return "mainItem" + d.lane + ' colorClass' + (d.lane%8);})
+			.attr("class", function(d) {return "mainItem lane" + d.lane + ' colorClass' + (d.lane%8);})
 			.attr("x", function(d) {return x1(d.start);})
 			//.attr("y", function(d) {return y1(d.lane) + 5;})
 			.attr("_id", function(d){return 'mainItem'+d._id;})
@@ -333,7 +348,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			.attr("width", function(d) {return x1(d.end) - x1(d.start);})
 			.attr("height", function(d) {return .9 * y1(1);})
 			.style("stroke-width", "3")
-			.style("stroke", "#073642")
+			//.style("stroke", "#073642")
 			//.style("fill", function(d, i) {return "hsl(" + d.lane / laneLength * 360. + ",70%,40%)";}) // a color for each lane
 			.style("fill-opacity", "1")
 			.attr("z-index", function(d){return d.start;})
@@ -406,11 +421,22 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		//update the item karmas
 		karmaLabels = itemRects.selectAll('.karmaLabel')
 			.data(visItems, function (d) { return d._id; })
+			.text(function(d) {
+				var duration = Math.ceil(Math.min((d.end - displayTime), (d.end - d.start)));
+				var durationMinutes = ("0" + Math.floor(duration / 60)).slice(-2);
+				var durationSeconds = ("0" + Math.floor(duration - durationMinutes * 60)).slice(-2);
+				return (d.karma + ' - ' + durationMinutes + "'"+ durationSeconds);
+			})
 			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 4;});
 		karmaLabels.enter().append("text")
-			.text(function(d) {return (d.karma + ' - ' + (d.end - d.start));})
+			.text(function(d) {
+				var duration = Math.ceil(Math.min((d.end - displayTime), (d.end - d.start)));
+				var durationMinutes = ("0" + Math.floor(duration / 60)).slice(-2);
+				var durationSeconds = ("0" + Math.floor(duration - durationMinutes * 60)).slice(-2);
+				return (d.karma + ' - ' + durationMinutes + "'"+ durationSeconds);
+			})
 			.attr("class", "karmaLabel")
-			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 4;})
+			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 12;})
 			.attr("y", function(d) {return y1($.inArray(d.lane, visibleLanes)+ 0.4);})
 			.attr("_id", function(d){return d._id;})
 			.attr("text-anchor", "start")
@@ -419,18 +445,21 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 		nuanceLabels = itemRects.selectAll('.nuanceLabel')
 			.data(visItems, function (d) { return d._id; })
-			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 6;})
+			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 12;})
 			.attr("y", function(d) {return y1($.inArray(d.lane, visibleLanes)+ .75);});
 		nuanceLabels.enter().append("text")
 			.text(function(d) {return  (d.nuance);})
 			.attr("class", "nuanceLabel")
-			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 6;})
+			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 12;})
 			.attr("y", function(d) {return y1($.inArray(d.lane, visibleLanes)+ .75);})
 			.attr("_id", function(d){return d._id;})
 			.attr("text-anchor", "start")
 			.attr("z-index", function(d){return d.start;});
 		nuanceLabels.exit().remove();
 
+		timeCursorHandle = mini.select('.timeCursorHandle')
+			.data(playHeadDatum)
+			.attr("x", function(d) {return x(d.x);});
 
 		// delete buttons action
 		deleteButtons.on('click', function(){
@@ -444,29 +473,22 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 	function animate() {
 
-		playingSpeed = 1;
-		//console.log('timeOffset TheSharedTime: ', timeOffset, TheSharedTime);
-		//currentTime = playingSpeed * ( timeOffset + pauseTime) / 1000;
-		currentTime = playingSpeed * (TheSharedTime);
-		//console.log(TheSharedTime);
+		var displayTimeFormatted = new Date(null);
+		displayTimeFormatted.setSeconds(displayTime); // specify value for SECONDS here
+		displayTimeFormatted = displayTimeFormatted.toISOString().substr(11, 8);
 
-		var currentTimeFormatted = new Date(null);
-		currentTimeFormatted.setSeconds(currentTime); // specify value for SECONDS here
-		currentTimeFormatted = currentTimeFormatted.toISOString().substr(11, 8);
-
-		// sequenceTimeDisplay.text("current time : " + currentTime.toFixed(2) + "s");
-		$('.john-header-playbar .current_time').text(currentTimeFormatted);
+		$('.john-header-playbar .current_time').text(displayTimeFormatted);
 
 		// make condition that stop cursor if time exceeds graph domain
-		if (currentTime > timeEnd ) {
+		if (displayTime > timeEnd ) {
 			playing = 0;
-			console.log("time overflow");
+			console.log('John < time overflow');
 			return;
 		}
 
-
+		//TODO : cela ne doit être fait que si le brush est "locké" sur la timeline
 		mini.select(".brush")
-			.call(brush.extent([currentTime, currentTime+brush.extent()[1]-brush.extent()[0]]));
+			.call(brush.extent([displayTime, displayTime+brush.extent()[1]-brush.extent()[0]]));
 
 		display();
 
@@ -479,7 +501,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	function init(){
 
 		mini.select(".brush")
-			.call(brush.extent([currentTime, Math.min(timeEnd,currentTime+brushSize)]));
+			.call(brush.extent([displayTime, Math.min(timeEnd,displayTime+brushSize)]));
 		display();
 	}
 
@@ -491,7 +513,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 	//// Drag function attached to the mainItem ////
 	function dragstart(d) {
-		d3.select(this).style("stroke", "red");
+		//d3.select(this).style("stroke", "red");
 	}
 	function dragmove(d) {		
 		var minExtent = brush.extent()[0],
@@ -500,6 +522,20 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		x1.domain([0, maxExtent-minExtent]);
 		var newPosition = Math.max(0, Math.min(totalWidth - 10, jUtils.roundN(d3.event.x, x1(10))));
 		var newWidth = Math.max(jUtils.roundN(d3.event.y,x1(10)), 10);
+
+		// scale function from graph position to data value
+	  	var minExtent = brush.extent()[0],
+			maxExtent = brush.extent()[1];
+		var invX = d3.scale.linear()
+				.domain([0, totalWidth])
+				.range([minExtent, maxExtent]);
+		var newStart = jUtils.roundN(invX(this.getAttribute('x')*1), 10);
+		invX.range([0, maxExtent - minExtent]);
+		var newDuration = jUtils.roundN(invX(this.getAttribute('width')*1), 10); // *1 converts string to number
+
+		// convert graph position to data value
+		d.start = newStart; // 
+		d.end = d.start + newDuration;
 
 		// move item rect
 		d3.select(this)
@@ -510,9 +546,13 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 				.attr("x", newPosition + newWidth - deleteButtonsSize);
 		// move labels
 		d3.select(".karmaLabel[_id='"+d._id+"']")
-				.attr("x", newPosition + 4);
+				.attr("x", newPosition + 12)
+				.text(function(d) {
+					var duration = Math.ceil(Math.min((d.end - displayTime), (d.end - d.start)));
+					return (d.karma + ' - ' + duration);
+				});
 		d3.select(".nuanceLabel[_id='"+d._id+"']")
-				.attr("x", newPosition + 6);
+				.attr("x", newPosition + 12);
 		// move dragbars
 		d3.select(".dragbarleft[_id='"+d._id+"']")
 				.attr("x", newPosition);
@@ -520,12 +560,11 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 				.attr("x", newPosition + newWidth);
 	}	
 	function dragend(d) {
-		d3.select(this).style("stroke", "black");
-
-		// toggle selection and update slection color class
+		// toggle selection and update selection color class
 		d.selected = !d.selected;
-		if (d.selected)	d3.select(this).attr("class", function(d) {return "mainItem" + d.lane + ' colorClass' + (d.lane%8) + ' selected';})
-			else d3.select(this).attr("class", function(d) {return "mainItem" + d.lane + ' colorClass' + (d.lane%8);});
+		
+		if (d.selected)	d3.select(this).classed('selected',true);
+			else d3.select(this).classed('selected',false);
 		
 		// scale function from graph position to data value
 	  	var minExtent = brush.extent()[0],
@@ -564,9 +603,9 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 				.attr("width", function(d) {return x1(d.end) - newPosition;})
 		// move labels
 		d3.select(".karmaLabel[_id='"+d._id+"']")
-				.attr("x", newPosition + 4);
+				.attr("x", newPosition + 12);
 		d3.select(".nuanceLabel[_id='"+d._id+"']")
-				.attr("x", newPosition + 6);
+				.attr("x", newPosition + 12);
 	}
 	function dragbarLend(d) {
 		d3.select(this).style("stroke", "black");
@@ -630,6 +669,38 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		d.end = d.start + newDuration;
 		// update mongo collection
 		Sequences.update({"_id":d._id}, {"lane":d.lane, "karma": d.karma, "nuance": d.nuance, "start":d.start, "end":d.end });
-
 	}
+
+		//// Drag function attached to the left dragbar ////
+	function dragTimeStart(d) {
+		console.log('start');
+	}
+	function dragTimeMove(d) {
+		console.log('move', d3.event.x);
+		var newPosition = Math.max(0, Math.min(totalWidth - 10, d3.event.x));//Math.max(0, Math.min(totalWidth - 10, jUtils.roundN(d3.event.x, x1(10))));
+		// move playhead rect
+		console.log('newPosition', newPosition);
+		d3.select(this)
+			.attr("x", newPosition);
+
+		var invX = d3.scale.linear()
+			.domain([0, totalWidth])
+			.range([timeBegin, timeEnd]);
+		var newTimeLocation = invX(newPosition);
+		playHeadDatum[0].x = newTimeLocation;
+		displayTime = newTimeLocation;
+
+		if (transportLock){
+			Meteor.call('setServerTime', newTimeLocation);
+		}
+		else{
+			local_currentTime = newTimeLocation;
+		}
+		animate();	
+	}
+
+	function dragTimeEnd(d) {
+		console.log('end');
+	}
+
 };

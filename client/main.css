@@ -11,14 +11,13 @@
 }
 
 .main text {
-	font:16px sans-serif;
-	margin-left: 25px;
+	font:24px sans-serif;
 	font-weight: bold;
 }
 
 .main text.nuanceLabel {
 	font-family: "Times New Roman", Times, serif;
-	font-size:16px;
+	font-size:28px;
 	font-style: italic;
 	font-weight: bold;
 }
@@ -49,6 +48,14 @@
 
 .miniItem6 {
 	stroke-width: 6;	
+}
+
+.mainItem {
+	stroke : #073642;
+}
+
+.mainItem.selected{
+	stroke: #F00;
 }
 
 .brush .extent {
@@ -116,12 +123,38 @@
 .colorClass7 {
 	fill: #859900;
 }
-.selected{
-	fill: #FFF;
-}
 
 
 .current_time {
 	font-size : 1.640625rem;
+}
+
+.timeCursorHandle {
+	cursor: move;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #222;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 70%;
+    max-width: 700px;
 }
 

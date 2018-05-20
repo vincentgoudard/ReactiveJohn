@@ -7,10 +7,26 @@
   <link rel="stylesheet" href="bootstrap-darkly.min.css">
   <!-- Overriding with CSS -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+
+  <!-- For static use of font-awesome, put the FA folder in the client folder and use the following CSS
+  <link rel="stylesheet" href="fontawesome-free-5.0.13/web-fonts-with-css/css/all.css"> -->
+
   <title>John, the Semi-Conductor</title>
 </head>
 
 <body>
+  
+  <!-- The About Modal -->
+  <div id="aboutModal" class="modal about">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <p>John is collective screen-score software developped by Vincent Goudard.</p>
+      <p>It is open-source and can be downloaded on <a href="https://github.com/vincentgoudard/ReactiveJohn" target="_blank">Github</a>.</p>
+      <button class='mr-1 btn btn-info aboutclose'>CLOSE</button>
+    </div>
+  </div>
+
+
   <div class="container-fluid">
 
     <!-- NAVBAR -->
@@ -22,16 +38,17 @@
         </div>
         <div class="col-lg10">
           <div class="input-group john-header-playbar" role="main">
+            <button class='mr-1 btn btn-info magnet'><i class="fas fa-magnet"></i></button>
             <button class='mr-1 btn btn-info fullscreen'><i class="fas fa-expand"></i></button>
             <button class='mr-1 btn btn-info rewind'><i class="fa fa-fast-backward"></i></button>
             <button class='mr-1 btn btn-info play'><i class="fa fa-play"></i></button>
-            <button class='mr-1 btn btn-warning lock'><i class="fas fa-lock"></i></button>
+            <button class='mr-1 btn btn-info lock'><i class="fas fa-lock"></i></button>
             <time class='ml-2 mr-1 current_time'>00:00:00</time>
-            <input class="ml-2 form-control" type="number" value="42" id="example-number-input">
+            <input class="ml-2 form-control playing_speed" type="number" value="1" id="example-number-input">
           </div>
         </div>
         <div class="col-lg1 text-right">
-          <h3>about</h3>
+          <button id="about-button" class='mr-1 btn btn-info about'>ABOUT</button>
         </div>
       </div>
     </div>
@@ -182,7 +199,10 @@
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    
+    <!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
 
@@ -194,6 +214,7 @@
   <button>Template test</button>
   <p>You've pressed the button {{counter}} times.</p>
 </template>
+
 
 <template name="info">
 </template>
