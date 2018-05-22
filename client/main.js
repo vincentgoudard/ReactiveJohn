@@ -363,7 +363,7 @@ Template.body.events({
 
       var myScore = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({score:John.items}));
       var dlAnchorElem = document.getElementById('download_anchor');
-      dlAnchorElem.setAttribute("href",     myScore     );
+      dlAnchorElem.setAttribute("href", myScore);
       dlAnchorElem.setAttribute("download", formattedDate+".JohnScore.json");
       dlAnchorElem.click();
     },
