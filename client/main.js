@@ -387,18 +387,16 @@ Template.body.events({
       // update icons
       if(transportLock) {
         clearInterval(localTransport);
-        $(".btn.lock").find('i').addClass('fa-lock');
-        $(".btn.lock").find('i').removeClass('fa-lock-open');
-        $(".btn.lock").addClass('btn-info');
-        $(".btn.lock").removeClass('btn-warning');    
+        $(".btn.lock").find('i').addClass('fa-lock').removeClass('fa-lock-open');
+        $(".btn.lock").find('svg').addClass('fa-lock').removeClass('fa-lock-open');
+        $(".btn.lock").addClass('btn-info').removeClass('btn-warning');    
         console.log('John < cleared local transport');
       }
       else {
         clearInterval(serverTransport);
-        $(".btn.lock").find('i').addClass('fa-lock-open');
-        $(".btn.lock").find('i').removeClass('fa-lock');
-        $(".btn.lock").addClass('btn-warning');
-        $(".btn.lock").removeClass('btn-info');    
+        $(".btn.lock").find('i').addClass('fa-lock-open').removeClass('fa-lock');
+        $(".btn.lock").find('svg').addClass('fa-lock-open').removeClass('fa-lock'); // for svg
+        $(".btn.lock").addClass('btn-warning').removeClass('btn-info');    
       }
     },
     'click button.play': function(e) {
@@ -429,12 +427,12 @@ Template.body.events({
       }
       // update icons
       if (local_isPlaying) {
-        $(".btn.play").find('i').addClass('fa-pause');
-        $(".btn.play").find('i').removeClass('fa-play');
+        $(".btn.play").find('i').addClass('fa-pause').removeClass('fa-play');
+        $(".btn.play").find('svg').addClass('fa-pause').removeClass('fa-play');
       }
       else {
-        $(".btn.play").find('i').addClass('fa-play');
-        $(".btn.play").find('i').removeClass('fa-pause');
+        $(".btn.play").find('i').addClass('fa-play').removeClass('fa-pause');
+        $(".btn.play").find('svg').addClass('fa-play').removeClass('fa-pause');      
       }
     },
     'click button.rewind': function(e) {

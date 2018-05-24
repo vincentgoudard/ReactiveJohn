@@ -23,6 +23,9 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	// build playhead object
 	var playHeadDatum = [{'x':0}];
 
+	var playheadMagnetismSuspend = 0;
+
+
 
 	this.setTime = function(time) {
 		displayTime = time;
@@ -238,7 +241,9 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	//brush - define the "brush" (selected area) and make the display() function the listener when brush moves
 	var brush = d3.svg.brush()
 						.x(x)
-						.on("brush", display); /*choix entre brushstart, brush, brushend*/
+						.on("brush", display) /*choix entre brushstart, brush, brushend*/
+						.on("brushstart", function(){playheadMagnetismSuspend=1;})
+						.on("brushend", function(){playheadMagnetismSuspend=0;});
 
 	mini.append("g")
 		.attr("class", "x brush")
@@ -486,9 +491,11 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			return;
 		}
 
-		//TODO : cela ne doit être fait que si le brush est "locké" sur la timeline
-		mini.select(".brush")
+		//should be done only if brush is locked on playhead
+		if (!playheadMagnetismSuspend){
+			mini.select(".brush")
 			.call(brush.extent([displayTime, displayTime+brush.extent()[1]-brush.extent()[0]]));
+		}
 
 		display();
 
@@ -514,6 +521,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	//// Drag function attached to the mainItem ////
 	function dragstart(d) {
 		//d3.select(this).style("stroke", "red");
+		playheadMagnetismSuspend = 1;
 	}
 	function dragmove(d) {		
 		var minExtent = brush.extent()[0],
@@ -549,8 +557,10 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 				.attr("x", newPosition + 12)
 				.text(function(d) {
 					var duration = Math.ceil(Math.min((d.end - displayTime), (d.end - d.start)));
-					return (d.karma + ' - ' + duration);
-				});
+					var durationMinutes = ("0" + Math.floor(duration / 60)).slice(-2);
+					var durationSeconds = ("0" + Math.floor(duration - durationMinutes * 60)).slice(-2);
+					return (d.karma + ' - ' + durationMinutes + "'"+ durationSeconds);
+			});
 		d3.select(".nuanceLabel[_id='"+d._id+"']")
 				.attr("x", newPosition + 12);
 		// move dragbars
@@ -582,6 +592,8 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 	
 		// update mongo collection
 		Sequences.update({"_id":d._id}, {"lane":d.lane, "karma": d.karma, "nuance": d.nuance, "start":d.start, "end":d.end });
+
+		playheadMagnetismSuspend = 1;
 	}
 
 
