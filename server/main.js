@@ -295,13 +295,10 @@ var mySequenceHandle = mySequenceCursor.observe({
   removed: function (post) { multicastOscSend(clientsIP, '/items/removed', post._id)  } // run when post is removed
 });
 
-var myTimeCursor = TheTime.find({});
+var myTimeCursor = TheTime.find('timer');
 var myTimeHandle = myTimeCursor.observe({
   changed: function (post) {
-  	if(post.playing==true){
-   		//console.log(post); 
-  		multicastOscSend(clientsIP, '/time', (post.time - post.john_start));		
-  	}
+  		multicastOscSend(clientsIP, '/time', (post.currentTime));		
   }, // run when post is changed
 });
 

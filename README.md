@@ -21,9 +21,9 @@ Installing John server
 ```Bash
 meteor npm install --save osc-min
 ```
-5. Try to launch John server by writing :
+5. Try to launch John server by writing (feel free to change port):
 ```Bash
-meteor run
+meteor --port 4000 
 ```
 6. If meteor succeeds to compile (despite a few warning, ahem), you should see something like:
 ```Bash
