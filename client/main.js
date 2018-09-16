@@ -34,6 +34,7 @@ transportLock = true;
 
 ////////////////////////////////////////////////////
 // Test for reactive vars
+/*
 Template.hello.onCreated(function helloOnCreated() {
   // counter starts at 0
   this.counter = new ReactiveVar(0);
@@ -51,7 +52,7 @@ Template.hello.events({
     // increment the counter when button is clicked
     instance.counter.set(instance.counter.get() + 1);  },
 });
-
+*/
 ////////////////////////////////////////////////////
 
 
@@ -86,14 +87,14 @@ Tracker.autorun(() => {
     // feed the karma Menu(s)
     $('.karmaMenu').empty();
     for (var i = 0; i < karmas.length; i++) {
-      var myElement = "<option value=" + karmas[i] + ">" + karmas[i] + "</option>";
+      var myElement = '<option value="' + karmas[i] + '">' + karmas[i] + '</option>';
       $( ".karmaMenu" ).append( myElement );
     }
 
     // feed the nuance Menu(s)
     $('.nuanceMenu').empty();
     for (var i = 0; i < nuances.length; i++) {
-      var myElement = "<option value=" + nuances[i] + ">" + nuances[i] + "</option>";
+      var myElement = "<option value='" + nuances[i] + "''>" + nuances[i] + "</option>";
       $( ".nuanceMenu" ).append( myElement );
     }
 
