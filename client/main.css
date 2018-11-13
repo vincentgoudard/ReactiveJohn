@@ -127,6 +127,7 @@
 
 .current_time {
 	font-size : 1.640625rem;
+    font-family: Lucida Console, Lucida Sans Typewriter, monaco, Bitstream Vera Sans Mono, monospace;
 }
 
 .timeCursorHandle {
