@@ -391,17 +391,21 @@ Template.body.events({
 
 
       // update icons
+      var lockIcon = $(".btn.lock").find('svg');
+
       if(transportLock) {
         clearInterval(localTransport);
         $(".btn.lock").find('i').addClass('fa-lock').removeClass('fa-lock-open');
-        $(".btn.lock").find('svg').addClass('fa-lock').removeClass('fa-lock-open');
-        $(".btn.lock").addClass('btn-info').removeClass('btn-warning');    
+        //$(".btn.lock").find('svg').addClass('fa-lock').removeClass('fa-lock-open');
+        lockIcon.attr('data-icon', 'lock');
+       	$(".btn.lock").addClass('btn-info').removeClass('btn-warning');
         console.log('John < cleared local transport');
       }
       else {
         clearInterval(serverTransport);
         $(".btn.lock").find('i').addClass('fa-lock-open').removeClass('fa-lock');
-        $(".btn.lock").find('svg').addClass('fa-lock-open').removeClass('fa-lock'); // for svg
+        //$(".btn.lock").find('svg').addClass('fa-lock-open').removeClass('fa-lock'); // for svg
+        lockIcon.attr('data-icon', 'unlock');
         $(".btn.lock").addClass('btn-warning').removeClass('btn-info');    
       }
     },
@@ -432,13 +436,16 @@ Template.body.events({
         }
       }
       // update icons
+      var playIcon = $(".btn.play").find('svg');
       if (local_isPlaying) {
         $(".btn.play").find('i').addClass('fa-pause').removeClass('fa-play');
-        $(".btn.play").find('svg').addClass('fa-pause').removeClass('fa-play');
+        //$(".btn.play").find('svg').addClass('fa-pause').removeClass('fa-play');
+        playIcon.attr('data-icon', 'pause');
       }
       else {
         $(".btn.play").find('i').addClass('fa-play').removeClass('fa-pause');
-        $(".btn.play").find('svg').addClass('fa-play').removeClass('fa-pause');      
+        //$(".btn.play").find('svg').addClass('fa-play').removeClass('fa-pause'); 
+        playIcon.attr('data-icon', 'play');
       }
     },
     'click button.rewind': function(e) {
@@ -448,6 +455,7 @@ Template.body.events({
       if (transportLock){
         Meteor.call('setServerTime', 0);
         updateTransportFromServer();
+        John.setTime(local_currentTime);
       }
       else {
         John.setTime(local_currentTime);
