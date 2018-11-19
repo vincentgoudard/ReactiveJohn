@@ -76,6 +76,24 @@ Tracker.autorun(() => {
       $( ".laneMenu" ).append( myElement );
     }
 
+    // get the time
+    // funtion update time is called by both client-side interval
+
+    if (!transportLock){
+		currentTime = local_currentTime;
+		console.log("----- : ", currentTime);
+	}
+    else { 
+ 		var theTimeCollection = TheTime.find('timer').fetch();
+ 		if(theTimeCollection.length == 1) {
+ 		  currentTime = theTimeCollection[0].currentTime;
+ 		  console.log("+++++ : ", currentTime);
+
+ 		  //John.setTime(currentTime[0].time, currentTime[0].john_start, currentTime[0].playing);
+ 		}    	
+ 		console.log("turlututu");
+    }; 
+
     // get the karmas and nuances
     var karmasCollection = Karmas.find({}).fetch();
     karmas = karmasCollection[0].karmas;
@@ -102,7 +120,7 @@ Tracker.autorun(() => {
 		var eventsCollection = Sequences.find({}).fetch();
 
     // create a view for timeline
-		John.create(Sequences, lanes, eventsCollection, "#john_anchor_1", function(time){
+		John.create(Sequences, lanes, eventsCollection, currentTime, "#john_anchor_1", function(time){
 			//var currentTime = TheTime.find('timer').fetch();
 			// inverse playing
 			//local_isPlaying = !currentTime[0].playing;
@@ -110,6 +128,16 @@ Tracker.autorun(() => {
 			//TheTime.upsert('timer', {$set:{"john_start": time}}); // no need, time is computed on server
 			//TheTime.upsert('timer', {$set:{"playing": playing}});
 		});
+
+		// update TIme?
+		//if (transportLock){
+		//	updateTransportFromServer();
+		//	console.log("tata");
+		//}
+    	//else { 
+    	//	updateLocalTime();
+    	//	console.log("turlututu");
+    	//}; 
 	}
 });
 

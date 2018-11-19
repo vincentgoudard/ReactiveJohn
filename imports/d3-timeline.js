@@ -7,7 +7,7 @@
 export const John = { extensions: {} };
 import '../client/lib/utils.js';
 
-John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
+John.create = function (Sequences, lanes, items, currentTime, main_anchor, start_callback) {
 	console.log("John < john created");
 	// clear whatever already exists in main anchor
 	d3.select(main_anchor).html("");
@@ -18,10 +18,10 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 
 	var wasPlaying = false;
 
-	var displayTime = 0;
+	var displayTime = currentTime;
 
 	// build playhead object
-	var playHeadDatum = [{'x':0}];
+	var playHeadDatum = [{'x':displayTime}];
 
 	var playheadMagnetismSuspend = 0;
 
@@ -606,6 +606,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 			maxExtent = brush.extent()[1];
 		x1.domain([0, maxExtent-minExtent]);
 		var newPosition = Math.max(0, Math.min(totalWidth - 10, jUtils.roundN(d3.event.x, x1(10))));
+		//console.log("newPosition", newPosition);
 
     	//move the right drag handle
     	d3.select(this).attr("x", newPosition);
@@ -652,6 +653,7 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		x1.domain([0, maxExtent-minExtent]);
 		var newPosition = Math.max(0, Math.min(totalWidth - 10, jUtils.roundN(d3.event.x, x1(10))));
 
+
     	//move the right drag handle
     	d3.select(this).attr("x", newPosition);
 		// update item duration
@@ -660,6 +662,24 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		// update delete button position
 		d3.select("rect.deleteButtons[_id='"+d._id+"']")
 				.attr("x", newPosition - deleteButtonsSize);
+
+		//// added for live évolution of date while dragging
+		// retrieve "parent" item which this dragbar refers to
+		var parentItem = (d3.select("rect[_id=mainItem"+d._id+"]"))[0][0];
+
+		// scale function from graph position to data value
+	  	var minExtent = brush.extent()[0],
+			maxExtent = brush.extent()[1];
+		var invX = d3.scale.linear()
+				.domain([0, totalWidth])
+				.range([minExtent, maxExtent]);
+		var newStart = jUtils.roundN(invX(parentItem.getAttribute('x')*1), 10);
+		invX.range([0, maxExtent - minExtent]);
+		var newDuration = jUtils.roundN(invX(parentItem.getAttribute('width')*1), 10); // *1 converts string to number
+
+		var formattedDuration = jUtils.formatTime(newDuration);
+		d3.select(".karmaLabel[_id='"+d._id+"']").text(d.karma + " - " + formattedDuration);
+	
 	}
 	function dragbarRend(d) {
 		d3.select(this).style("stroke", "black");
@@ -698,21 +718,22 @@ John.create = function (Sequences, lanes, items, main_anchor, start_callback) {
 		var invX = d3.scale.linear()
 			.domain([0, totalWidth])
 			.range([timeBegin, timeEnd]);
-		var newTimeLocation = invX(newPosition);
+		newTimeLocation = invX(newPosition);
 		playHeadDatum[0].x = newTimeLocation;
 		displayTime = newTimeLocation;
 
+
+		animate();	
+	}
+
+	function dragTimeEnd(d) {
+		console.log('end');
 		if (transportLock){
 			Meteor.call('setServerTime', newTimeLocation);
 		}
 		else{
 			local_currentTime = newTimeLocation;
 		}
-		animate();	
-	}
-
-	function dragTimeEnd(d) {
-		console.log('end');
 	}
 
 };

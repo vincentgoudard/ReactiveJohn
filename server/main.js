@@ -107,7 +107,7 @@ Meteor.startup(() => {
   			server_currentTime += server_playingSpeed * server_timeIncrement / 1000;
 	
 			// find active event
-			var TheTimeColl = TheTime.find('timer').fetch()[0];
+			//var TheTimeColl = TheTime.find('timer').fetch()[0];
 	
 			//console.log(TheTimeColl.john_start);
 			//console.log(TheTimeColl.playing);
@@ -122,7 +122,6 @@ Meteor.startup(() => {
 
 			//if (TheTimeColl.playing){
 			TheTime.upsert('timer', {$set:{"currentTime": server_currentTime }});
-				//console.log(currentTime);
 			//}
 	
 			var activeItems = Sequences.find(
@@ -153,6 +152,7 @@ Meteor.startup(() => {
 		},
 		setServerTime: function(time) {
 			server_currentTime = time;
+			TheTime.upsert('timer', {$set:{"currentTime": server_currentTime }});
 			console.log('John < setting server time to ', time);
 		},
 		setServerPlayingSpeed: function(speed) {
