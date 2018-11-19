@@ -41,4 +41,11 @@
       return result;
 	}
 
+  // format time passed in seconds as a formatted string duration
+  jUtils.formatTime = function(duration){
+        var durationMinutes = ("0" + Math.floor(duration / 60)).slice(-2);
+        var durationSeconds = ("0" + Math.floor(duration - durationMinutes * 60)).slice(-2);
+        return (durationMinutes + "'"+ durationSeconds);
+  }
+
 })();
