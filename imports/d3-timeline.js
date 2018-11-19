@@ -587,9 +587,9 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 		var invX = d3.scale.linear()
 				.domain([0, totalWidth])
 				.range([minExtent, maxExtent]);
-		var newStart = jUtils.roundN(invX(this.getAttribute('x')*1), 10);
+		var newStart = jUtils.roundN(invX(this.getAttribute('x')*1), timeQuantum);
 		invX.range([0, maxExtent - minExtent]);
-		var newDuration = jUtils.roundN(invX(this.getAttribute('width')*1), 10); // *1 converts string to number
+		var newDuration = jUtils.roundN(invX(this.getAttribute('width')*1), timeQuantum); // *1 converts string to number
 
 		// convert graph position to data value
 		d.start = newStart; // 
@@ -652,9 +652,9 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 		var invX = d3.scale.linear()
 				.domain([0, totalWidth])
 				.range([minExtent, maxExtent]);
-		var newStart = jUtils.roundN(invX(parentItem.getAttribute('x')*1), 10);
+		var newStart = jUtils.roundN(invX(parentItem.getAttribute('x')*1), timeQuantum);
 		invX.range([0, maxExtent - minExtent]);
-		var newDuration = jUtils.roundN(invX(parentItem.getAttribute('width')*1), 10); // *1 converts string to number
+		var newDuration = jUtils.roundN(invX(parentItem.getAttribute('width')*1), timeQuantum); // *1 converts string to number
 
 		// convert graph position to data value
 		d.start = newStart; // 
@@ -712,9 +712,9 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 		var invX = d3.scale.linear()
 				.domain([0, totalWidth])
 				.range([minExtent, maxExtent]);
-		var newStart = jUtils.roundN(invX(parentItem.getAttribute('x')*1), 10);
+		var newStart = jUtils.roundN(invX(parentItem.getAttribute('x')*1), timeQuantum);
 		invX.range([0, maxExtent - minExtent]);
-		var newDuration = jUtils.roundN(invX(parentItem.getAttribute('width')*1), 10); // *1 converts string to number
+		var newDuration = jUtils.roundN(invX(parentItem.getAttribute('width')*1), timeQuantum); // *1 converts string to number
 
 		// convert graph position to data value
 		d.end = d.start + newDuration;
