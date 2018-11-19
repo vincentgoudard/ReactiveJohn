@@ -25,6 +25,7 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 
 	var playheadMagnetismSuspend = 0;
 
+	var timeQuantum = 10;
 
 
 	this.setTime = function(time) {
@@ -35,19 +36,19 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 
 	// define drag callbacks on items
 	var drag = d3.behavior.drag()
-				.origin(function(d) { return {x:x1(d.start),y:(x1(d.end) - x1(d.start))}; })
+				.origin(function(d) { return {x:0,y:0}; })
     			.on("dragstart", dragstart)
     			.on("drag", dragmove)
     			.on("dragend", dragend);
 
     // define drag callbacks on dragbars
 	var dragLeft = d3.behavior.drag()
-				.origin(function(d) { return {x:x1(d.start),y:(x1(d.end) - x1(d.start))}; })
+				.origin(function(d) { return {x:0,y:0}; })
     			.on("dragstart", dragbarLstart)
     			.on("drag", dragbarLmove)
     			.on("dragend", dragbarLend);
     var dragRight = d3.behavior.drag()
-				.origin(function(d) { return {x:x1(d.end),y:(x1(d.end) - x1(d.start))}; })
+				.origin(function(d) { return {x:0,y:0}; })
     			.on("dragstart", dragbarRstart)
     			.on("drag", dragbarRmove)
     			.on("dragend", dragbarRend);
@@ -104,10 +105,13 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 		mainHeight = 600; // fixed height for main view,
 		miniHeight = laneLength * 14; // fixed LANE height for mini view,
 		totalHeight = mainHeight + miniHeight + 30;
+	
 		//scales
+		// convert full score time to full graphics width (for mini lanes)
 		x = d3.scale.linear()
 			.domain([timeBegin, timeEnd])
 			.range([0, totalWidth]);
+		// convert some domain to full graphics width
 		x1 = d3.scale.linear()
 			.range([0, totalWidth]);
 		y1 = d3.scale.linear()
@@ -428,17 +432,15 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 			.data(visItems, function (d) { return d._id; })
 			.text(function(d) {
 				var duration = Math.ceil(Math.min((d.end - displayTime), (d.end - d.start)));
-				var durationMinutes = ("0" + Math.floor(duration / 60)).slice(-2);
-				var durationSeconds = ("0" + Math.floor(duration - durationMinutes * 60)).slice(-2);
-				return (d.karma + ' - ' + durationMinutes + "'"+ durationSeconds);
+				var formattedDuration = jUtils.formatTime(duration);
+				return (d.karma + ' - ' + formattedDuration);
 			})
 			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 4;});
 		karmaLabels.enter().append("text")
 			.text(function(d) {
 				var duration = Math.ceil(Math.min((d.end - displayTime), (d.end - d.start)));
-				var durationMinutes = ("0" + Math.floor(duration / 60)).slice(-2);
-				var durationSeconds = ("0" + Math.floor(duration - durationMinutes * 60)).slice(-2);
-				return (d.karma + ' - ' + durationMinutes + "'"+ durationSeconds);
+				var formattedDuration = jUtils.formatTime(duration);
+				return (d.karma + ' - ' + formattedDuration);
 			})
 			.attr("class", "karmaLabel")
 			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 12;})
@@ -527,23 +529,25 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 		var minExtent = brush.extent()[0],
 			maxExtent = brush.extent()[1];
 
-		x1.domain([0, maxExtent-minExtent]);
-		var newPosition = Math.max(0, Math.min(totalWidth - 10, jUtils.roundN(d3.event.x, x1(10))));
-		var newWidth = Math.max(jUtils.roundN(d3.event.y,x1(10)), 10);
-
-		// scale function from graph position to data value
-	  	var minExtent = brush.extent()[0],
-			maxExtent = brush.extent()[1];
 		var invX = d3.scale.linear()
 				.domain([0, totalWidth])
-				.range([minExtent, maxExtent]);
-		var newStart = jUtils.roundN(invX(this.getAttribute('x')*1), 10);
-		invX.range([0, maxExtent - minExtent]);
-		var newDuration = jUtils.roundN(invX(this.getAttribute('width')*1), 10); // *1 converts string to number
+				.range([0, maxExtent-minExtent]);
 
-		// convert graph position to data value
-		d.start = newStart; // 
-		d.end = d.start + newDuration;
+		// compute new start time based on X-axis drag
+		var newStartTime = Math.max(jUtils.roundN(d.start + invX(d3.event.x), timeQuantum), 0);
+		x1.domain([minExtent, maxExtent]);
+		// convert it to new position
+		var newPosition = x1(newStartTime);
+
+		// compute new duration based on Y-axis drag
+		var oldDuration = d.end - d.start;
+		var newDuration = Math.max(jUtils.roundN(oldDuration + invX(d3.event.y), timeQuantum), timeQuantum);
+		// convert it to new width
+		x1.domain([0, maxExtent-minExtent]);
+		var newWidth = x1(newDuration);
+
+
+		var newEndTime = newStartTime + newDuration;
 
 		// move item rect
 		d3.select(this)
@@ -556,10 +560,9 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 		d3.select(".karmaLabel[_id='"+d._id+"']")
 				.attr("x", newPosition + 12)
 				.text(function(d) {
-					var duration = Math.ceil(Math.min((d.end - displayTime), (d.end - d.start)));
-					var durationMinutes = ("0" + Math.floor(duration / 60)).slice(-2);
-					var durationSeconds = ("0" + Math.floor(duration - durationMinutes * 60)).slice(-2);
-					return (d.karma + ' - ' + durationMinutes + "'"+ durationSeconds);
+					var duration = Math.ceil(Math.min((newEndTime - displayTime), newDuration));
+					var formattedDuration = jUtils.formatTime(duration);
+					return (d.karma + ' - ' + formattedDuration);
 			});
 		d3.select(".nuanceLabel[_id='"+d._id+"']")
 				.attr("x", newPosition + 12);
@@ -569,6 +572,8 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 		d3.select(".dragbarright[_id='"+d._id+"']")
 				.attr("x", newPosition + newWidth);
 	}	
+
+
 	function dragend(d) {
 		// toggle selection and update selection color class
 		d.selected = !d.selected;
@@ -602,11 +607,22 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 		d3.select(this).style("stroke", "red");
 	}
 	function dragbarLmove(d) {
+
 		var minExtent = brush.extent()[0],
 			maxExtent = brush.extent()[1];
-		x1.domain([0, maxExtent-minExtent]);
-		var newPosition = Math.max(0, Math.min(totalWidth - 10, jUtils.roundN(d3.event.x, x1(10))));
-		//console.log("newPosition", newPosition);
+
+		var invX = d3.scale.linear()
+				.domain([0, totalWidth])
+				.range([0, maxExtent-minExtent]);
+
+		// compute new start time based on X-axis drag
+		var newStartTime = Math.min(jUtils.roundN(d.start + invX(d3.event.x), timeQuantum), (d.end - timeQuantum));
+		x1.domain([minExtent, maxExtent]);
+		// convert it to new position
+		var newPosition = x1(newStartTime);
+
+		//compute new duration
+		var newDuration = d.end - newStartTime;
 
     	//move the right drag handle
     	d3.select(this).attr("x", newPosition);
@@ -616,7 +632,11 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 				.attr("width", function(d) {return x1(d.end) - newPosition;})
 		// move labels
 		d3.select(".karmaLabel[_id='"+d._id+"']")
-				.attr("x", newPosition + 12);
+				.attr("x", newPosition + 12)
+				.text(function(d) {
+					var formattedDuration = jUtils.formatTime(newDuration);
+					return (d.karma + ' - ' + formattedDuration);
+				});
 		d3.select(".nuanceLabel[_id='"+d._id+"']")
 				.attr("x", newPosition + 12);
 	}
@@ -648,38 +668,37 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 		d3.select(this).style("stroke", "red");
 	}
 	function dragbarRmove(d) {
+
 		var minExtent = brush.extent()[0],
 			maxExtent = brush.extent()[1];
-		x1.domain([0, maxExtent-minExtent]);
-		var newPosition = Math.max(0, Math.min(totalWidth - 10, jUtils.roundN(d3.event.x, x1(10))));
 
-
-    	//move the right drag handle
-    	d3.select(this).attr("x", newPosition);
-		// update item duration
-		d3.select("rect[_id=mainItem"+d._id+"]")
-				.attr("width", function(d) {return newPosition - x1(d.start);});
-		// update delete button position
-		d3.select("rect.deleteButtons[_id='"+d._id+"']")
-				.attr("x", newPosition - deleteButtonsSize);
-
-		//// added for live évolution of date while dragging
-		// retrieve "parent" item which this dragbar refers to
-		var parentItem = (d3.select("rect[_id=mainItem"+d._id+"]"))[0][0];
-
-		// scale function from graph position to data value
-	  	var minExtent = brush.extent()[0],
-			maxExtent = brush.extent()[1];
 		var invX = d3.scale.linear()
 				.domain([0, totalWidth])
-				.range([minExtent, maxExtent]);
-		var newStart = jUtils.roundN(invX(parentItem.getAttribute('x')*1), 10);
-		invX.range([0, maxExtent - minExtent]);
-		var newDuration = jUtils.roundN(invX(parentItem.getAttribute('width')*1), 10); // *1 converts string to number
+				.range([0, maxExtent-minExtent]);
 
-		var formattedDuration = jUtils.formatTime(newDuration);
-		d3.select(".karmaLabel[_id='"+d._id+"']").text(d.karma + " - " + formattedDuration);
-	
+		// compute new start time based on X-axis drag
+		var newEndTime = Math.max(jUtils.roundN(d.end + invX(d3.event.x), timeQuantum), (d.start + timeQuantum));
+		x1.domain([minExtent, maxExtent]);
+		// convert it to new position
+		var newRightHandlePosition = x1(newEndTime);
+
+		//compute new duration
+		var newDuration = newEndTime - d.start;
+
+    	//move the right drag handle
+    	d3.select(this).attr("x", newRightHandlePosition);
+		// move deleteButton
+		d3.select("rect[_id=mainItem"+d._id+"]")
+				.attr("width", function(d) {return newRightHandlePosition - x1(d.start);})
+		// move labels
+		d3.select(".karmaLabel[_id='"+d._id+"']")
+				.text(function(d) {
+					var formattedDuration = jUtils.formatTime(newDuration);
+					return (d.karma + ' - ' + formattedDuration);
+				});
+		// update delete button position
+		d3.select("rect.deleteButtons[_id='"+d._id+"']")
+				.attr("x", newRightHandlePosition - deleteButtonsSize);	
 	}
 	function dragbarRend(d) {
 		d3.select(this).style("stroke", "black");
