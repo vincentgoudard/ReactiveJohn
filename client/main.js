@@ -32,6 +32,12 @@ var local_newTime = 0;
 var local_prevTime = 0;
 transportLock = true;
 
+currentModifierKarma = 'Doux';
+currentModifierNuance = 'mf';
+currentCreatorKarma = 'Doux';
+currentCreatorNuance = 'mf';
+
+
 ////////////////////////////////////////////////////
 // Test for reactive vars
 /*
@@ -58,102 +64,76 @@ Template.hello.events({
 
 const handle = Meteor.subscribe('john.public');
 
+// the tracker below is automatically called when the data on the server is updated
+// this means at least every 100ms, since it is the delay we compute currentTime on the server
+
+initDone = false;
+
 Tracker.autorun(() => {
 	const isReady = handle.ready();
-	console.log(`John < I am ${isReady ? 'ready' : 'not ready'}`);
+	// console.log(`John < I am ${isReady ? 'ready' : 'not ready'}`);
+
+  eventsCollection = null;
 
 	if(isReady) {
-		// get the lanes
-		var lanesCollection = Lanes.find({}).fetch();
-		lanes = lanesCollection[0].lanes;
-    console.log("John < lanes.length: " + lanes);
+    if (initDone == false) {
+      console.log("John < initiating the menus");
+      // get the karmas and nuances
+      var karmasCollection = Karmas.find({}).fetch();
+      karmas = karmasCollection[0].karmas;
+      var nuancesCollection = Nuances.find({}).fetch();
+      nuances = nuancesCollection[0].nuances;
+      // feed the karma Menu(s)
+      $('.karmaMenu').empty();
+      for (var i = 0; i < karmas.length; i++) {
+        var myElement = '<option value="' + karmas[i] + '">' + karmas[i] + '</option>';
+        $( ".karmaMenu" ).append( myElement );
+      }
+      // feed the nuance Menu(s)
+      $('.nuanceMenu').empty();
+      for (var i = 0; i < nuances.length; i++) {
+        var myElement = "<option value='" + nuances[i] + "''>" + nuances[i] + "</option>";
+        $( ".nuanceMenu" ).append( myElement );
+      }
+      // get the lanes
+      var lanesCollection = Lanes.find({}).fetch();
+      lanes = lanesCollection[0].lanes;
+      // feed the lane Menus
+      $('.laneMenu').empty();
+      for (var i = 0; i < lanes.length; i++) {
+        var myElement = "<option value=" + i + ">" + lanes[i] + "</option>";
+        $( ".laneMenu" ).append( myElement );
+      }
 
-
-    // feed the lane Menus
-    $('.laneMenu').empty();
-    for (var i = 0; i < lanes.length; i++) {
-      var myElement = "<option value=" + i + ">" + lanes[i] + "</option>";
-      $( ".laneMenu" ).append( myElement );
+      initDone = true; 
     }
 
     // get the time
     // funtion update time is called by both client-side interval
-
     if (!transportLock){
-		currentTime = local_currentTime;
-		console.log("----- : ", currentTime);
-	}
-    else { 
- 		var theTimeCollection = TheTime.find('timer').fetch();
- 		if(theTimeCollection.length == 1) {
- 		  currentTime = theTimeCollection[0].currentTime;
- 		  console.log("+++++ : ", currentTime);
+  		currentTime = local_currentTime;
+	  }
+    else {
+      var theTimeCollection = TheTime.find('timer').fetch();
+      if(theTimeCollection.length == 1) {
+        currentTime = theTimeCollection[0].currentTime;
+      }
+    };
 
- 		  //John.setTime(currentTime[0].time, currentTime[0].john_start, currentTime[0].playing);
- 		}    	
- 		console.log("turlututu");
-    }; 
-
-    // get the karmas and nuances
-    var karmasCollection = Karmas.find({}).fetch();
-    karmas = karmasCollection[0].karmas;
-    var nuancesCollection = Nuances.find({}).fetch();
-    nuances = nuancesCollection[0].nuances;
-    console.log('John < nuances : ' + nuances);   
-    console.log('John < karmas : ' + karmasCollection[0].karmas);
-
-    // feed the karma Menu(s)
-    $('.karmaMenu').empty();
-    for (var i = 0; i < karmas.length; i++) {
-      var myElement = '<option value="' + karmas[i] + '">' + karmas[i] + '</option>';
-      $( ".karmaMenu" ).append( myElement );
-    }
-
-    // feed the nuance Menu(s)
-    $('.nuanceMenu').empty();
-    for (var i = 0; i < nuances.length; i++) {
-      var myElement = "<option value='" + nuances[i] + "''>" + nuances[i] + "</option>";
-      $( ".nuanceMenu" ).append( myElement );
-    }
+    //create the view
+    var eventsCollection = Sequences.find({}).fetch();
+    John.create(Sequences, lanes, eventsCollection, currentTime, "#john_anchor_1", function(time){});
 
     // get the events
-		var eventsCollection = Sequences.find({}).fetch();
+		//var newEventsCollection = Sequences.find({}).fetch();
+    //if (newEventsCollection != eventsCollection){
+    //  eventsCollection = newEventsCollection;
+    //  // (re)create a view for timeline
+    //  John.create(Sequences, lanes, eventsCollection, currentTime, "#john_anchor_1", function(time){});
+    //}
 
-    // create a view for timeline
-		John.create(Sequences, lanes, eventsCollection, currentTime, "#john_anchor_1", function(time){
-			//var currentTime = TheTime.find('timer').fetch();
-			// inverse playing
-			//local_isPlaying = !currentTime[0].playing;
-
-			//TheTime.upsert('timer', {$set:{"john_start": time}}); // no need, time is computed on server
-			//TheTime.upsert('timer', {$set:{"playing": playing}});
-		});
-
-		// update TIme?
-		//if (transportLock){
-		//	updateTransportFromServer();
-		//	console.log("tata");
-		//}
-    	//else { 
-    	//	updateLocalTime();
-    	//	console.log("turlututu");
-    	//}; 
 	}
 });
-
-// the tracker below is automatically called when the data on the server is updated
-// this means at least every 100ms, since it is the delay we compute currentTime on the server
-
-Tracker.autorun(() => {
-//  if(transportLock){
-  //console.log('hey');
-    var theTimeCollection = TheTime.find('timer').fetch();
-    if(theTimeCollection.length == 1) {
-       //John.setTime(currentTime[0].time, currentTime[0].john_start, currentTime[0].playing);
-       //John.setTime(theTimeCollection[0].currentTime, theTimeCollection[0].playing);
-    }
-});
-
 
 // funtion update time is called by both client-side interval 
 function updateLocalTime() {
@@ -199,8 +179,8 @@ Template.body.events({
     }
     John.items.forEach(editEventForSelectedItem);
     // Clear form
-    target.karmaMenu.value = 'Doux';
-    target.nuanceMenu.value = 'mf';
+    // target.karmaMenu.value = 'Doux';
+    // target.nuanceMenu.value = 'mf';
   },
 
   'submit .new-event'(event) {
@@ -225,11 +205,11 @@ Template.body.events({
     Sequences.insert({"lane": lane, "karma": karma, "nuance" : nuance, "start": start, "end": end});
 
     // Clear form
-    target.laneMenu.value = '0';
-    target.karmaMenu.value = 'Doux';
-    target.nuanceMenu.value = 'mf';
-    target.start.value = '0';
-    target.end.value = '1000';
+    //target.laneMenu.value = '0';
+    //target.karmaMenu.value = 'Doux';
+    //target.nuanceMenu.value = 'mf';
+    //target.start.value = '0';
+    //target.end.value = '1000';
 
   },
   // function to create a new random score

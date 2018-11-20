@@ -7,6 +7,9 @@
 export const John = { extensions: {} };
 import '../client/lib/utils.js';
 
+var brushSize = 500;
+
+
 John.create = function (Sequences, lanes, items, currentTime, main_anchor, start_callback) {
 	console.log("John < john created");
 	// clear whatever already exists in main anchor
@@ -25,7 +28,7 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 
 	var playheadMagnetismSuspend = 0;
 
-	var timeQuantum = 10;
+	var timeQuantum = 1;
 
 
 	this.setTime = function(time) {
@@ -64,10 +67,14 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 	var laneLength = lanes.length;
 
 	// visibleLanes defines the indices of visible lanes
-	var visibleLanes = [0, 1, 2, 3, 4, 5, 6]; // TODO : this should not be hard coded! :-(
-	//var visibleLanes = [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
+	visibleLanes = [];
+	for(var i = 0; i < laneLength; i++) {
+	    visibleLanes.push(i);
+	}
+	// console.log(visibleLanes);
+
 	// filter out elements from score which do not belong to visible lanes
-		visibleLanesItems = lanes.filter(function(d, i) { return (($.inArray(i, visibleLanes))!=-1)});
+	visibleLanesItems = lanes.filter(function(d, i) { return (($.inArray(i, visibleLanes))!=-1)});
 
 
 	// find biggest value for time end
@@ -76,8 +83,8 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 		if( items[i].end > timeEnd) timeEnd = items[i].end;
 	}
 
-	console.log("max time: ", timeEnd);
-	console.log("dyn-width", $('#john_anchor_1').width());
+	//console.log("max time: ", timeEnd);
+	//console.log("dyn-width", $('#john_anchor_1').width());
 
 
 	// définit les dimensions du graph
@@ -102,7 +109,7 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 	function computeScales() {
 
 		totalWidth = $('#john_anchor_1').width() - m[1] - m[3];
-		mainHeight = 600; // fixed height for main view,
+		mainHeight = 580; // fixed height for main view,
 		miniHeight = laneLength * 14; // fixed LANE height for mini view,
 		totalHeight = mainHeight + miniHeight + 30;
 	
@@ -299,26 +306,28 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 
 	// toggle lane visibility by clicking on miniLane texts
 	miniLaneText.on('click', function(){
-		//var theQuery = this.getAttribute('lane');
-		// var theQuery = {'_id':this.getAttribute('_id')};
-		var laneID = Number(this.getAttribute('_laneid'));
-		var index = visibleLanes.indexOf(laneID);
-   		if (index === -1) {
-   		    visibleLanes.push(laneID);
-   		} else {
-   		    visibleLanes.splice(index, 1);
-   		}
-   		console.log(visibleLanes);
-		computeScales();
-   		display();
+
+		//temporarily de-activate this
+		//var laneID = Number(this.getAttribute('_laneid'));
+		//var index = visibleLanes.indexOf(laneID);
+   		//if (index === -1) {
+   		//    visibleLanes.push(laneID);
+   		//} else {
+   		//    visibleLanes.splice(index, 1);
+   		//}
+   		//console.log(visibleLanes);
+		//computeScales();
+   		//display();
 	});
 
 
 	function display() {
 
-
 		var minExtent = brush.extent()[0],
 			maxExtent = Math.min(timeEnd, brush.extent()[1]);
+
+		// update brushSize so that it remains the same when John is re-created
+		brushSize = maxExtent - minExtent;
 
 		// get a list with items inside the brush' scope
 		var	visItems = items.filter(function(d) {return d.start < maxExtent && d.end > minExtent;});
@@ -435,7 +444,7 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 				var formattedDuration = jUtils.formatTime(duration);
 				return (d.karma + ' - ' + formattedDuration);
 			})
-			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 4;});
+			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 12;});
 		karmaLabels.enter().append("text")
 			.text(function(d) {
 				var duration = Math.ceil(Math.min((d.end - displayTime), (d.end - d.start)));
@@ -475,7 +484,6 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 		});
 	}
 
-	var brushSize = 500;
 	var requestId = undefined;
 
 	function animate() {
