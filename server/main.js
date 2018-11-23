@@ -88,7 +88,7 @@ Meteor.startup(() => {
 	for (var i=0; i<myScore.length; i++)
 	Sequences.insert(myScore[i]);
 
-	var delay_milliseconds = 100; // clock period for sending time to client
+	var delay_milliseconds = 50; // clock period for sending time to client
 
 	var isPlaying = false;
 

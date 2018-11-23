@@ -75,6 +75,8 @@ Tracker.autorun(() => {
 
   eventsCollection = null;
 
+    console.log("score refresh");
+
 	if(isReady) {
     if (initDone == false) {
       console.log("John < initiating the menus");
@@ -108,17 +110,7 @@ Tracker.autorun(() => {
       initDone = true; 
     }
 
-    // get the time
-    // funtion update time is called by both client-side interval
-    if (!transportLock){
-  		currentTime = local_currentTime;
-	  }
-    else {
-      var theTimeCollection = TheTime.find('timer').fetch();
-      if(theTimeCollection.length == 1) {
-        currentTime = theTimeCollection[0].currentTime;
-      }
-    };
+
 
     //create the view
     var eventsCollection = Sequences.find({}).fetch();
@@ -135,6 +127,22 @@ Tracker.autorun(() => {
 	}
 });
 
+Tracker.autorun(() => {
+    // get the time
+    // funtion update time is called by both client-side interval
+    console.log("time refresh");
+    if (!transportLock){
+      currentTime = local_currentTime;
+    }
+    else {
+      var theTimeCollection = TheTime.find('timer').fetch();
+      if(theTimeCollection.length == 1) {
+        currentTime = theTimeCollection[0].currentTime;
+      }
+    }
+    //John.setTime(currentTime);
+});
+
 // funtion update time is called by both client-side interval 
 function updateLocalTime() {
   local_newTime = Date.now();
@@ -148,13 +156,12 @@ function updateLocalTime() {
 }
 
 function updateTransportFromServer() {
-  console.log('John < updating server transport')
-  var theTimeCollection = TheTime.find('timer').fetch();
-  if(theTimeCollection.length == 1) {
-    currentTime = theTimeCollection[0].currentTime;
-    //John.setTime(currentTime[0].time, currentTime[0].john_start, currentTime[0].playing);
+  //console.log('John < updating server transport')
+  //var theTimeCollection = TheTime.find('timer').fetch();
+  //if(theTimeCollection.length == 1) {
+  //  currentTime = theTimeCollection[0].currentTime;
     John.setTime(currentTime);
-  }
+  //}
 }
 
 var localTransport;
