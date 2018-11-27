@@ -44,5 +44,5 @@ For OSC communication, John relies on [osc-min](https://github.com/russellmcc/no
 
 Licence
 ------
-If you happen to use John, please let me know what uts about!
-And if you have troubles using it, please let me knos abouotutè
+If you happen to use John, please let me know what about your project!
+And if you have troubles using it, please fill an issue!
