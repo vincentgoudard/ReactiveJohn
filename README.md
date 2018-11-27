@@ -18,16 +18,17 @@ Installing John server
 ```Bash
 meteor npm install --save osc-min
 ```
-5. Try to launch John server by writing :
+5. You'll probably need to do that too : `meteor npm install @babel/runtime@7.0.0-beta.55`
+6. Try to launch John server by writing :
 ```Bash
 meteor run
 ```
-6. If meteor succeeds to compile (despite a few warning, ahem), you should see something like:
+7. If meteor succeeds to compile (despite a few warning, ahem), you should see something like:
 ```Bash
 => Started your app.
 => App running at: http://localhost:4000/
 ```
-7. Scream "hell yes!" and open a browser at url http://localhost:4000/ (you should maybe allow your firewall to accept that)
+8. Scream "hell yes!" and open a browser at url http://localhost:4000/ (you should maybe allow your firewall to accept that)
 
 
 Using John clients
