@@ -81,7 +81,7 @@ Meteor.startup(() => {
 	Lanes.insert({"lanes" : myLanes});
 
 	// add sample karmas and nuances
-	Karmas.insert({"karmas" : ["4’33", "Agitato", "à l'unison", "Aquatique", "Cosmique", "Cristallin", "Cuivré", "Céleste", "Doux", "Élastique", "En orbite", "Explosif", "Fugato", "Glissandi", "Géologie sonore", "Immobile", "In C", "Jour", "Lointain", "Mécanique", "Nuit", "Onomatopée", "Pointilliste", "Presque rien", "Rebours", "Shuffling", "Sul Ponticello", "Sériel", "Valse", "Vivace"]});
+	Karmas.insert({"karmas" : ["4’33", "Agitato", "à l'unison", "Aquatique", "Cosmique", "Crescendo", "Cristallin", "Cuivré", "Céleste", "Doux", "Élastique", "En orbite", "Explosif", "Fugato", "Glissandi", "Géologie sonore", "Immobile", "In C", "Jour", "Lointain", "Mécanique", "Nuit", "Onomatopée", "Pointilliste", "Presque rien", "Rebours", "Shuffling", "Sul Ponticello", "Sériel", "Valse", "Vivace"]});
 	Nuances.insert({"nuances" : ["ppp", "pp", "p", "mp", "mf", "f", "ff", "fff"]});
 
 	// add sample events
