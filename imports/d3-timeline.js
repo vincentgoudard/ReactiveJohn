@@ -8,6 +8,7 @@ export const John = { extensions: {} };
 import '../client/lib/utils.js';
 
 var brushSize = 500;
+var mainPlayheadOffset = 100;
 
 
 John.create = function (Sequences, lanes, items, currentTime, main_anchor, start_callback) {
@@ -175,6 +176,14 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 		.attr("height", miniHeight)
 		.attr("class", "mini");
 
+	var mainPlayhead = main.append("line")
+	 	.attr("x1", 0)
+	 	.attr("y1", -5)
+	 	.attr("x2", 0)
+	 	.attr("y2", mainHeight+5)
+	 	.attr("stroke-width", 4)
+	 	.attr("stroke", "#F00");
+
 	//main lanes lines and players names
 	mainlaneLines.selectAll(".laneLines")
 		.data(visibleLanesItems)
@@ -330,14 +339,14 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 		brushSize = maxExtent - minExtent;
 
 		// get a list with items inside the brush' scope
-		var	visItems = items.filter(function(d) {return d.start < maxExtent && d.end > minExtent;});
+		var	visItems = items.filter(function(d) {return d.start < maxExtent && d.end > (minExtent - mainPlayheadOffset);});
 		// mask hidden lanes
 		visItems = visItems.filter(function(d) { return (($.inArray(d.lane, visibleLanes))!=-1)});
 
 		mini.select(".brush")
 			.call(brush.extent([minExtent, maxExtent]));
 
-		x1.domain([minExtent, maxExtent]);
+		x1.domain([minExtent - mainPlayheadOffset, maxExtent]);
 
 		// update x-axis for main view (disabled while overlaying mini-lane)
 		//main.selectAll('.x.axis').remove();
@@ -347,6 +356,16 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
       	//	.call(xAxis2);
 
 		var solarizePalette = ["#b58900", "#cb4b16", "#dc322f", "#d33682", "#6c71c4", "#268bd2", "#2aa198", "#859900"];
+
+
+		// playhead sur le main display
+		//x1.domain([minExtent - 100, maxExtent]);
+	
+		mainPlayhead.attr("x1", x1(displayTime))
+				 	.attr("x2", x1(displayTime))
+				 	.attr("y1", -5)
+	 				.attr("y2", mainHeight+5)
+	 				.attr("z-index", -99999999999);
 
 		//update main item rects
 		rects = itemRects.selectAll("rect")
@@ -440,35 +459,44 @@ John.create = function (Sequences, lanes, items, currentTime, main_anchor, start
 		karmaLabels = itemRects.selectAll('.karmaLabel')
 			.data(visItems, function (d) { return d._id; })
 			.text(function(d) {
-				var duration = Math.ceil(Math.min((d.end - displayTime), (d.end - d.start)));
+				var duration = Math.ceil(Math.max(0, Math.min((d.end - displayTime), (d.end - d.start))));
 				var formattedDuration = jUtils.formatTime(duration);
 				return (d.karma + ' - ' + formattedDuration);
 			})
-			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 12;});
+			.attr("x", function(d) {
+				var textLength = document.getElementById(d._id).getComputedTextLength() + 12;
+				return Math.max(x1(d.start) + 12, Math.min(x1(d.end) - textLength, x1(displayTime) - textLength));
+			});
 		karmaLabels.enter().append("text")
 			.text(function(d) {
-				var duration = Math.ceil(Math.min((d.end - displayTime), (d.end - d.start)));
+				var duration = Math.ceil(Math.max(0, Math.min((d.end - displayTime), (d.end - d.start))));
 				var formattedDuration = jUtils.formatTime(duration);
 				return (d.karma + ' - ' + formattedDuration);
 			})
 			.attr("class", "karmaLabel")
-			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 12;})
+			.attr("x", function(d) {return x1(Math.max(d.start, minExtent-mainPlayheadOffset)) + 12;})
 			.attr("y", function(d) {return y1($.inArray(d.lane, visibleLanes)+ 0.4);})
 			.attr("_id", function(d){return d._id;})
+			.attr("id", function(d){return d._id;})
 			.attr("text-anchor", "start")
 			.attr("z-index", function(d){return d.start;});
+		
 		karmaLabels.exit().remove();
 
 		nuanceLabels = itemRects.selectAll('.nuanceLabel')
 			.data(visItems, function (d) { return d._id; })
-			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 12;})
+			.attr("x", function(d) {
+				var textLength = document.getElementById(d._id+"_nuance").getComputedTextLength() + 12;
+				return Math.max(x1(d.start) + 12, Math.min(x1(d.end) - textLength, x1(displayTime) - textLength));
+			})
+
 			.attr("y", function(d) {return y1($.inArray(d.lane, visibleLanes)+ .75);});
 		nuanceLabels.enter().append("text")
 			.text(function(d) {return  (d.nuance);})
 			.attr("class", "nuanceLabel")
-			.attr("x", function(d) {return x1(Math.max(d.start, minExtent)) + 12;})
 			.attr("y", function(d) {return y1($.inArray(d.lane, visibleLanes)+ .75);})
 			.attr("_id", function(d){return d._id;})
+			.attr("id", function(d){return d._id+"_nuance";})
 			.attr("text-anchor", "start")
 			.attr("z-index", function(d){return d.start;});
 		nuanceLabels.exit().remove();
